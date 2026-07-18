@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>書き味プロトタイプ v0.1</title>
+<title>書き味プロトタイプ v0.2</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
@@ -16,6 +16,9 @@
     overscroll-behavior: none;
   }
   body {
+    /* height固定+中央寄せだと低いビューポートで上端がスクロール不能な形で切れるため min-height にする */
+    height: auto;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,9 +27,11 @@
     padding: 12px;
   }
   #cell {
-    /* マス内のみ描画（全画面キャンバスにしない） */
-    width: min(82vmin, 560px);
-    height: min(82vmin, 560px);
+    /* マス内のみ描画（全画面キャンバスにしない）。ボタン・計測表示のぶんを差し引いて画面内に収める */
+    width: min(82vmin, 560px, calc(100vh - 150px));
+    width: min(82vmin, 560px, calc(100dvh - 150px));
+    height: min(82vmin, 560px, calc(100vh - 150px));
+    height: min(82vmin, 560px, calc(100dvh - 150px));
     background: #fff;
     border: 3px solid #888;
     border-radius: 4px;
@@ -60,7 +65,7 @@
     <button id="clear" type="button">ぜんぶ消す</button>
   </div>
   <div id="metrics">
-    点数: <span id="mPoints">0</span> ／ 推定 <span id="mHz">–</span> Hz ／ v0.1
+    点数: <span id="mPoints">0</span> ／ 推定 <span id="mHz">–</span> Hz ／ v0.2
   </div>
 
 <script>
