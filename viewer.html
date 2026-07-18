@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>80字ビューア（検収用） viewer v0.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #f5f5f0;
+    color: #333;
+    padding: 12px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 16px; font-weight: 600; margin: 4px 0 12px; color: #555; }
+  h1 small { font-weight: normal; color: #999; }
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 6px;
+  }
+  #grid button {
+    font-size: 26px;
+    font-family: inherit;
+    aspect-ratio: 1;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+  }
+  #grid button:active { background: #e8e8e8; }
+  /* 詳細パネル */
+  #detail {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  #detail.open { display: flex; }
+  #panel {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: min(92vw, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  #panel .head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+  #panel .char { font-size: 40px; }
+  #panel .meta { font-size: 13px; color: #666; line-height: 1.5; }
+  #anim {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    background: #fff;
+    border: 2px solid #bbb;
+    border-radius: 6px;
+  }
+  #anim .bg { stroke: #e0e0e0; }
+  #anim .fg { stroke: #1a1a1a; }
+  #anim path {
+    fill: none;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #panel .btns { display: flex; gap: 10px; margin-top: 12px; }
+  #panel .btns button {
+    flex: 1;
+    font-size: 15px;
+    font-family: inherit;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+  #readings { font-size: 14px; margin-top: 10px; line-height: 1.7; }
+  #readings b { font-weight: 600; color: #555; }
+  footer {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #999;
+    line-height: 1.6;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>10級レベル 80字ビューア <small>（検収用・viewer v0.1）</small></h1>
+  <div id="grid"></div>
+
+  <div id="detail">
+    <div id="panel">
+      <div class="head">
+        <span class="char" id="dChar"></span>
+        <span class="meta" id="dMeta"></span>
+      </div>
+      <svg id="anim" viewBox="0 0 109 109" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div id="readings"></div>
+      <div class="btns">
+        <button id="replay" type="button">もう一度</button>
+        <button id="close" type="button">とじる</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    筆順データ: KanjiVG © Ulrich Apel（CC BY-SA 3.0・<a href="http://kanjivg.tagaini.net">kanjivg.tagaini.net</a>）／
+    読み・画数・部首: KANJIDIC2 © EDRDG（CC BY-SA 4.0）<br>
+    viewer v0.1
+  </footer>
+
+<script>
+'use strict';
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const grid = document.getElementById('grid');
+const detail = document.getElementById('detail');
+const anim = document.getElementById('anim');
+let kanjiList = [];
+let currentRec = null;
+let animTimers = [];   // 実行中アニメの setTimeout 群（中断用）
+
+fetch('data/kanji-g1.json')
+  .then(r => r.json())
+  .then(data => {
+    kanjiList = data.kanji;
+    for (const rec of kanjiList) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = rec.char;
+      b.addEventListener('click', () => openDetail(rec));
+      grid.appendChild(b);
+    }
+  })
+  .catch(err => {
+    grid.textContent = 'データ読み込みエラー: ' + err;
+  });
+
+function openDetail(rec) {
+  currentRec = rec;
+  document.getElementById('dChar').textContent = rec.char;
+  document.getElementById('dMeta').textContent =
+    `${rec.strokeCount}画 ／ 10級レベル（小${rec.grade}） ／ 部首番号(classical): ${rec.radical.classical}`;
+  document.getElementById('readings').innerHTML =
+    `<b>音:</b> ${rec.readings.on.join('、') || 'なし'}<br><b>訓:</b> ${rec.readings.kun.join('、') || 'なし'}`;
+  detail.classList.add('open');
+  playAnimation(rec);
+}
+
+function clearAnimation() {
+  for (const t of animTimers) clearTimeout(t);
+  animTimers = [];
+  anim.innerHTML = '';
+}
+
+// 筆順アニメ: stroke-dasharray/dashoffset を CSS transition で 0 に戻す定番手法。
+// ★rAF には依存しない（Phase 0 の教訓: iOS 低電力時の rAF 抑制）。
+// 進行は setTimeout 連鎖で駆動する。
+function playAnimation(rec) {
+  clearAnimation();
+  // 下敷き: 全画を薄いグレーで表示
+  for (const s of rec.strokes) {
+    const p = document.createElementNS(SVG_NS, 'path');
+    p.setAttribute('d', s.path);
+    p.setAttribute('class', 'bg');
+    anim.appendChild(p);
+  }
+  // 前景: 1画ずつ描く
+  let delay = 250;
+  for (const s of rec.strokes) {
+    const p = document.createElementNS(SVG_NS, 'path');
+    p.setAttribute('d', s.path);
+    p.setAttribute('class', 'fg');
+    anim.appendChild(p);
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    // round cap は dashoffset=len でも始点に点が出るため、開始まで隠す
+    p.style.visibility = 'hidden';
+    // 画の長さに応じた所要時間（0.25〜0.7秒）
+    const dur = Math.min(700, Math.max(250, len * 9));
+    animTimers.push(setTimeout(() => {
+      p.style.visibility = 'visible';
+      p.getBoundingClientRect(); // 強制リフロー: 開始値(offset=len)を確定させてから終値を入れる
+      p.style.transition = `stroke-dashoffset ${dur}ms ease-in-out`;
+      p.style.strokeDashoffset = '0';
+    }, delay));
+    delay += dur + 180;
+  }
+}
+
+document.getElementById('replay').addEventListener('click', () => {
+  if (currentRec) playAnimation(currentRec);
+});
+document.getElementById('close').addEventListener('click', () => {
+  detail.classList.remove('open');
+  clearAnimation();
+});
+detail.addEventListener('click', (e) => {
+  if (e.target === detail) {
+    detail.classList.remove('open');
+    clearAnimation();
+  }
+});
+</script>
+</body>
+</html>
