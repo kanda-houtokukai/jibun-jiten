@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>書き味プロトタイプ v0.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #f5f5f0;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    overscroll-behavior: none;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px;
+  }
+  #cell {
+    /* マス内のみ描画（全画面キャンバスにしない） */
+    width: min(82vmin, 560px);
+    height: min(82vmin, 560px);
+    background: #fff;
+    border: 3px solid #888;
+    border-radius: 4px;
+    touch-action: none; /* これがないと描画がスクロールに食われる */
+    display: block;
+  }
+  #controls { display: flex; gap: 16px; }
+  #controls button {
+    font-size: 18px;
+    padding: 12px 24px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    touch-action: manipulation;
+  }
+  #controls button:active { background: #e0e0e0; }
+  #metrics {
+    font-size: 14px;
+    color: #666;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <canvas id="cell"></canvas>
+  <div id="controls">
+    <button id="undo" type="button">1画もどす</button>
+    <button id="clear" type="button">ぜんぶ消す</button>
+  </div>
+  <div id="metrics">
+    点数: <span id="mPoints">0</span> ／ 推定 <span id="mHz">–</span> Hz ／ v0.1
+  </div>
+
+<script>
+'use strict';
+
+const canvas = document.getElementById('cell');
+const ctx = canvas.getContext('2d', { desynchronized: true });
+const mPoints = document.getElementById('mPoints');
+const mHz = document.getElementById('mHz');
+
+// ストローク保存形式: 0〜1 の正規化座標（リサイズ時の再描画用。永続化はしない）
+let strokes = [];      // 確定した画の配列
+let current = null;    // 描画中の画（点の配列）
+
+let cssSize = 0;       // マスのCSSピクセル一辺
+let rect = null;       // ストローク中にキャッシュする getBoundingClientRect
+let activePointer = null;
+
+// ---- キャンバス初期化・再描画 ----
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  cssSize = canvas.clientWidth;
+  canvas.width = Math.round(cssSize * dpr);
+  canvas.height = Math.round(cssSize * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  redrawAll();
+}
+
+function drawGuides() {
+  // 十字の薄いガイド線
+  ctx.save();
+  ctx.strokeStyle = '#d8d8e8';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([7, 5]);
+  ctx.beginPath();
+  ctx.moveTo(cssSize / 2, 0);
+  ctx.lineTo(cssSize / 2, cssSize);
+  ctx.moveTo(0, cssSize / 2);
+  ctx.lineTo(cssSize, cssSize / 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function setStrokeStyle() {
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = Math.max(4, cssSize * 0.014);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+
+function drawStroke(points) {
+  if (points.length === 0) return;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x * cssSize, points[0].y * cssSize);
+  if (points.length === 1) {
+    // 1点だけの画は点として描く（lineCap: round で丸くなる）
+    ctx.lineTo(points[0].x * cssSize + 0.01, points[0].y * cssSize);
+  } else {
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i].x * cssSize, points[i].y * cssSize);
+    }
+  }
+  ctx.stroke();
+}
+
+function redrawAll() {
+  ctx.clearRect(0, 0, cssSize, cssSize);
+  drawGuides();
+  setStrokeStyle();
+  for (const s of strokes) drawStroke(s);
+  if (current) drawStroke(current);
+}
+
+// ---- 計測（pointermove間隔からの推定Hz）----
+
+let lastMoveTime = 0;
+let intervals = [];    // 直近の pointermove 間隔（ms）
+let lastMetricsAt = 0; // 表示更新のスロットル用
+
+// rAF は使わない（iOS Safari の低電力時・非表示時に止まり表示が固まるため）。
+// イベント駆動＋100msスロットルで DOM 更新の負荷を抑える。
+function updateMetrics(force) {
+  const now = performance.now();
+  if (!force && now - lastMetricsAt < 100) return;
+  lastMetricsAt = now;
+  mPoints.textContent = current ? current.length : (strokes.length ? strokes[strokes.length - 1].length : 0);
+  if (intervals.length >= 5) {
+    const sorted = intervals.slice().sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    mHz.textContent = median > 0 ? Math.round(1000 / median) : '–';
+  }
+}
+
+// ---- 手書き入力（Pointer Events・生の素点で描く）----
+// Safari は getCoalescedEvents 未対応のため使わない。
+// スムージング・筆圧なし。座標を結ぶだけの単純描画（生の書き味を見るため）。
+
+function toPoint(e) {
+  return {
+    x: (e.clientX - rect.left) / cssSize,
+    y: (e.clientY - rect.top) / cssSize
+  };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (activePointer !== null) return; // 2本目以降のタッチは無視
+  activePointer = e.pointerId;
+  canvas.setPointerCapture(e.pointerId);
+  rect = canvas.getBoundingClientRect();
+  current = [toPoint(e)];
+  lastMoveTime = 0;
+  setStrokeStyle();
+  drawStroke(current); // タップ即打点
+  updateMetrics(true);
+  e.preventDefault();
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== activePointer || !current) return;
+  const p = toPoint(e);
+  const prev = current[current.length - 1];
+  current.push(p);
+  // 直前の点から新しい点へ1セグメントだけ描く（全再描画しない）
+  ctx.beginPath();
+  ctx.moveTo(prev.x * cssSize, prev.y * cssSize);
+  ctx.lineTo(p.x * cssSize, p.y * cssSize);
+  ctx.stroke();
+  // Hz計測
+  if (lastMoveTime > 0) {
+    intervals.push(e.timeStamp - lastMoveTime);
+    if (intervals.length > 60) intervals.shift();
+  }
+  lastMoveTime = e.timeStamp;
+  updateMetrics(false);
+  e.preventDefault();
+});
+
+function endStroke(e) {
+  if (e.pointerId !== activePointer) return;
+  activePointer = null;
+  if (current) {
+    strokes.push(current);
+    current = null;
+  }
+  updateMetrics(true);
+}
+canvas.addEventListener('pointerup', endStroke);
+canvas.addEventListener('pointercancel', endStroke);
+
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// ---- ボタン ----
+
+document.getElementById('undo').addEventListener('click', () => {
+  strokes.pop();
+  redrawAll();
+  updateMetrics(true);
+});
+
+document.getElementById('clear').addEventListener('click', () => {
+  strokes = [];
+  current = null;
+  redrawAll();
+  updateMetrics(true);
+});
+
+// ---- リサイズ・回転対応 ----
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
+</body>
+</html>
