@@ -3,240 +3,685 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>書き味プロトタイプ v0.2</title>
+<title>じぶんじてん</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     height: 100%;
     font-family: -apple-system, "Hiragino Sans", sans-serif;
-    background: #f5f5f0;
+    background: #fdfbf5;                 /* 背景明色 */
+    color: #3a3a3a;
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
     overscroll-behavior: none;
   }
-  body {
-    /* height固定+中央寄せだと低いビューポートで上端がスクロール不能な形で切れるため min-height にする */
-    height: auto;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 12px;
+  :root {
+    --accent: #2f7cd6;                   /* アクセント1色 */
+    --good: #2e9e5b;                     /* 成功色 */
   }
-  #cell {
-    /* マス内のみ描画（全画面キャンバスにしない）。ボタン・計測表示のぶんを差し引いて画面内に収める */
-    width: min(82vmin, 560px, calc(100vh - 150px));
-    width: min(82vmin, 560px, calc(100dvh - 150px));
-    height: min(82vmin, 560px, calc(100vh - 150px));
-    height: min(82vmin, 560px, calc(100dvh - 150px));
+  .screen { display: none; min-height: 100%; padding: 14px; max-width: 640px; margin: 0 auto; }
+  .screen.on { display: flex; flex-direction: column; align-items: center; }
+  button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
+
+  /* ---- ホーム ---- */
+  #scrHome h1 { font-size: 34px; margin: 36px 0 8px; color: var(--accent); letter-spacing: 2px; }
+  #scrHome .sub { font-size: 14px; color: #888; margin-bottom: 30px; }
+  .bigBtn {
+    display: block; width: 100%; max-width: 420px;
+    font-size: 24px; padding: 22px; margin: 10px 0;
+    border: none; border-radius: 16px;
+    background: var(--accent); color: #fff;
+  }
+  .bigBtn.second { background: #fff; color: var(--accent); border: 2px solid var(--accent); }
+  .bigBtn:active { opacity: 0.85; }
+  #homeProgress { font-size: 16px; color: #666; margin: 18px 0 6px; }
+  #backupBox { margin-top: 40px; width: 100%; max-width: 420px; font-size: 12px; color: #888; }
+  #backupBox summary { cursor: pointer; }
+  #backupBox .inner { padding: 10px 4px; line-height: 1.7; }
+  #backupBox button { font-size: 12px; padding: 6px 12px; border: 1px solid #aaa; border-radius: 6px; background: #fff; margin-right: 8px; }
+  .ver { margin-top: 18px; font-size: 11px; color: #bbb; }
+
+  /* ---- れんしゅう ---- */
+  #pTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
+  #pCounter { font-size: 14px; color: #888; }
+  #pQuit { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #888; }
+  #pReadings { min-height: 44px; margin: 6px 0 2px; text-align: center; line-height: 1.5; }
+  #pReadings .kun { font-size: 20px; color: #3a3a3a; }
+  #pReadings .on { font-size: 14px; color: #888; }
+  #pMsg { min-height: 30px; font-size: 18px; font-weight: 600; margin: 4px 0; text-align: center; }
+  #pMsg.good { color: var(--good); }
+  #pMsg.accent { color: var(--accent); }
+  #pCell {
+    width: min(88vw, 440px, calc(100dvh - 320px));
+    aspect-ratio: 1;
     background: #fff;
-    border: 3px solid #888;
-    border-radius: 4px;
-    touch-action: none; /* これがないと描画がスクロールに食われる */
+    border: 3px solid #c9c2ae;
+    border-radius: 10px;
+    touch-action: none;
     display: block;
   }
-  #controls { display: flex; gap: 16px; }
-  #controls button {
-    font-size: 18px;
-    padding: 12px 24px;
-    border: 1px solid #aaa;
-    border-radius: 8px;
-    background: #fff;
-    color: #333;
-    touch-action: manipulation;
+  #pDots { display: flex; gap: 8px; margin: 10px 0 4px; min-height: 14px; }
+  #pDots span { width: 12px; height: 12px; border-radius: 50%; background: #ddd; }
+  #pDots span.done { background: var(--good); }
+  #pBtns { margin-top: 8px; display: flex; gap: 12px; }
+  #pAction {
+    font-size: 20px; padding: 14px 34px; border: none; border-radius: 14px;
+    background: var(--accent); color: #fff;
   }
-  #controls button:active { background: #e0e0e0; }
-  #metrics {
-    font-size: 14px;
-    color: #666;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-    line-height: 1.6;
+  #pAction:active { opacity: 0.85; }
+  #pAction[hidden] { display: none; }
+
+  /* ---- じぶんじてん ---- */
+  #dTop { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  #dTop h2 { font-size: 20px; color: var(--accent); }
+  #dBack { font-size: 14px; padding: 8px 16px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+  #dCount { width: 100%; font-size: 14px; color: #888; margin-bottom: 10px; }
+  #dGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 6px;
   }
+  #dGrid .cellBtn {
+    aspect-ratio: 1; border: 1px solid #e0d9c8; border-radius: 8px; background: #fff; padding: 3px;
+  }
+  #dGrid .cellBtn.got { border-color: var(--accent); }
+  #dGrid svg { width: 100%; height: 100%; display: block; }
+  /* 詳細 */
+  #dDetail {
+    display: none; position: fixed; inset: 0; background: rgba(60,50,30,0.45);
+    align-items: center; justify-content: center; padding: 14px; z-index: 5;
+  }
+  #dDetail.on { display: flex; }
+  #dPanel {
+    background: #fff; border-radius: 14px; padding: 16px;
+    width: min(94vw, 560px); max-height: 92vh; overflow-y: auto;
+  }
+  #dPanel h3 { font-size: 22px; margin-bottom: 10px; color: #3a3a3a; }
+  #dThree { display: flex; gap: 10px; flex-wrap: wrap; }
+  #dThree .slot { flex: 1 1 140px; text-align: center; }
+  #dThree .slot .cap { font-size: 14px; color: var(--accent); font-weight: 600; }
+  #dThree .slot .date { font-size: 11px; color: #aaa; margin-bottom: 4px; }
+  #dThree svg { width: 100%; aspect-ratio: 1; background: #fdfbf5; border: 1px solid #eee; border-radius: 8px; }
+  #dThree .slot button {
+    margin-top: 6px; font-size: 13px; padding: 6px 16px;
+    border: 1px solid var(--accent); color: var(--accent); background: #fff; border-radius: 8px;
+  }
+  #dNotYet { font-size: 15px; color: #888; padding: 10px 0 4px; }
+  #dClose { margin-top: 14px; width: 100%; font-size: 16px; padding: 12px; border: none; border-radius: 10px; background: #eee; }
 </style>
 </head>
 <body>
-  <canvas id="cell"></canvas>
-  <div id="controls">
-    <button id="undo" type="button">1画もどす</button>
-    <button id="clear" type="button">ぜんぶ消す</button>
-  </div>
-  <div id="metrics">
-    点数: <span id="mPoints">0</span> ／ 推定 <span id="mHz">–</span> Hz ／ v0.2
+
+  <!-- ホーム -->
+  <div id="scrHome" class="screen on">
+    <h1>じぶんじてん</h1>
+    <div class="sub">かいた じが たまっていく かんじの れんしゅう</div>
+    <button id="btnToday" class="bigBtn"></button>
+    <button id="btnDict" class="bigBtn second"></button>
+    <div id="homeProgress"></div>
+    <details id="backupBox">
+      <summary></summary>
+      <div class="inner">
+        <div id="backupNote"></div>
+        <div style="margin-top:6px;">
+          <button id="btnExport"></button>
+          <button id="btnImport"></button>
+          <input type="file" id="fileImport" accept="application/json" hidden>
+        </div>
+      </div>
+    </details>
+    <div class="ver">v0.3</div>
   </div>
 
-<script>
-'use strict';
+  <!-- れんしゅう -->
+  <div id="scrPractice" class="screen">
+    <div id="pTop">
+      <span id="pCounter"></span>
+      <button id="pQuit"></button>
+    </div>
+    <div id="pReadings"></div>
+    <div id="pMsg"></div>
+    <canvas id="pCell"></canvas>
+    <div id="pDots"></div>
+    <div id="pBtns"><button id="pAction"></button></div>
+  </div>
 
-const canvas = document.getElementById('cell');
+  <!-- じぶんじてん -->
+  <div id="scrDict" class="screen">
+    <div id="dTop">
+      <h2></h2>
+      <button id="dBack"></button>
+    </div>
+    <div id="dCount"></div>
+    <div id="dGrid"></div>
+    <div id="dDetail">
+      <div id="dPanel">
+        <h3></h3>
+        <div id="dNotYet" hidden></div>
+        <div id="dThree"></div>
+        <button id="dClose"></button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+import { DEFAULT_CONFIG, scoreStroke, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js';
+import { openStore } from './js/store.js';
+import { TEXTS, formatReadings } from './js/texts.js';
+
+const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+
+let kanjiList = [];
+let store = null;
+let entries = {};    // {char: {first,best,latest}} のキャッシュ
+
+// ---- 画面切替 ----
+function show(id) {
+  for (const s of document.querySelectorAll('.screen')) s.classList.remove('on');
+  $(id).classList.add('on');
+}
+
+// ---- 静的文言の流し込み ----
+function applyTexts() {
+  $('btnToday').textContent = TEXTS.home.today;
+  $('btnDict').textContent = TEXTS.home.dict;
+  document.querySelector('#backupBox summary').textContent = TEXTS.backup.summary;
+  $('backupNote').textContent = TEXTS.backup.note;
+  $('btnExport').textContent = TEXTS.backup.export;
+  $('btnImport').textContent = TEXTS.backup.import;
+  $('pQuit').textContent = TEXTS.practice.quit;
+  document.querySelector('#dTop h2').textContent = TEXTS.dict.title;
+  $('dBack').textContent = TEXTS.dict.back;
+  $('dClose').textContent = TEXTS.dict.close;
+}
+
+async function refreshHome() {
+  entries = await store.getAll();
+  const n = Object.keys(entries).length;
+  $('homeProgress').textContent = n ? TEXTS.home.progress(n) : TEXTS.home.progressZero;
+}
+
+// ============================================================
+// れんしゅう
+// ============================================================
+
+const canvas = $('pCell');
 const ctx = canvas.getContext('2d', { desynchronized: true });
-const mPoints = document.getElementById('mPoints');
-const mHz = document.getElementById('mHz');
 
-// ストローク保存形式: 0〜1 の正規化座標（リサイズ時の再描画用。永続化はしない）
-let strokes = [];      // 確定した画の配列
-let current = null;    // 描画中の画（点の配列）
+const P = {
+  chars: [], idx: 0,
+  rec: null, tmpl: [], tmplPaths: [], anim: [],  // anim = 描画用サンプル列
+  phase: 'watch',        // watch | trace | air | charDone | sessionDone
+  accepted: [], scores: [], current: null,
+  stumbles: 0, consecFails: 0, rescueGuide: false,
+  timers: [], drawing: false,
+};
 
-let cssSize = 0;       // マスのCSSピクセル一辺
-let rect = null;       // ストローク中にキャッシュする getBoundingClientRect
-let activePointer = null;
+function clearTimers() {
+  for (const t of P.timers) clearTimeout(t);
+  P.timers = [];
+}
 
-// ---- キャンバス初期化・再描画 ----
+// きょうの5もじ: 未習得を先に、足りなければベストスコアの低い順で補う
+function pickToday() {
+  const un = kanjiList.filter(k => !entries[k.char]);
+  const got = kanjiList.filter(k => entries[k.char])
+    .sort((a, b) => entries[a.char].best.score - entries[b.char].best.score);
+  return [...un, ...got].slice(0, 5);
+}
 
-function resizeCanvas() {
+let cssSize = 0, rect = null, activePointer = null;
+
+function resizeCell() {
   const dpr = window.devicePixelRatio || 1;
   cssSize = canvas.clientWidth;
   canvas.width = Math.round(cssSize * dpr);
   canvas.height = Math.round(cssSize * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  redrawAll();
+  redrawCell();
 }
 
-function drawGuides() {
-  // 十字の薄いガイド線
-  ctx.save();
-  ctx.strokeStyle = '#d8d8e8';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([7, 5]);
-  ctx.beginPath();
-  ctx.moveTo(cssSize / 2, 0);
-  ctx.lineTo(cssSize / 2, cssSize);
-  ctx.moveTo(0, cssSize / 2);
-  ctx.lineTo(cssSize, cssSize / 2);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function setStrokeStyle() {
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = Math.max(4, cssSize * 0.014);
+function setSpace() {
+  const dpr = window.devicePixelRatio || 1;
+  const k = (cssSize * dpr) / 109;
+  ctx.setTransform(k, 0, 0, k, 0, 0);
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 }
 
-function drawStroke(points) {
-  if (points.length === 0) return;
+function drawCross() {
+  ctx.save();
+  ctx.strokeStyle = '#efece2';
+  ctx.lineWidth = 0.6;
+  ctx.setLineDash([2.4, 1.8]);
   ctx.beginPath();
-  ctx.moveTo(points[0].x * cssSize, points[0].y * cssSize);
-  if (points.length === 1) {
-    // 1点だけの画は点として描く（lineCap: round で丸くなる）
-    ctx.lineTo(points[0].x * cssSize + 0.01, points[0].y * cssSize);
-  } else {
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x * cssSize, points[i].y * cssSize);
-    }
+  ctx.moveTo(54.5, 0); ctx.lineTo(54.5, 109);
+  ctx.moveTo(0, 54.5); ctx.lineTo(109, 54.5);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function guideVisible() {
+  return P.phase === 'trace' || P.phase === 'watch' || (P.phase === 'air' && P.rescueGuide);
+}
+
+function redrawCell() {
+  if (!P.rec) return;
+  setSpace();
+  ctx.clearRect(0, 0, 109, 109);
+  drawCross();
+  if (guideVisible()) {
+    ctx.strokeStyle = P.phase === 'watch' ? '#e8e4d8' : '#d8d2c0'; // 薄いガイド
+    ctx.lineWidth = 3.6;
+    for (const p2d of P.tmplPaths) ctx.stroke(p2d);
   }
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.8;
+  for (const s of P.accepted) drawPoly(s, 1);
+  if (P.current) drawPoly(P.current, 1);
+}
+
+function drawPoly(points, scaleTo109) {
+  if (!points.length) return;
+  const k = scaleTo109 ? 109 : 1;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x * k, points[0].y * k);
+  if (points.length === 1) ctx.lineTo(points[0].x * k + 0.01, points[0].y * k);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x * k, points[i].y * k);
   ctx.stroke();
 }
 
-function redrawAll() {
-  ctx.clearRect(0, 0, cssSize, cssSize);
-  drawGuides();
-  setStrokeStyle();
-  for (const s of strokes) drawStroke(s);
-  if (current) drawStroke(current);
-}
-
-// ---- 計測（pointermove間隔からの推定Hz）----
-
-let lastMoveTime = 0;
-let intervals = [];    // 直近の pointermove 間隔（ms）
-let lastMetricsAt = 0; // 表示更新のスロットル用
-
-// rAF は使わない（iOS Safari の低電力時・非表示時に止まり表示が固まるため）。
-// イベント駆動＋100msスロットルで DOM 更新の負荷を抑える。
-function updateMetrics(force) {
-  const now = performance.now();
-  if (!force && now - lastMetricsAt < 100) return;
-  lastMetricsAt = now;
-  mPoints.textContent = current ? current.length : (strokes.length ? strokes[strokes.length - 1].length : 0);
-  if (intervals.length >= 5) {
-    const sorted = intervals.slice().sort((a, b) => a - b);
-    const median = sorted[Math.floor(sorted.length / 2)];
-    mHz.textContent = median > 0 ? Math.round(1000 / median) : '–';
-  }
-}
-
-// ---- 手書き入力（Pointer Events・生の素点で描く）----
-// Safari は getCoalescedEvents 未対応のため使わない。
-// スムージング・筆圧なし。座標を結ぶだけの単純描画（生の書き味を見るため）。
-
-function toPoint(e) {
-  return {
-    x: (e.clientX - rect.left) / cssSize,
-    y: (e.clientY - rect.top) / cssSize
+// 1画をタイマー駆動で描き進める（rAF非依存・★台帳の教訓）
+function animateStroke(i, color, stepMs, onDone) {
+  const pts = P.anim[i];
+  let k = 2;
+  const step = () => {
+    redrawCell();
+    setSpace();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3.4;
+    drawPoly(pts.slice(0, k), 0);
+    if (k < pts.length) {
+      k += 2;
+      P.timers.push(setTimeout(step, stepMs));
+    } else if (onDone) onDone();
   };
+  step();
+}
+
+// 手本アニメ: 全画を順に（watch用）
+function animateAll(i = 0) {
+  if (i >= P.anim.length) {
+    P.accepted = P.rec.strokes.map((_, j) => P.anim[j].map(p => ({ x: p.x / 109, y: p.y / 109 })));
+    redrawCell();
+    P.accepted = [];
+    showAction(TEXTS.practice.write);
+    return;
+  }
+  animateStroke(i, '#1a1a1a', 22, () => {
+    // 描いた画は accepted 相当として残す
+    P.accepted.push(P.anim[i].map(p => ({ x: p.x / 109, y: p.y / 109 })));
+    P.timers.push(setTimeout(() => animateAll(i + 1), 160));
+  });
+}
+
+function setMsg(text, cls) {
+  const el = $('pMsg');
+  el.textContent = text || '';
+  el.className = cls || '';
+}
+
+function setDots() {
+  const n = P.rec ? P.rec.strokeCount : 0;
+  $('pDots').innerHTML = Array.from({ length: n }, (_, i) =>
+    `<span class="${i < P.accepted.length ? 'done' : ''}"></span>`).join('');
+}
+
+function showAction(label) {
+  const b = $('pAction');
+  b.hidden = false;
+  b.textContent = label;
+}
+function hideAction() { $('pAction').hidden = true; }
+
+function setReadings(rec) {
+  const r = formatReadings(rec.readings);
+  $('pReadings').innerHTML =
+    `<div class="kun">${r.kun.join('　') || ''}</div><div class="on">${r.on.join('　') || ''}</div>`;
+}
+
+function startChar() {
+  clearTimers();
+  const rec = P.chars[P.idx];
+  P.rec = rec;
+  P.tmpl = templateStrokes(rec, cfg.samplePoints);
+  P.tmplPaths = rec.strokes.map(s => new Path2D(s.path));
+  P.anim = rec.strokes.map(s => samplePath(s.path, 40));
+  P.accepted = []; P.scores = []; P.current = null;
+  P.stumbles = 0; P.consecFails = 0; P.rescueGuide = false;
+  P.phase = 'watch'; P.drawing = false;
+  $('pCounter').textContent = TEXTS.practice.counter(P.idx + 1, P.chars.length);
+  setReadings(rec);
+  setMsg(TEXTS.practice.watchTitle, 'accent');
+  setDots();
+  hideAction();
+  resizeCell();
+  P.timers.push(setTimeout(() => animateAll(0), 350));
+}
+
+function startTrace() {
+  clearTimers();
+  P.phase = 'trace';
+  P.accepted = []; P.scores = []; P.consecFails = 0;
+  setMsg(TEXTS.practice.traceTitle, 'accent');
+  setDots(); hideAction(); redrawCell();
+}
+
+function startAir() {
+  clearTimers();
+  P.phase = 'air';
+  P.accepted = []; P.scores = []; P.stumbles = 0; P.consecFails = 0; P.rescueGuide = false;
+  setMsg(TEXTS.practice.airTitle, 'accent');
+  setDots(); hideAction(); redrawCell();
+}
+
+let cameFromTrace = false; // charDone の遷移: なぞり後→そらがき / そらがき後→次の字 or ホーム
+
+async function onCharComplete() {
+  cameFromTrace = (P.phase === 'trace');
+  if (P.phase === 'trace') {
+    P.phase = 'charDone';
+    setMsg(TEXTS.practice.good, 'good');
+    showAction(TEXTS.practice.next);
+    return;
+  }
+  // そらがき合格 → 保存（保存はここだけ）
+  const avg = Math.round(P.scores.reduce((a, b) => a + b, 0) / P.scores.length);
+  const entry = await store.recordPass(P.rec.char, {
+    strokes: P.accepted, score: avg, at: Date.now(),
+  });
+  entries[P.rec.char] = entry;
+  P.phase = 'charDone';
+  setMsg(TEXTS.practice.finishOne, 'good');
+  showAction(P.idx + 1 < P.chars.length ? TEXTS.practice.next : TEXTS.practice.backHome);
+  if (P.idx + 1 >= P.chars.length) setMsg(TEXTS.practice.sessionDone, 'good');
+}
+
+function onStrokeEnd(points) {
+  const i = P.accepted.length;
+  const res = scoreStroke(userStrokeTo109(points), P.tmpl[i], cfg);
+  const pass = res.score >= cfg.passScore;
+  // 3回連続でつまずいた画は、ガイドがある状態なら通す（失敗で終わらせない）
+  const rescueAccept = !pass && P.consecFails >= 2 && guideVisible();
+  if (pass || rescueAccept) {
+    P.accepted.push(points);
+    P.scores.push(res.score);
+    P.consecFails = 0;
+    setMsg('', '');
+    setDots();
+    redrawCell();
+    if (P.accepted.length === P.rec.strokeCount) onCharComplete().catch(console.error);
+    return;
+  }
+  // おしい: 該当画だけアニメで見せて再挑戦
+  P.consecFails++;
+  P.stumbles++;
+  if (P.phase === 'air' && P.stumbles >= 3 && !P.rescueGuide) {
+    P.rescueGuide = true;
+    setMsg(TEXTS.practice.rescue, 'accent');
+  } else {
+    setMsg(TEXTS.practice.close(i + 1), 'accent');
+  }
+  animateStroke(i, '#2f7cd6', 18, () => { P.timers.push(setTimeout(redrawCell, 250)); });
+}
+
+// ---- 手書き入力（Phase 0 方式） ----
+function toPoint(e) {
+  return { x: (e.clientX - rect.left) / cssSize, y: (e.clientY - rect.top) / cssSize };
 }
 
 canvas.addEventListener('pointerdown', (e) => {
-  if (activePointer !== null) return; // 2本目以降のタッチは無視
+  if (activePointer !== null) return;
+  if (P.phase !== 'trace' && P.phase !== 'air') return;
+  if (P.accepted.length >= (P.rec ? P.rec.strokeCount : 0)) return;
   activePointer = e.pointerId;
   canvas.setPointerCapture(e.pointerId);
   rect = canvas.getBoundingClientRect();
-  current = [toPoint(e)];
-  lastMoveTime = 0;
-  setStrokeStyle();
-  drawStroke(current); // タップ即打点
-  updateMetrics(true);
+  clearTimers();          // おしいアニメ中に書き始めたら止める
+  redrawCell();
+  P.current = [toPoint(e)];
+  setSpace();
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.8;
+  drawPoly(P.current, 1);
   e.preventDefault();
 });
 
 canvas.addEventListener('pointermove', (e) => {
-  if (e.pointerId !== activePointer || !current) return;
+  if (e.pointerId !== activePointer || !P.current) return;
   const p = toPoint(e);
-  const prev = current[current.length - 1];
-  current.push(p);
-  // 直前の点から新しい点へ1セグメントだけ描く（全再描画しない）
+  const prev = P.current[P.current.length - 1];
+  P.current.push(p);
+  setSpace();
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.8;
   ctx.beginPath();
-  ctx.moveTo(prev.x * cssSize, prev.y * cssSize);
-  ctx.lineTo(p.x * cssSize, p.y * cssSize);
+  ctx.moveTo(prev.x * 109, prev.y * 109);
+  ctx.lineTo(p.x * 109, p.y * 109);
   ctx.stroke();
-  // Hz計測
-  if (lastMoveTime > 0) {
-    intervals.push(e.timeStamp - lastMoveTime);
-    if (intervals.length > 60) intervals.shift();
-  }
-  lastMoveTime = e.timeStamp;
-  updateMetrics(false);
   e.preventDefault();
 });
 
 function endStroke(e) {
   if (e.pointerId !== activePointer) return;
   activePointer = null;
-  if (current) {
-    strokes.push(current);
-    current = null;
+  if (P.current) {
+    const pts = P.current;
+    P.current = null;
+    onStrokeEnd(pts);
   }
-  updateMetrics(true);
 }
 canvas.addEventListener('pointerup', endStroke);
 canvas.addEventListener('pointercancel', endStroke);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 
-canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-// ---- ボタン ----
-
-document.getElementById('undo').addEventListener('click', () => {
-  strokes.pop();
-  redrawAll();
-  updateMetrics(true);
+$('pAction').addEventListener('click', () => {
+  if (P.phase === 'watch') startTrace();
+  else if (P.phase === 'charDone') advance();
 });
 
-document.getElementById('clear').addEventListener('click', () => {
-  strokes = [];
-  current = null;
-  redrawAll();
-  updateMetrics(true);
+function advance() {
+  if (cameFromTrace) { cameFromTrace = false; startAir(); return; }
+  if (P.idx + 1 < P.chars.length) { P.idx++; startChar(); }
+  else goHome();
+}
+
+function goHome() {
+  clearTimers();
+  P.rec = null;
+  refreshHome().then(() => show('scrHome'));
+}
+
+$('pQuit').addEventListener('click', goHome);
+
+$('btnToday').addEventListener('click', async () => {
+  entries = await store.getAll();
+  P.chars = pickToday();
+  P.idx = 0;
+  show('scrPractice');
+  startChar();
 });
 
-// ---- リサイズ・回転対応 ----
+window.addEventListener('resize', () => {
+  if ($('scrPractice').classList.contains('on')) resizeCell();
+});
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+// ============================================================
+// じぶんじてん
+// ============================================================
+
+function strokesToPathD(strokes, k) {
+  // 正規化(0..1)座標列 → SVG path（109空間）
+  return strokes.map(s => {
+    if (!s.length) return '';
+    let d = `M${(s[0].x * k).toFixed(1)},${(s[0].y * k).toFixed(1)}`;
+    if (s.length === 1) d += ` l0.01,0`;
+    for (let i = 1; i < s.length; i++) d += ` L${(s[i].x * k).toFixed(1)},${(s[i].y * k).toFixed(1)}`;
+    return d;
+  });
+}
+
+function makeSvg(paths, color, width) {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 109 109');
+  for (const d of paths) {
+    if (!d) continue;
+    const p = document.createElementNS(SVG_NS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', color);
+    p.setAttribute('stroke-width', width);
+    p.setAttribute('stroke-linecap', 'round');
+    p.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(p);
+  }
+  return svg;
+}
+
+function renderDict() {
+  $('dCount').textContent = TEXTS.dict.count(Object.keys(entries).length);
+  const grid = $('dGrid');
+  grid.innerHTML = '';
+  for (const rec of kanjiList) {
+    const e = entries[rec.char];
+    const btn = document.createElement('button');
+    btn.className = 'cellBtn' + (e ? ' got' : '');
+    const svg = e
+      ? makeSvg(strokesToPathD(e.best.strokes, 109), '#1a1a1a', 4)
+      : makeSvg(rec.strokes.map(s => s.path), '#d5cfc0', 4);   // 未習得=グレーの模範(KanjiVG)
+    btn.appendChild(svg);
+    btn.addEventListener('click', () => openDetail(rec));
+    grid.appendChild(btn);
+  }
+}
+
+let detailTimers = [];
+function clearDetailTimers() { for (const t of detailTimers) clearTimeout(t); detailTimers = []; }
+
+function fmtDate(at) {
+  const d = new Date(at);
+  return `${d.getMonth() + 1}がつ${d.getDate()}にち`;
+}
+
+function openDetail(rec) {
+  clearDetailTimers();
+  const e = entries[rec.char];
+  document.querySelector('#dPanel h3').textContent = rec.char + '（' + rec.strokeCount + 'かく）';
+  const three = $('dThree');
+  three.innerHTML = '';
+  $('dNotYet').hidden = !!e;
+  if (!e) {
+    $('dNotYet').textContent = TEXTS.dict.notYet;
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.appendChild(makeSvg(rec.strokes.map(s => s.path), '#d5cfc0', 4));
+    three.appendChild(slot);
+  } else {
+    for (const [key, cap] of [['first', TEXTS.dict.first], ['best', TEXTS.dict.best], ['latest', TEXTS.dict.latest]]) {
+      const a = e[key];
+      const slot = document.createElement('div');
+      slot.className = 'slot';
+      slot.innerHTML = `<div class="cap">${cap}</div><div class="date">${fmtDate(a.at)}</div>`;
+      const svg = makeSvg(strokesToPathD(a.strokes, 109), '#1a1a1a', 4);
+      slot.appendChild(svg);
+      const btn = document.createElement('button');
+      btn.textContent = TEXTS.dict.replay;
+      btn.addEventListener('click', () => replaySvg(svg));
+      slot.appendChild(btn);
+      three.appendChild(slot);
+    }
+  }
+  $('dDetail').classList.add('on');
+}
+
+// 筆跡の順再生（成長リプレイ最小版）。CSS transition＋setTimeout・rAF非依存
+function replaySvg(svg) {
+  clearDetailTimers();
+  const paths = [...svg.querySelectorAll('path')];
+  let delay = 120;
+  for (const p of paths) {
+    const len = p.getTotalLength();
+    p.style.transition = 'none';
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.visibility = 'hidden';   // round cap の始点ドット対策（★台帳の教訓）
+    const dur = Math.min(600, Math.max(200, len * 8));
+    detailTimers.push(setTimeout(() => {
+      p.style.visibility = 'visible';
+      p.getBoundingClientRect();     // 強制リフロー
+      p.style.transition = `stroke-dashoffset ${dur}ms ease-in-out`;
+      p.style.strokeDashoffset = '0';
+    }, delay));
+    delay += dur + 140;
+  }
+}
+
+$('btnDict').addEventListener('click', async () => {
+  entries = await store.getAll();
+  renderDict();
+  show('scrDict');
+});
+$('dBack').addEventListener('click', () => { clearDetailTimers(); goHome(); });
+$('dClose').addEventListener('click', () => { clearDetailTimers(); $('dDetail').classList.remove('on'); });
+$('dDetail').addEventListener('click', (e) => {
+  if (e.target === $('dDetail')) { clearDetailTimers(); $('dDetail').classList.remove('on'); }
+});
+
+// ============================================================
+// バックアップ（ほごしゃ向け・設定隅）
+// ============================================================
+
+$('btnExport').addEventListener('click', async () => {
+  const obj = await store.exportJson(Date.now());
+  if (!Object.keys(obj.entries).length) { alert(TEXTS.backup.empty); return; }
+  const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'jibun-jiten-backup.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$('btnImport').addEventListener('click', () => $('fileImport').click());
+$('fileImport').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!confirm(TEXTS.backup.importConfirm)) return;
+  try {
+    const obj = JSON.parse(await file.text());
+    const n = await store.importJson(obj);
+    await refreshHome();
+    alert(TEXTS.backup.importDone(n));
+  } catch (err) {
+    alert(TEXTS.backup.importError + (err.message || err));
+  }
+});
+
+// ============================================================
+// 起動
+// ============================================================
+
+(async () => {
+  applyTexts();
+  store = await openStore();
+  const data = await (await fetch('data/kanji-g1.json')).json();
+  kanjiList = data.kanji;
+  await refreshHome();
+})();
 </script>
 </body>
 </html>
