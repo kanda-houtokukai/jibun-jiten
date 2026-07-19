@@ -114,6 +114,33 @@
   #rReviewGrid .rv { width: 52px; height: 52px; background: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 3px; }
   #rReviewGrid svg { width: 100%; height: 100%; }
 
+  /* ---- ふりかえり（なんでかな？）---- */
+  #rReviewGrid .rv { display: flex; flex-direction: column; align-items: center; width: 64px; height: auto; padding: 3px 3px 4px; cursor: pointer; }
+  #rReviewGrid .rv svg { width: 52px; height: 52px; }
+  #rReviewGrid .rv .why { font-size: 10px; color: var(--accent); margin-top: 2px; }
+  #wDetail {
+    display: none; position: fixed; inset: 0; background: rgba(60,50,30,0.45);
+    align-items: center; justify-content: center; padding: 14px; z-index: 6;
+  }
+  #wDetail.on { display: flex; }
+  #wPanel {
+    background: #fff; border-radius: 14px; padding: 16px;
+    width: min(94vw, 430px); max-height: 92vh; overflow-y: auto;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  #wTitle { font-size: 17px; font-weight: 600; color: var(--accent); margin-bottom: 2px; min-height: 24px; }
+  #wTitle.good { color: var(--good); }
+  #wSub { font-size: 13px; color: #888; min-height: 20px; margin-bottom: 6px; }
+  #wCell {
+    width: min(80vw, 330px); aspect-ratio: 1; background: #fdfbf5;
+    border: 2px solid #c9c2ae; border-radius: 10px; touch-action: none; display: block;
+  }
+  #wLegend { font-size: 11px; color: #999; margin-top: 6px; }
+  #wAnswer { font-size: 20px; margin: 14px 0; min-height: 28px; }
+  #wBtns { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+  #wBtns button { font-size: 15px; padding: 10px 18px; border-radius: 10px; border: 1px solid #aaa; background: #fff; }
+  #wBtns #wRewrite, #wBtns #wSubmit { border: none; background: var(--accent); color: #fff; }
+
   /* ---- じぶんじてん ---- */
   #dTop { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   #dTop h2 { font-size: 20px; color: var(--accent); }
@@ -176,7 +203,7 @@
         </div>
       </div>
     </details>
-    <div class="ver">v0.4</div>
+    <div class="ver">v0.5</div>
   </div>
 
   <!-- テスト -->
@@ -206,6 +233,21 @@
     <div id="rReviewNote"></div>
     <div id="rReviewGrid"></div>
     <button id="rHome" class="bigBtn" style="margin-top:18px;"></button>
+    <div id="wDetail">
+      <div id="wPanel">
+        <div id="wTitle"></div>
+        <div id="wSub"></div>
+        <canvas id="wCell"></canvas>
+        <div id="wLegend"></div>
+        <div id="wAnswer"></div>
+        <div id="wBtns">
+          <button id="wRewrite" type="button"></button>
+          <button id="wRedo" type="button" hidden></button>
+          <button id="wSubmit" type="button" hidden></button>
+          <button id="wClose" type="button"></button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- れんしゅう -->
@@ -272,6 +314,10 @@ function applyTexts() {
   $('eSubmit').textContent = TEXTS.exam.submit;
   $('rTitle').textContent = TEXTS.exam.resultTitle;
   $('rHome').textContent = TEXTS.exam.backHome;
+  $('wRewrite').textContent = TEXTS.review.rewrite;
+  $('wRedo').textContent = TEXTS.exam.redo;
+  $('wSubmit').textContent = TEXTS.exam.submit;
+  $('wClose').textContent = TEXTS.review.close;
   document.querySelector('#backupBox summary').textContent = TEXTS.backup.summary;
   $('backupNote').textContent = TEXTS.backup.note;
   $('btnExport').textContent = TEXTS.backup.export;
@@ -839,10 +885,17 @@ async function finishExam() {
   // もどってくる: 落とした字を復習キューへ（重複なしで後ろに追加）
   const rq = (await store.metaGet('reviewQueue')) || [];
   await store.metaSet('reviewQueue', [...rq, ...res.wrong.filter(c => !rq.includes(c))]);
-  showResult(res);
+  // ふりかえり用: 落とした問題の問と解答（かきは筆跡込み）をメモリに保持
+  const byChar = {};
+  E.questions.forEach((q, i) => {
+    const a = E.answers[i];
+    const ok = q.type === 'kaki' ? (a && a.verdict === 'ok') : (a && a.chosenIndex === q.answerIndex);
+    if (!ok) byChar[q.char] = { q, a: a || {} };
+  });
+  showResult(res, { byChar });
 }
 
-function showResult(res) {
+function showResult(res, detail) {
   $('rScore').textContent = TEXTS.exam.score(res.score);
   const msg = $('rMsg');
   if (res.score >= EXAM_SPEC.fullScore) { msg.textContent = TEXTS.exam.perfect; msg.className = 'good'; }
@@ -860,6 +913,14 @@ function showResult(res) {
       const d = document.createElement('div');
       d.className = 'rv';
       d.appendChild(makeSvg(byCharApp[c].strokes.map(s => s.path), '#1a1a1a', 5));
+      const info = detail && detail.byChar && detail.byChar[c];
+      if (info) {
+        const w = document.createElement('div');
+        w.className = 'why';
+        w.textContent = TEXTS.review.why;
+        d.appendChild(w);
+        d.addEventListener('click', () => openReview(c, info));
+      }
       grid.appendChild(d);
     }
   } else {
@@ -971,8 +1032,275 @@ $('eSubmit').addEventListener('click', () => {
   const q = E.questions[E.idx];
   if (!E.strokes.length) return; // 白紙は受け付けない
   const verdict = matchKanji(E.strokes, byCharApp[q.char], cfg).verdict;
-  answerExam({ verdict }).catch(console.error);
+  // 筆跡も控える（ふりかえり用。examProgress と一緒に一時保持され、次のテスト開始で破棄）
+  answerExam({ verdict, strokes: E.strokes }).catch(console.error);
 });
+
+// ============================================================
+// ふりかえり（なんでかな？）
+// ============================================================
+// 設計思想（指示書）: 機械は断定・講釈しない。視覚（重ね表示）が主役。
+// 形ずれのみの場合は言葉で指摘しない（誤判定の可能性がある領域）。
+// 逃げ道として「もういちど かく」を常に置く。
+
+const W = {
+  rec: null, strokes: [], anim: [],
+  mode: 'view',           // view | write | done | answer
+  writeStrokes: [], current: null, timers: [],
+};
+const wCanvas = $('wCell');
+const wctx = wCanvas.getContext('2d', { desynchronized: true });
+let wCss = 0, wRect = null, wPointer = null;
+
+function wClearTimers() { for (const t of W.timers) clearTimeout(t); W.timers = []; }
+
+function wSpace() {
+  const dpr = window.devicePixelRatio || 1;
+  wCss = wCanvas.clientWidth;
+  if (wCanvas.width !== Math.round(wCss * dpr)) {
+    wCanvas.width = Math.round(wCss * dpr);
+    wCanvas.height = Math.round(wCss * dpr);
+  }
+  const k = (wCss * dpr) / 109;
+  wctx.setTransform(k, 0, 0, k, 0, 0);
+  wctx.lineCap = 'round';
+  wctx.lineJoin = 'round';
+}
+
+function wPoly(points, color, width) {
+  if (!points.length) return;
+  wctx.strokeStyle = color;
+  wctx.lineWidth = width;
+  wctx.beginPath();
+  wctx.moveTo(points[0].x * 109, points[0].y * 109);
+  if (points.length === 1) wctx.lineTo(points[0].x * 109 + 0.01, points[0].y * 109);
+  for (let i = 1; i < points.length; i++) wctx.lineTo(points[i].x * 109, points[i].y * 109);
+  wctx.stroke();
+}
+
+function wCross() {
+  wctx.save();
+  wctx.strokeStyle = '#efece2';
+  wctx.lineWidth = 0.6;
+  wctx.setLineDash([2.4, 1.8]);
+  wctx.beginPath();
+  wctx.moveTo(54.5, 0); wctx.lineTo(54.5, 109);
+  wctx.moveTo(0, 54.5); wctx.lineTo(109, 54.5);
+  wctx.stroke();
+  wctx.restore();
+}
+
+// 重ね表示: 手本（基準色・問題画は強調）＋ 自分の筆跡（別色・問題画は赤）
+function wDrawOverlay(matchResult) {
+  wSpace();
+  wctx.clearRect(0, 0, 109, 109);
+  wCross();
+  const failing = matchResult ? matchResult.failing : [];
+  W.rec.strokes.forEach((s, i) => {
+    wctx.strokeStyle = failing.includes(i) ? '#2f7cd6' : '#b9c8e0';
+    wctx.lineWidth = failing.includes(i) ? 4.4 : 3.6;
+    wctx.stroke(new Path2D(s.path));
+  });
+  W.strokes.forEach((s, i) => {
+    const bad = matchResult && (failing.includes(i) || i >= W.rec.strokeCount);
+    wPoly(s, bad ? '#c62828' : '#1a1a1a', 2.8);
+  });
+}
+
+// 指定した手本画を順にアニメ（タイマー駆動・rAF非依存）
+function wAnimate(indices, base) {
+  let pos = 0;
+  const one = () => {
+    if (pos >= indices.length) return;
+    const idx = indices[pos];
+    const pts = W.anim[idx];
+    let k = 2;
+    const step = () => {
+      wDrawOverlay(W.lastResult);
+      wSpace();
+      wPoly(pts.slice(0, k).map(p => ({ x: p.x / 109, y: p.y / 109 })), '#2f7cd6', 4.6);
+      if (k < pts.length) {
+        k += 2;
+        W.timers.push(setTimeout(step, 24));
+      } else {
+        pos++;
+        W.timers.push(setTimeout(one, 300));
+      }
+    };
+    step();
+  };
+  W.timers.push(setTimeout(one, base || 400));
+}
+
+function wSetButtons(mode) {
+  $('wRewrite').hidden = !(mode === 'view' || mode === 'done');
+  $('wRedo').hidden = mode !== 'write';
+  $('wSubmit').hidden = mode !== 'write';
+}
+
+function viewReview() {
+  wClearTimers();
+  W.mode = 'view';
+  const res = matchKanji(W.strokes, W.rec, cfg);
+  W.lastResult = res;
+  const title = $('wTitle');
+  title.textContent = TEXTS.review.look;
+  title.className = '';
+  let sub = '';
+  let animIdx = [];
+  if (res.verdict === 'too-few') {
+    sub = TEXTS.review.fewer;
+    animIdx = W.rec.strokes.map((_, i) => i);      // 手本の画数アニメ
+  } else if (res.verdict === 'too-many') {
+    sub = TEXTS.review.more;
+    animIdx = W.rec.strokes.map((_, i) => i);
+  } else {
+    const dirIssues = res.failing.filter(i => res.perStroke[i] && !res.perStroke[i].dirOk);
+    if (dirIssues.length) {
+      sub = TEXTS.review.order;                     // 向き・順番はアニメで見せる
+      animIdx = dirIssues;
+    }
+    // 形ずれのみ: 言葉での指摘はしない（重ね表示だけ）
+  }
+  $('wSub').textContent = sub;
+  $('wLegend').textContent = TEXTS.review.legend;
+  $('wAnswer').textContent = '';
+  wCanvas.style.display = 'block';
+  wSetButtons('view');
+  wDrawOverlay(res);
+  if (animIdx.length) wAnimate(animIdx);
+}
+
+function openReview(char, info) {
+  wClearTimers();
+  const { q, a } = info;
+  $('wDetail').classList.add('on');
+  if (q.type === 'kaki' && a.strokes && a.strokes.length) {
+    W.rec = byCharApp[char];
+    W.anim = W.rec.strokes.map(s => samplePath(s.path, 40));
+    W.strokes = a.strokes;
+    viewReview();
+    return;
+  }
+  // よみ・かくすう（またはかき筆跡なし）: こたえを示すだけ。講釈しない
+  W.mode = 'answer';
+  $('wTitle').textContent = '';
+  $('wTitle').className = '';
+  $('wLegend').textContent = '';
+  wSetButtons('answer');
+  if (q.type === 'yomi') {
+    $('wSub').textContent = q.text;
+    wCanvas.style.display = 'none';
+    $('wAnswer').textContent = TEXTS.review.answerIs(q.choices[q.answerIndex]);
+  } else {
+    $('wSub').textContent = '';
+    wCanvas.style.display = 'block';
+    W.rec = byCharApp[char];
+    wSpace();
+    wctx.clearRect(0, 0, 109, 109);
+    wCross();
+    for (const s of W.rec.strokes) {
+      wctx.strokeStyle = '#1a1a1a';
+      wctx.lineWidth = 3.6;
+      wctx.stroke(new Path2D(s.path));
+    }
+    $('wAnswer').textContent = q.type === 'kakusuu'
+      ? TEXTS.review.answerIs(TEXTS.exam.kakusuuUnit(q.strokeCount))
+      : '';
+  }
+}
+
+// もういちど かく（納得のための再挑戦。テストの点は変えない）
+$('wRewrite').addEventListener('click', () => {
+  wClearTimers();
+  W.mode = 'write';
+  W.writeStrokes = [];
+  W.current = null;
+  $('wTitle').textContent = '';
+  $('wTitle').className = '';
+  $('wSub').textContent = '';
+  $('wLegend').textContent = '';
+  wSetButtons('write');
+  wSpace();
+  wctx.clearRect(0, 0, 109, 109);
+  wCross();
+});
+
+$('wRedo').addEventListener('click', () => {
+  W.writeStrokes = [];
+  W.current = null;
+  wSpace();
+  wctx.clearRect(0, 0, 109, 109);
+  wCross();
+});
+
+$('wSubmit').addEventListener('click', () => {
+  if (!W.writeStrokes.length) return;
+  const res = matchKanji(W.writeStrokes, W.rec, cfg);
+  if (res.verdict === 'ok') {
+    wClearTimers();
+    W.mode = 'done';
+    W.lastResult = null;
+    $('wTitle').textContent = TEXTS.review.done;
+    $('wTitle').className = 'good';
+    $('wSub').textContent = '';
+    wSetButtons('done');
+    // 書けた字をそのまま見せる（強調なし）
+    wSpace();
+    wctx.clearRect(0, 0, 109, 109);
+    wCross();
+    for (const s of W.writeStrokes) wPoly(s, '#1a1a1a', 2.8);
+  } else {
+    // 中立にもう一度重ねて見せる（新しい筆跡で比較し直す）
+    W.strokes = W.writeStrokes;
+    viewReview();
+  }
+});
+
+$('wClose').addEventListener('click', () => {
+  wClearTimers();
+  $('wDetail').classList.remove('on');
+});
+$('wDetail').addEventListener('click', (e) => {
+  if (e.target === $('wDetail')) { wClearTimers(); $('wDetail').classList.remove('on'); }
+});
+
+// 手書き入力（書き直し用）
+wCanvas.addEventListener('pointerdown', (e) => {
+  if (W.mode !== 'write' || wPointer !== null) return;
+  wPointer = e.pointerId;
+  wCanvas.setPointerCapture(e.pointerId);
+  wRect = wCanvas.getBoundingClientRect();
+  W.current = [{ x: (e.clientX - wRect.left) / wCss, y: (e.clientY - wRect.top) / wCss }];
+  wSpace();
+  wPoly(W.current, '#1a1a1a', 2.8);
+  e.preventDefault();
+});
+wCanvas.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== wPointer || !W.current) return;
+  const p = { x: (e.clientX - wRect.left) / wCss, y: (e.clientY - wRect.top) / wCss };
+  const prev = W.current[W.current.length - 1];
+  W.current.push(p);
+  wSpace();
+  wctx.strokeStyle = '#1a1a1a';
+  wctx.lineWidth = 2.8;
+  wctx.beginPath();
+  wctx.moveTo(prev.x * 109, prev.y * 109);
+  wctx.lineTo(p.x * 109, p.y * 109);
+  wctx.stroke();
+  e.preventDefault();
+});
+function wEndStroke(e) {
+  if (e.pointerId !== wPointer) return;
+  wPointer = null;
+  if (W.current) {
+    W.writeStrokes.push(W.current);
+    W.current = null;
+  }
+}
+wCanvas.addEventListener('pointerup', wEndStroke);
+wCanvas.addEventListener('pointercancel', wEndStroke);
+wCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
 // ============================================================
 // バックアップ（ほごしゃ向け・設定隅）
@@ -1030,6 +1358,25 @@ $('fileImport').addEventListener('change', async (ev) => {
     const score = Math.max(0, Math.min(150, parseInt(qp.get('dev-result'), 10) || 0));
     const wrong = [...(qp.get('dev-wrong') || '')].filter(c => byCharApp[c]);
     showResult({ score, wrong, passed: score >= EXAM_SPEC.passScore }); // 表示のみ・保存しない
+  }
+  // 開発用: ふりかえりの誤りパターン再現（表示のみ・保存しない）
+  // 例: index.html?dev-review=jun（筆順違い）/ kazu（画数不足）/ katachi（形ずれ）
+  if (qp.has('dev-review')) {
+    const kind = qp.get('dev-review');
+    const char = qp.get('dev-char') && byCharApp[qp.get('dev-char')] ? qp.get('dev-char') : '右';
+    const rec = byCharApp[char];
+    let strokes = templateStrokes(rec, 24).map(pts => pts.map(p => ({ x: p.x / 109, y: p.y / 109 })));
+    if (kind === 'jun' && strokes.length >= 2) {
+      [strokes[0], strokes[1]] = [strokes[1], strokes[0]];
+    } else if (kind === 'kazu') {
+      strokes = strokes.slice(0, -1);
+    } else if (kind === 'katachi') {
+      strokes = strokes.map(s => s.map(p => ({
+        x: Math.min(1, p.x + 0.12), y: Math.min(1, p.y + 0.12) })));
+    }
+    showResult({ score: 145, wrong: [char], passed: true },
+      { byChar: { [char]: { q: { type: 'kaki', char }, a: { strokes } } } });
+    openReview(char, { q: { type: 'kaki', char }, a: { strokes } });
   }
 })();
 </script>

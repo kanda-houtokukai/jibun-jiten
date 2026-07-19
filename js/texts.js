@@ -70,6 +70,19 @@ export const TEXTS = {
     best: (s) => `さいこうきろく ${s}てん`,
   },
 
+  review: {
+    why: 'なんでかな？',
+    look: 'ここを みてみよう',
+    order: 'こっちの じゅんばん',
+    fewer: 'かくが たりないよ',
+    more: 'かくが おおいよ',
+    legend: 'あお＝おてほん　くろ＝じぶんの じ',
+    rewrite: 'もういちど かく',
+    done: 'できたね',
+    answerIs: (a) => `こたえは 「${a}」`,
+    close: 'とじる',
+  },
+
   // ほごしゃ向け（設定隅・漢字可）
   backup: {
     summary: '保護者の方へ（データのバックアップ）',
