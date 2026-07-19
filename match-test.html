@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>照合しきい値 調整ページ match-test v0.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #f5f5f0;
+    color: #333;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    overscroll-behavior: none;
+  }
+  body { max-width: 900px; margin: 0 auto; padding: 10px; }
+  h1 { font-size: 15px; font-weight: 600; color: #555; margin-bottom: 8px; }
+  h1 small { font-weight: normal; color: #999; }
+  #layout { display: flex; flex-wrap: wrap; gap: 14px; }
+  #left { flex: 1 1 320px; max-width: 480px; }
+  #right { flex: 1 1 260px; min-width: 260px; }
+  #picker { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  #picker select {
+    font-size: 18px; padding: 6px 10px; border: 1px solid #aaa; border-radius: 6px;
+    background: #fff; font-family: inherit;
+  }
+  #picker button, #controls button {
+    font-size: 15px; padding: 8px 14px; border: 1px solid #aaa; border-radius: 8px;
+    background: #fff; font-family: inherit; touch-action: manipulation; cursor: pointer;
+  }
+  #picker button:active, #controls button:active { background: #e0e0e0; }
+  #cell {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 480px;
+    background: #fff;
+    border: 3px solid #888;
+    border-radius: 4px;
+    touch-action: none;
+    display: block;
+  }
+  #controls { display: flex; gap: 10px; margin-top: 8px; }
+  #verdict {
+    margin-top: 8px; font-size: 17px; font-weight: 600; min-height: 24px;
+  }
+  #verdict .ok { color: #1a7f37; }
+  #verdict .close { color: #b58500; }
+  #verdict .ng { color: #c62828; }
+  #strokeList { margin-top: 8px; border-collapse: collapse; width: 100%; font-size: 13px; }
+  #strokeList th, #strokeList td { border: 1px solid #ddd; padding: 4px 6px; text-align: center; }
+  #strokeList th { background: #eee; font-weight: 600; }
+  #strokeList tr.fail td { background: #fdecea; }
+  #strokeList tr.pass td { background: #eef7ee; }
+  #strokeList tr.sel td { outline: 2px solid #1565c0; outline-offset: -2px; }
+  #sliders { margin-top: 4px; }
+  #sliders .row { margin-bottom: 10px; }
+  #sliders label { display: block; font-size: 13px; color: #555; margin-bottom: 2px; }
+  #sliders input[type=range] { width: 100%; }
+  #configOut {
+    font-size: 12px; font-family: ui-monospace, Menlo, monospace;
+    background: #fff; border: 1px solid #ddd; border-radius: 6px;
+    padding: 8px; margin-top: 6px; line-height: 1.6; word-break: break-all;
+  }
+  footer { margin-top: 14px; font-size: 11px; color: #999; text-align: center; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <h1>照合しきい値 調整ページ <small>（match-test v0.1）</small></h1>
+  <div id="layout">
+    <div id="left">
+      <div id="picker">
+        <select id="charSel"></select>
+        <button id="random" type="button">ランダム</button>
+        <span id="charInfo" style="font-size:13px;color:#666;"></span>
+      </div>
+      <canvas id="cell"></canvas>
+      <div id="controls">
+        <button id="undo" type="button">1画もどす</button>
+        <button id="clear" type="button">ぜんぶ消す</button>
+      </div>
+      <div id="verdict"></div>
+      <table id="strokeList"></table>
+    </div>
+    <div id="right">
+      <div id="sliders">
+        <div class="row">
+          <label>距離許容 distNorm = <span id="vDistNorm"></span>（大きいほど形・位置に寛容）</label>
+          <input type="range" id="sDistNorm" min="5" max="40" step="1">
+        </div>
+        <div class="row">
+          <label>方向の重み dirWeight = <span id="vDirWeight"></span>（残りが距離の重み）</label>
+          <input type="range" id="sDirWeight" min="0" max="1" step="0.05">
+        </div>
+        <div class="row">
+          <label>画の合格ライン passScore = <span id="vPassScore"></span></label>
+          <input type="range" id="sPassScore" min="0" max="100" step="1">
+        </div>
+        <div class="row">
+          <label>×確定の下限 floorScore = <span id="vFloorScore"></span>（これ未満の画があれば×）</label>
+          <input type="range" id="sFloorScore" min="0" max="100" step="1">
+        </div>
+        <div class="row">
+          <label>「おしい」にできる不合格画数 maxCloseStrokes = <span id="vMaxClose"></span></label>
+          <input type="range" id="sMaxClose" min="0" max="5" step="1">
+        </div>
+        <button id="resetCfg" type="button" style="font-size:13px;padding:6px 12px;border:1px solid #aaa;border-radius:6px;background:#fff;">初期値にもどす</button>
+      </div>
+      <div id="configOut"></div>
+    </div>
+  </div>
+  <footer>
+    筆順データ: KanjiVG © Ulrich Apel（CC BY-SA 3.0・kanjivg.tagaini.net）／ 画数・読み: KANJIDIC2 © EDRDG（CC BY-SA 4.0）<br>
+    match-test v0.1
+  </footer>
+
+<script type="module">
+import { DEFAULT_CONFIG, matchKanji } from './js/matcher.js';
+
+const canvas = document.getElementById('cell');
+const ctx = canvas.getContext('2d', { desynchronized: true });
+const charSel = document.getElementById('charSel');
+const verdictEl = document.getElementById('verdict');
+const listEl = document.getElementById('strokeList');
+
+let kanjiList = [];
+let rec = null;            // 出題中の字
+let tmplPaths = [];        // Path2D 配列（模範の下敷き描画用）
+let userStrokes = [];      // 確定済みの画（0..1正規化）
+let current = null;        // 描画中の画
+let result = null;         // matchKanji の最新結果
+let selectedRow = -1;      // タップでハイライト中の画（-1=なし）
+let cfg = { ...DEFAULT_CONFIG };
+
+// ---- キャンバス ----
+
+let cssSize = 0, rect = null, activePointer = null;
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  cssSize = canvas.clientWidth;
+  canvas.width = Math.round(cssSize * dpr);
+  canvas.height = Math.round(cssSize * dpr);
+  redrawAll();
+}
+
+// すべて109×109空間で描く（変換行列で拡大）
+function setSpace() {
+  const dpr = window.devicePixelRatio || 1;
+  const k = (cssSize * dpr) / 109;
+  ctx.setTransform(k, 0, 0, k, 0, 0);
+}
+
+function redrawAll() {
+  setSpace();
+  ctx.clearRect(0, 0, 109, 109);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  // 十字ガイド
+  ctx.save();
+  ctx.strokeStyle = '#e4e4f0';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([2.4, 1.8]);
+  ctx.beginPath();
+  ctx.moveTo(54.5, 0); ctx.lineTo(54.5, 109);
+  ctx.moveTo(0, 54.5); ctx.lineTo(109, 54.5);
+  ctx.stroke();
+  ctx.restore();
+  // 模範の下敷き（不合格画=橙 / 行タップ選択=青 / 通常=薄グレー）
+  tmplPaths.forEach((p2d, i) => {
+    ctx.lineWidth = 3.6;
+    ctx.strokeStyle = '#dcdcdc';
+    if (result && result.failing.includes(i)) ctx.strokeStyle = '#f4a742';
+    if (i === selectedRow) ctx.strokeStyle = '#1565c0';
+    ctx.stroke(p2d);
+  });
+  // ユーザーの画（不合格=赤 / 合格・未判定=黒）
+  userStrokes.forEach((s, i) => {
+    const fail = result && result.perStroke[i] && result.perStroke[i].score < cfg.passScore;
+    drawUserStroke(s, fail ? '#c62828' : '#1a1a1a');
+  });
+  if (current) drawUserStroke(current, '#1a1a1a');
+}
+
+function drawUserStroke(points, color) {
+  if (!points.length) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x * 109, points[0].y * 109);
+  if (points.length === 1) ctx.lineTo(points[0].x * 109 + 0.01, points[0].y * 109);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x * 109, points[i].y * 109);
+  ctx.stroke();
+}
+
+// ---- 手書き入力（Phase 0 の方式を踏襲・生の素点）----
+
+function toPoint(e) {
+  return { x: (e.clientX - rect.left) / cssSize, y: (e.clientY - rect.top) / cssSize };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (activePointer !== null || !rec) return;
+  activePointer = e.pointerId;
+  canvas.setPointerCapture(e.pointerId);
+  rect = canvas.getBoundingClientRect();
+  current = [toPoint(e)];
+  setSpace();
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  drawUserStroke(current, '#1a1a1a');
+  e.preventDefault();
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== activePointer || !current) return;
+  const p = toPoint(e);
+  const prev = current[current.length - 1];
+  current.push(p);
+  setSpace();
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(prev.x * 109, prev.y * 109);
+  ctx.lineTo(p.x * 109, p.y * 109);
+  ctx.stroke();
+  e.preventDefault();
+});
+
+function endStroke(e) {
+  if (e.pointerId !== activePointer) return;
+  activePointer = null;
+  if (current) {
+    userStrokes.push(current);
+    current = null;
+    rescore();
+  }
+}
+canvas.addEventListener('pointerup', endStroke);
+canvas.addEventListener('pointercancel', endStroke);
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// ---- 採点と表示 ----
+
+function rescore() {
+  selectedRow = -1;
+  result = rec && userStrokes.length ? matchKanji(userStrokes, rec, cfg) : null;
+  renderResult();
+  redrawAll();
+}
+
+function renderResult() {
+  // 判定行
+  if (!rec || !result) {
+    verdictEl.innerHTML = rec ? `あと ${rec.strokeCount} 画` : '';
+  } else if (result.got < result.expected) {
+    verdictEl.innerHTML = `あと ${result.expected - result.got} 画`;
+  } else if (result.verdict === 'too-many') {
+    verdictEl.innerHTML = `<span class="ng">画数が多い（模範 ${result.expected} 画 / ${result.got} 画目）</span>`;
+  } else if (result.verdict === 'ok') {
+    verdictEl.innerHTML = `<span class="ok">○ 合格</span>`;
+  } else if (result.verdict === 'close') {
+    verdictEl.innerHTML = `<span class="close">△ おしい（${result.failing.map(i => i + 1).join('・')}画目）</span>`;
+  } else {
+    verdictEl.innerHTML = `<span class="ng">× （${result.failing.map(i => i + 1).join('・')}画目）</span>`;
+  }
+  // 画リスト
+  let html = '<tr><th>画</th><th>種</th><th>スコア</th><th>判定</th><th>平均距離</th><th>向き</th></tr>';
+  const n = rec ? rec.strokeCount : 0;
+  for (let i = 0; i < n; i++) {
+    const s = result && result.perStroke[i];
+    const cls = !s ? '' : (s.score >= cfg.passScore ? 'pass' : 'fail');
+    const sel = i === selectedRow ? ' sel' : '';
+    html += `<tr class="${cls}${sel}" data-i="${i}">`
+      + `<td>${i + 1}</td>`
+      + `<td>${rec.strokes[i].type || '–'}</td>`
+      + `<td>${s ? s.score : ''}</td>`
+      + `<td>${s ? (s.score >= cfg.passScore ? '○' : (s.score < cfg.floorScore ? '×' : '△')) : ''}</td>`
+      + `<td>${s ? s.dist : ''}</td>`
+      + `<td>${s ? (s.dirOk ? '○' : '×') + ' (' + s.dirCos + ')' : ''}</td>`
+      + '</tr>';
+  }
+  listEl.innerHTML = html;
+}
+
+// 行タップで模範画をハイライト
+listEl.addEventListener('click', (e) => {
+  const tr = e.target.closest('tr[data-i]');
+  if (!tr) return;
+  const i = parseInt(tr.dataset.i, 10);
+  selectedRow = selectedRow === i ? -1 : i;
+  renderResult();
+  redrawAll();
+});
+
+// ---- 出題 ----
+
+function setChar(k) {
+  rec = k;
+  if (charSel.value !== k.char) charSel.value = k.char;
+  tmplPaths = k.strokes.map(s => new Path2D(s.path));
+  userStrokes = [];
+  current = null;
+  result = null;
+  selectedRow = -1;
+  document.getElementById('charInfo').textContent = `${k.strokeCount}画`;
+  renderResult();
+  redrawAll();
+}
+
+document.getElementById('random').addEventListener('click', () => {
+  const k = kanjiList[Math.floor(Math.random() * kanjiList.length)];
+  charSel.value = k.char;
+  setChar(k);
+});
+
+charSel.addEventListener('change', () => {
+  setChar(kanjiList.find(k => k.char === charSel.value));
+});
+
+document.getElementById('undo').addEventListener('click', () => {
+  userStrokes.pop();
+  rescore();
+});
+
+document.getElementById('clear').addEventListener('click', () => {
+  userStrokes = [];
+  current = null;
+  rescore();
+});
+
+// ---- スライダー（重み・しきい値。変更即反映）----
+
+const sliders = [
+  ['sDistNorm', 'vDistNorm', 'distNorm'],
+  ['sDirWeight', 'vDirWeight', 'dirWeight'],
+  ['sPassScore', 'vPassScore', 'passScore'],
+  ['sFloorScore', 'vFloorScore', 'floorScore'],
+  ['sMaxClose', 'vMaxClose', 'maxCloseStrokes'],
+];
+
+function syncSliders() {
+  for (const [sid, vid, key] of sliders) {
+    document.getElementById(sid).value = cfg[key];
+    document.getElementById(vid).textContent = cfg[key];
+  }
+  document.getElementById('configOut').textContent =
+    '現在の設定: ' + JSON.stringify({
+      samplePoints: cfg.samplePoints, distNorm: cfg.distNorm,
+      dirWeight: cfg.dirWeight, passScore: cfg.passScore,
+      floorScore: cfg.floorScore, maxCloseStrokes: cfg.maxCloseStrokes,
+      dirOkCos: cfg.dirOkCos,
+    });
+}
+
+for (const [sid, , key] of sliders) {
+  document.getElementById(sid).addEventListener('input', (e) => {
+    cfg[key] = parseFloat(e.target.value);
+    syncSliders();
+    rescore();
+  });
+}
+
+document.getElementById('resetCfg').addEventListener('click', () => {
+  cfg = { ...DEFAULT_CONFIG };
+  syncSliders();
+  rescore();
+});
+
+// ---- 起動 ----
+
+fetch('data/kanji-g1.json')
+  .then(r => r.json())
+  .then(data => {
+    kanjiList = data.kanji;
+    for (const k of kanjiList) {
+      const o = document.createElement('option');
+      o.value = k.char;
+      o.textContent = k.char;
+      charSel.appendChild(o);
+    }
+    syncSliders();
+    setChar(kanjiList.find(k => k.char === '右') || kanjiList[0]);
+    resizeCanvas();
+  })
+  .catch(err => { verdictEl.textContent = 'データ読み込みエラー: ' + err; });
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
+</body>
+</html>
