@@ -72,6 +72,48 @@
   #pAction:active { opacity: 0.85; }
   #pAction[hidden] { display: none; }
 
+  /* ---- テスト ---- */
+  #eTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
+  #eCounter { font-size: 14px; color: #888; }
+  #eQuit { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #888; }
+  #ePrompt { font-size: 16px; font-weight: 600; color: var(--accent); margin: 10px 0 6px; text-align: center; }
+  #eSentence { font-size: 22px; line-height: 1.9; margin: 6px 0 10px; text-align: center; max-width: 480px; }
+  #eSentence .target { color: #c62828; font-weight: 600; }
+  #eSentence .kblank {
+    display: inline-block; min-width: 1.7em; text-align: center;
+    border: 2px dashed #c62828; border-radius: 6px; color: #c62828;
+    font-size: 15px; padding: 2px 4px; margin: 0 2px; vertical-align: baseline;
+  }
+  #eCharBox { width: min(50vw, 200px); aspect-ratio: 1; background: #fff; border: 2px solid #c9c2ae; border-radius: 10px; margin: 6px 0 10px; }
+  #eCharBox svg { width: 100%; height: 100%; display: block; }
+  #eChoices { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 400px; }
+  #eChoices button {
+    font-size: 22px; padding: 16px; border: 2px solid var(--accent); border-radius: 14px;
+    background: #fff; color: #3a3a3a;
+  }
+  #eChoices button:active { background: #e8f0fb; }
+  #eCell {
+    width: min(80vw, 380px, calc(100dvh - 340px));
+    aspect-ratio: 1; background: #fff; border: 3px solid #c9c2ae;
+    border-radius: 10px; touch-action: none; display: none;
+  }
+  #eKakiBtns { display: none; gap: 12px; margin-top: 10px; }
+  #eKakiBtns button { font-size: 17px; padding: 12px 26px; border-radius: 12px; border: 1px solid #aaa; background: #fff; }
+  #eKakiBtns #eSubmit { background: var(--accent); color: #fff; border: none; }
+
+  /* ---- けっか ---- */
+  #scrResult h2 { font-size: 22px; color: var(--accent); margin: 26px 0 10px; }
+  #rScore { font-size: 34px; font-weight: 700; margin: 6px 0; }
+  #rMsg { font-size: 19px; font-weight: 600; min-height: 28px; margin: 4px 0 2px; text-align: center; }
+  #rMsg.good { color: var(--good); }
+  #rMsg.accent { color: var(--accent); }
+  #rBest { font-size: 13px; color: #888; margin-bottom: 14px; }
+  #rReviewLabel { font-size: 14px; color: #666; margin-top: 8px; }
+  #rReviewNote { font-size: 12px; color: #999; margin-bottom: 8px; }
+  #rReviewGrid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 420px; }
+  #rReviewGrid .rv { width: 52px; height: 52px; background: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 3px; }
+  #rReviewGrid svg { width: 100%; height: 100%; }
+
   /* ---- じぶんじてん ---- */
   #dTop { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   #dTop h2 { font-size: 20px; color: var(--accent); }
@@ -119,8 +161,10 @@
     <h1>じぶんじてん</h1>
     <div class="sub">かいた じが たまっていく かんじの れんしゅう</div>
     <button id="btnToday" class="bigBtn"></button>
+    <button id="btnExam" class="bigBtn second"></button>
     <button id="btnDict" class="bigBtn second"></button>
     <div id="homeProgress"></div>
+    <div id="homeBest" style="font-size:13px;color:#888;margin-top:4px;"></div>
     <details id="backupBox">
       <summary></summary>
       <div class="inner">
@@ -132,7 +176,36 @@
         </div>
       </div>
     </details>
-    <div class="ver">v0.3</div>
+    <div class="ver">v0.4</div>
+  </div>
+
+  <!-- テスト -->
+  <div id="scrExam" class="screen">
+    <div id="eTop">
+      <span id="eCounter"></span>
+      <button id="eQuit"></button>
+    </div>
+    <div id="ePrompt"></div>
+    <div id="eSentence"></div>
+    <div id="eCharBox" hidden></div>
+    <div id="eChoices"></div>
+    <canvas id="eCell"></canvas>
+    <div id="eKakiBtns">
+      <button id="eRedo" type="button"></button>
+      <button id="eSubmit" type="button"></button>
+    </div>
+  </div>
+
+  <!-- けっか -->
+  <div id="scrResult" class="screen">
+    <h2 id="rTitle"></h2>
+    <div id="rScore"></div>
+    <div id="rMsg"></div>
+    <div id="rBest"></div>
+    <div id="rReviewLabel"></div>
+    <div id="rReviewNote"></div>
+    <div id="rReviewGrid"></div>
+    <button id="rHome" class="bigBtn" style="margin-top:18px;"></button>
   </div>
 
   <!-- れんしゅう -->
@@ -167,15 +240,19 @@
   </div>
 
 <script type="module">
-import { DEFAULT_CONFIG, scoreStroke, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js';
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js';
 import { openStore } from './js/store.js';
 import { TEXTS, formatReadings } from './js/texts.js';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const $ = id => document.getElementById(id);
 
 let kanjiList = [];
+let byCharApp = {};      // {char: kanjiレコード}
+let sentencesData = [];  // sentences-g1.json
+let readingsData = {};   // exam-readings-g1.json
 let store = null;
 let entries = {};    // {char: {first,best,latest}} のキャッシュ
 
@@ -188,7 +265,13 @@ function show(id) {
 // ---- 静的文言の流し込み ----
 function applyTexts() {
   $('btnToday').textContent = TEXTS.home.today;
+  $('btnExam').textContent = TEXTS.exam.entry;
   $('btnDict').textContent = TEXTS.home.dict;
+  $('eQuit').textContent = TEXTS.exam.quit;
+  $('eRedo').textContent = TEXTS.exam.redo;
+  $('eSubmit').textContent = TEXTS.exam.submit;
+  $('rTitle').textContent = TEXTS.exam.resultTitle;
+  $('rHome').textContent = TEXTS.exam.backHome;
   document.querySelector('#backupBox summary').textContent = TEXTS.backup.summary;
   $('backupNote').textContent = TEXTS.backup.note;
   $('btnExport').textContent = TEXTS.backup.export;
@@ -203,6 +286,11 @@ async function refreshHome() {
   entries = await store.getAll();
   const n = Object.keys(entries).length;
   $('homeProgress').textContent = n ? TEXTS.home.progress(n) : TEXTS.home.progressZero;
+  const [progress, best] = await Promise.all([
+    store.metaGet('examProgress'), store.metaGet('examBest'),
+  ]);
+  $('btnExam').textContent = progress ? TEXTS.exam.entryResume : TEXTS.exam.entry;
+  $('homeBest').textContent = best ? TEXTS.exam.best(best.score) : '';
 }
 
 // ============================================================
@@ -226,12 +314,15 @@ function clearTimers() {
   P.timers = [];
 }
 
-// きょうの5もじ: 未習得を先に、足りなければベストスコアの低い順で補う
-function pickToday() {
-  const un = kanjiList.filter(k => !entries[k.char]);
-  const got = kanjiList.filter(k => entries[k.char])
+// きょうの5もじ: 復習キュー優先 → 未習得 → ベストスコアの低い順（もどってくる）
+async function pickToday() {
+  const queue = (await store.metaGet('reviewQueue')) || [];
+  const qRecs = queue.map(c => byCharApp[c]).filter(Boolean);
+  const rest = kanjiList.filter(k => !queue.includes(k.char));
+  const un = rest.filter(k => !entries[k.char]);
+  const got = rest.filter(k => entries[k.char])
     .sort((a, b) => entries[a.char].best.score - entries[b.char].best.score);
-  return [...un, ...got].slice(0, 5);
+  return [...qRecs, ...un, ...got].slice(0, 5);
 }
 
 let cssSize = 0, rect = null, activePointer = null;
@@ -404,6 +495,11 @@ async function onCharComplete() {
     strokes: P.accepted, score: avg, at: Date.now(),
   });
   entries[P.rec.char] = entry;
+  // 復習キューから外す（もどってくるの完了）
+  const rq = (await store.metaGet('reviewQueue')) || [];
+  if (rq.includes(P.rec.char)) {
+    await store.metaSet('reviewQueue', rq.filter(c => c !== P.rec.char));
+  }
   P.phase = 'charDone';
   setMsg(TEXTS.practice.finishOne, 'good');
   showAction(P.idx + 1 < P.chars.length ? TEXTS.practice.next : TEXTS.practice.backHome);
@@ -509,7 +605,7 @@ $('pQuit').addEventListener('click', goHome);
 
 $('btnToday').addEventListener('click', async () => {
   entries = await store.getAll();
-  P.chars = pickToday();
+  P.chars = await pickToday();
   P.idx = 0;
   show('scrPractice');
   startChar();
@@ -641,6 +737,244 @@ $('dDetail').addEventListener('click', (e) => {
 });
 
 // ============================================================
+// ためす（10きゅうレベル テスト）
+// ============================================================
+
+const E = { questions: null, answers: [], idx: 0, strokes: [], current: null };
+const eCanvas = $('eCell');
+const ectx = eCanvas.getContext('2d', { desynchronized: true });
+let eCss = 0, eRect = null, ePointer = null;
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function startExam() {
+  const saved = await store.metaGet('examProgress');
+  if (saved) {
+    E.questions = saved.questions;
+    E.answers = saved.answers;
+    E.idx = saved.idx;
+  } else {
+    const exam = buildExam({ kanji: kanjiList, sentences: sentencesData, readings: readingsData });
+    E.questions = exam.questions;
+    E.answers = [];
+    E.idx = 0;
+  }
+  show('scrExam');
+  renderExamQ();
+}
+
+function renderExamQ() {
+  const q = E.questions[E.idx];
+  $('eCounter').textContent = TEXTS.exam.counter(E.idx + 1, E.questions.length);
+  $('eSentence').innerHTML = '';
+  $('eCharBox').hidden = true;
+  $('eChoices').innerHTML = '';
+  eCanvas.style.display = 'none';
+  $('eKakiBtns').style.display = 'none';
+
+  if (q.type === 'yomi') {
+    $('ePrompt').textContent = TEXTS.exam.yomiQ;
+    $('eSentence').innerHTML =
+      esc(q.text.slice(0, q.start))
+      + '<span class="target">' + esc(q.text.substr(q.start, q.len)) + '</span>'
+      + esc(q.text.slice(q.start + q.len));
+    for (let i = 0; i < q.choices.length; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = q.choices[i];
+      b.addEventListener('click', () => answerExam({ chosenIndex: i }));
+      $('eChoices').appendChild(b);
+    }
+  } else if (q.type === 'kaki') {
+    $('ePrompt').textContent = TEXTS.exam.kakiQ;
+    $('eSentence').innerHTML =
+      esc(q.text.slice(0, q.start))
+      + '<span class="kblank">' + esc(q.kana) + '</span>'
+      + esc(q.text.slice(q.start + q.len));
+    E.strokes = [];
+    E.current = null;
+    eCanvas.style.display = 'block';
+    $('eKakiBtns').style.display = 'flex';
+    resizeExamCell();
+  } else { // kakusuu
+    $('ePrompt').textContent = TEXTS.exam.kakusuuQ;
+    const box = $('eCharBox');
+    box.hidden = false;
+    box.innerHTML = '';
+    // 字形はKanjiVG描画（フォント不使用）
+    box.appendChild(makeSvg(byCharApp[q.char].strokes.map(s => s.path), '#1a1a1a', 5));
+    for (let i = 0; i < q.choices.length; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = TEXTS.exam.kakusuuUnit(q.choices[i]);
+      b.addEventListener('click', () => answerExam({ chosenIndex: i }));
+      $('eChoices').appendChild(b);
+    }
+  }
+}
+
+// 静かに記録して次へ（正誤フィードバックなし・進行を毎問保存）
+async function answerExam(ans) {
+  E.answers[E.idx] = ans;
+  E.idx++;
+  if (E.idx >= E.questions.length) {
+    await finishExam();
+    return;
+  }
+  await store.metaSet('examProgress', {
+    questions: E.questions, answers: E.answers, idx: E.idx,
+  });
+  renderExamQ();
+}
+
+async function finishExam() {
+  const res = scoreExam(E.questions, E.answers);
+  await store.metaDelete('examProgress');
+  const rec = { score: res.score, at: Date.now(), wrong: res.wrong };
+  await store.metaSet('examLatest', rec);
+  const best = await store.metaGet('examBest');
+  if (!best || res.score > best.score) await store.metaSet('examBest', rec);
+  // もどってくる: 落とした字を復習キューへ（重複なしで後ろに追加）
+  const rq = (await store.metaGet('reviewQueue')) || [];
+  await store.metaSet('reviewQueue', [...rq, ...res.wrong.filter(c => !rq.includes(c))]);
+  showResult(res);
+}
+
+function showResult(res) {
+  $('rScore').textContent = TEXTS.exam.score(res.score);
+  const msg = $('rMsg');
+  if (res.score >= EXAM_SPEC.fullScore) { msg.textContent = TEXTS.exam.perfect; msg.className = 'good'; }
+  else if (res.passed) { msg.textContent = TEXTS.exam.passed; msg.className = 'good'; }
+  else { msg.textContent = TEXTS.exam.failed(EXAM_SPEC.passScore - res.score); msg.className = 'accent'; }
+  store.metaGet('examBest').then(b => {
+    $('rBest').textContent = b ? TEXTS.exam.best(b.score) : '';
+  });
+  const grid = $('rReviewGrid');
+  grid.innerHTML = '';
+  if (res.wrong.length) {
+    $('rReviewLabel').textContent = TEXTS.exam.reviewList;
+    $('rReviewNote').textContent = TEXTS.exam.reviewNote;
+    for (const c of res.wrong) {
+      const d = document.createElement('div');
+      d.className = 'rv';
+      d.appendChild(makeSvg(byCharApp[c].strokes.map(s => s.path), '#1a1a1a', 5));
+      grid.appendChild(d);
+    }
+  } else {
+    $('rReviewLabel').textContent = TEXTS.exam.noReview;
+    $('rReviewNote').textContent = '';
+  }
+  show('scrResult');
+}
+
+$('btnExam').addEventListener('click', () => { startExam().catch(console.error); });
+$('eQuit').addEventListener('click', async () => {
+  // 進行はここまでの解答ぶんが保存済み（毎問保存）。現在の問題は未回答のまま中断
+  await store.metaSet('examProgress', {
+    questions: E.questions, answers: E.answers, idx: E.idx,
+  });
+  goHome();
+});
+$('rHome').addEventListener('click', goHome);
+
+// ---- かき問題の手書きマス（ガイドなし・十字のみ）----
+
+function resizeExamCell() {
+  const dpr = window.devicePixelRatio || 1;
+  eCss = eCanvas.clientWidth;
+  eCanvas.width = Math.round(eCss * dpr);
+  eCanvas.height = Math.round(eCss * dpr);
+  redrawExamCell();
+}
+
+function eSpace() {
+  const dpr = window.devicePixelRatio || 1;
+  const k = (eCss * dpr) / 109;
+  ectx.setTransform(k, 0, 0, k, 0, 0);
+  ectx.lineCap = 'round';
+  ectx.lineJoin = 'round';
+}
+
+function redrawExamCell() {
+  eSpace();
+  ectx.clearRect(0, 0, 109, 109);
+  ectx.save();
+  ectx.strokeStyle = '#efece2';
+  ectx.lineWidth = 0.6;
+  ectx.setLineDash([2.4, 1.8]);
+  ectx.beginPath();
+  ectx.moveTo(54.5, 0); ectx.lineTo(54.5, 109);
+  ectx.moveTo(0, 54.5); ectx.lineTo(109, 54.5);
+  ectx.stroke();
+  ectx.restore();
+  ectx.strokeStyle = '#1a1a1a';
+  ectx.lineWidth = 2.8;
+  for (const s of E.strokes) drawExamPoly(s);
+  if (E.current) drawExamPoly(E.current);
+}
+
+function drawExamPoly(points) {
+  if (!points.length) return;
+  ectx.beginPath();
+  ectx.moveTo(points[0].x * 109, points[0].y * 109);
+  if (points.length === 1) ectx.lineTo(points[0].x * 109 + 0.01, points[0].y * 109);
+  for (let i = 1; i < points.length; i++) ectx.lineTo(points[i].x * 109, points[i].y * 109);
+  ectx.stroke();
+}
+
+eCanvas.addEventListener('pointerdown', (e) => {
+  if (ePointer !== null) return;
+  ePointer = e.pointerId;
+  eCanvas.setPointerCapture(e.pointerId);
+  eRect = eCanvas.getBoundingClientRect();
+  E.current = [{ x: (e.clientX - eRect.left) / eCss, y: (e.clientY - eRect.top) / eCss }];
+  eSpace();
+  ectx.strokeStyle = '#1a1a1a';
+  ectx.lineWidth = 2.8;
+  drawExamPoly(E.current);
+  e.preventDefault();
+});
+eCanvas.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== ePointer || !E.current) return;
+  const p = { x: (e.clientX - eRect.left) / eCss, y: (e.clientY - eRect.top) / eCss };
+  const prev = E.current[E.current.length - 1];
+  E.current.push(p);
+  eSpace();
+  ectx.strokeStyle = '#1a1a1a';
+  ectx.lineWidth = 2.8;
+  ectx.beginPath();
+  ectx.moveTo(prev.x * 109, prev.y * 109);
+  ectx.lineTo(p.x * 109, p.y * 109);
+  ectx.stroke();
+  e.preventDefault();
+});
+function endExamStroke(e) {
+  if (e.pointerId !== ePointer) return;
+  ePointer = null;
+  if (E.current) {
+    E.strokes.push(E.current);
+    E.current = null;
+  }
+}
+eCanvas.addEventListener('pointerup', endExamStroke);
+eCanvas.addEventListener('pointercancel', endExamStroke);
+eCanvas.addEventListener('contextmenu', e => e.preventDefault());
+
+$('eRedo').addEventListener('click', () => {
+  E.strokes = [];
+  E.current = null;
+  redrawExamCell();
+});
+$('eSubmit').addEventListener('click', () => {
+  const q = E.questions[E.idx];
+  if (!E.strokes.length) return; // 白紙は受け付けない
+  const verdict = matchKanji(E.strokes, byCharApp[q.char], cfg).verdict;
+  answerExam({ verdict }).catch(console.error);
+});
+
+// ============================================================
 // バックアップ（ほごしゃ向け・設定隅）
 // ============================================================
 
@@ -678,9 +1012,25 @@ $('fileImport').addEventListener('change', async (ev) => {
 (async () => {
   applyTexts();
   store = await openStore();
-  const data = await (await fetch('data/kanji-g1.json')).json();
-  kanjiList = data.kanji;
+  const [kd, sd, rd] = await Promise.all([
+    fetch('data/kanji-g1.json').then(r => r.json()),
+    fetch('data/sentences-g1.json').then(r => r.json()),
+    fetch('data/exam-readings-g1.json').then(r => r.json()),
+  ]);
+  kanjiList = kd.kanji;
+  byCharApp = Object.fromEntries(kanjiList.map(k => [k.char, k]));
+  sentencesData = sd.sentences;
+  readingsData = rd.readings;
   await refreshHome();
+
+  // 開発用: 結果画面の文言確認（本番導線からは見えない）
+  // 例: index.html?dev-result=115&dev-wrong=右左山
+  const qp = new URLSearchParams(location.search);
+  if (qp.has('dev-result')) {
+    const score = Math.max(0, Math.min(150, parseInt(qp.get('dev-result'), 10) || 0));
+    const wrong = [...(qp.get('dev-wrong') || '')].filter(c => byCharApp[c]);
+    showResult({ score, wrong, passed: score >= EXAM_SPEC.passScore }); // 表示のみ・保存しない
+  }
 })();
 </script>
 </body>

@@ -46,6 +46,30 @@ export const TEXTS = {
     close: 'とじる',
   },
 
+  exam: {
+    entry: '10きゅうレベル テスト',
+    entryResume: 'テストの つづきから',
+    counter: (i, n) => `${i}もんめ ／ ${n}もん`,
+    yomiQ: 'あかい じの よみかたは どれ？',
+    kakiQ: 'あかい ところの かんじを マスに かこう',
+    kakusuuQ: 'この じは なんかくで かく？',
+    kakusuuUnit: (n) => `${n}かく`,
+    submit: 'できた',
+    redo: 'かきなおす',
+    quit: 'ちゅうだん',
+    quitNote: 'とちゅうまでが のこるよ。またね',
+    resultTitle: 'けっかはっぴょう',
+    score: (s) => `${s}てん ／ 150てん`,
+    passed: 'ごうかく！おめでとう！',
+    perfect: 'まんてん！すごい！',
+    failed: (d) => `あと ${d}てんで ごうかく。つぎは きっと できるよ`,
+    reviewList: 'もういちど れんしゅうする じ',
+    noReview: 'ぜんぶ せいかい！',
+    reviewNote: '「きょうの5もじ」に さきに でてくるよ',
+    backHome: 'ホームに もどる',
+    best: (s) => `さいこうきろく ${s}てん`,
+  },
+
   // ほごしゃ向け（設定隅・漢字可）
   backup: {
     summary: '保護者の方へ（データのバックアップ）',

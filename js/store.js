@@ -68,22 +68,26 @@ export function parseImport(obj) {
 
 const DB_NAME = 'jibun-jiten';
 const STORE = 'kanji'; // key = 字, value = { first, best, latest }
+const META = 'meta';   // key-value（テスト進行状態・履歴・復習キュー）
+const DB_VERSION = 2;  // v2: meta ストア追加（既存 kanji には触れない追加のみ）
 
 function idb() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
-      req.result.createObjectStore(STORE);
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      if (!db.objectStoreNames.contains(META)) db.createObjectStore(META);
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
 }
 
-function tx(db, mode, fn) {
+function tx(db, mode, fn, storeName = STORE) {
   return new Promise((resolve, reject) => {
-    const t = db.transaction(STORE, mode);
-    const store = t.objectStore(STORE);
+    const t = db.transaction(storeName, mode);
+    const store = t.objectStore(storeName);
     const req = fn(store);
     // 未保存キーの get は result=undefined。リクエスト自体を返さないこと
     t.oncomplete = () => resolve(req && typeof req === 'object' && 'result' in req ? req.result : undefined);
@@ -124,6 +128,16 @@ export async function openStore() {
     },
     async exportJson(exportedAt) {
       return serializeExport(await this.getAll(), exportedAt);
+    },
+    // ---- meta（テスト進行状態・履歴・復習キューなどの小物置き場）----
+    async metaGet(key) {
+      return tx(db, 'readonly', s => s.get(key), META);
+    },
+    async metaSet(key, value) {
+      await tx(db, 'readwrite', s => s.put(value, key), META);
+    },
+    async metaDelete(key) {
+      await tx(db, 'readwrite', s => s.delete(key), META);
     },
     // バックアップからの復元（全置換）。呼び出し側で確認を取ってから使う
     async importJson(obj) {
