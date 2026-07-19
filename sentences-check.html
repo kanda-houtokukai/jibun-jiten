@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10級 問題データ照読ページ check v0.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #f5f5f0; color: #333;
+    padding: 12px; max-width: 860px; margin: 0 auto;
+  }
+  h1 { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 4px; }
+  h1 small { font-weight: normal; color: #999; }
+  p.note { font-size: 12px; color: #888; margin-bottom: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: #fff; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
+  th { background: #eee; font-weight: 600; font-size: 12px; }
+  td.char { font-size: 22px; text-align: center; width: 44px; }
+  td.readings { font-size: 12px; color: #555; width: 130px; line-height: 1.6; }
+  td.id { font-size: 11px; color: #999; width: 70px; }
+  td.use { font-size: 11px; color: #777; width: 70px; }
+  td.reading { width: 90px; color: #555; }
+  .target { color: #c62828; font-weight: 600; }
+  .rowgroup td.char, .rowgroup td.readings { background: #fafaf5; }
+  footer { margin-top: 14px; font-size: 11px; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>10級 問題データ照読ページ <small>（check v0.1）</small></h1>
+  <p class="note">
+    見てほしいのは「小1にとって自然か」だけ（形式は機械チェック済み）。
+    違和感のある行は <b>id</b>（例: g1-012-2）で指摘してください。読みの「.」から後ろは送り仮名です。
+  </p>
+  <table id="tbl">
+    <tr><th>字</th><th>出題読み（選定）</th><th>id</th><th>文</th><th>読み</th><th>用途</th></tr>
+  </table>
+  <footer>check v0.1 ／ 文はすべて自前生成</footer>
+
+<script>
+(async () => {
+  const [readings, sentences] = await Promise.all([
+    fetch('data/exam-readings-g1.json').then(r => r.json()),
+    fetch('data/sentences-g1.json').then(r => r.json()),
+  ]);
+  const byChar = {};
+  for (const s of sentences.sentences) {
+    (byChar[s.target.char] = byChar[s.target.char] || []).push(s);
+  }
+  const tbl = document.getElementById('tbl');
+  for (const [char, sel] of Object.entries(readings.readings)) {
+    const rows = byChar[char] || [];
+    rows.forEach((s, i) => {
+      const tr = document.createElement('tr');
+      if (i === 0) tr.className = 'rowgroup';
+      const hl = s.text.slice(0, s.target.start)
+        + '<span class="target">' + s.text.substr(s.target.start, s.target.len) + '</span>'
+        + s.text.slice(s.target.start + s.target.len);
+      const selHtml = i === 0
+        ? `音: ${sel.on.join('、') || '－'}<br>訓: ${sel.kun.join('、') || '－'}`
+        : '';
+      tr.innerHTML =
+        (i === 0 ? `<td class="char" rowspan="${rows.length}">${char}</td>
+         <td class="readings" rowspan="${rows.length}">${selHtml}</td>` : '')
+        + `<td class="id">${s.id}</td><td>${hl}</td>`
+        + `<td class="reading">${s.target.reading}</td>`
+        + `<td class="use">${s.use.join('・')}</td>`;
+      tbl.appendChild(tr);
+    });
+  }
+})();
+</script>
+</body>
+</html>

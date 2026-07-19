@@ -1,0 +1,2306 @@
+{
+ "schemaVersion": 1,
+ "grade": 1,
+ "kenLevel": 10,
+ "sources": {
+  "origin": "全文自前生成（既存の問題集・ドリル・教材は参照していない）。Phase 3a・照読検収"
+ },
+ "sentences": [
+  {
+   "id": "g1-001-1",
+   "text": "一ばんのりでこうえんについた。",
+   "target": {
+    "char": "一",
+    "reading": "イチ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-001-2",
+   "text": "あめを一つもらった。",
+   "target": {
+    "char": "一",
+    "reading": "ひと.つ",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-002-1",
+   "text": "右てではしをもつ。",
+   "target": {
+    "char": "右",
+    "reading": "みぎ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-002-2",
+   "text": "つぎのかどを右にまがる。",
+   "target": {
+    "char": "右",
+    "reading": "みぎ",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-003-1",
+   "text": "雨のひはかさをさす。",
+   "target": {
+    "char": "雨",
+    "reading": "あめ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-003-2",
+   "text": "あさから雨がふっている。",
+   "target": {
+    "char": "雨",
+    "reading": "あめ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-004-1",
+   "text": "ジュースはひゃく円だった。",
+   "target": {
+    "char": "円",
+    "reading": "エン",
+    "start": 8,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-004-2",
+   "text": "円いおさらにケーキをのせる。",
+   "target": {
+    "char": "円",
+    "reading": "まる.い",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-005-1",
+   "text": "らいおんはどうぶつの王さまだ。",
+   "target": {
+    "char": "王",
+    "reading": "オウ",
+    "start": 10,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-005-2",
+   "text": "トランプの王さまをひいた。",
+   "target": {
+    "char": "王",
+    "reading": "オウ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-006-1",
+   "text": "かみなりの音にびっくりした。",
+   "target": {
+    "char": "音",
+    "reading": "おと",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-006-2",
+   "text": "音がくのじかんにうたをうたう。",
+   "target": {
+    "char": "音",
+    "reading": "オン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-007-1",
+   "text": "つくえの下にえんぴつがおちた。",
+   "target": {
+    "char": "下",
+    "reading": "した",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-007-2",
+   "text": "きの下でひとやすみする。",
+   "target": {
+    "char": "下",
+    "reading": "した",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-008-1",
+   "text": "たきびの火があたたかい。",
+   "target": {
+    "char": "火",
+    "reading": "ひ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-008-2",
+   "text": "火ようびにプールへいく。",
+   "target": {
+    "char": "火",
+    "reading": "カ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-009-1",
+   "text": "きいろい花がさいた。",
+   "target": {
+    "char": "花",
+    "reading": "はな",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-009-2",
+   "text": "花だんにみずをやる。",
+   "target": {
+    "char": "花",
+    "reading": "はな",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-010-1",
+   "text": "おかあさんと貝がらをひろった。",
+   "target": {
+    "char": "貝",
+    "reading": "かい",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-010-2",
+   "text": "きれいな貝をみつけた。",
+   "target": {
+    "char": "貝",
+    "reading": "かい",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-011-1",
+   "text": "学げいかいでげきをした。",
+   "target": {
+    "char": "学",
+    "reading": "ガク",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-011-2",
+   "text": "こうじょうけん学にいった。",
+   "target": {
+    "char": "学",
+    "reading": "ガク",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-012-1",
+   "text": "げん気にへんじをする。",
+   "target": {
+    "char": "気",
+    "reading": "キ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-012-2",
+   "text": "てん気がいいのでそとであそぶ。",
+   "target": {
+    "char": "気",
+    "reading": "キ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-013-1",
+   "text": "九ひきのこねこがいる。",
+   "target": {
+    "char": "九",
+    "reading": "キュウ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-013-2",
+   "text": "あめだまが九つある。",
+   "target": {
+    "char": "九",
+    "reading": "ここの.つ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-014-1",
+   "text": "かぜをひいてがっこうを休んだ。",
+   "target": {
+    "char": "休",
+    "reading": "やす.む",
+    "start": 11,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-014-2",
+   "text": "すこしだけ休むことにした。",
+   "target": {
+    "char": "休",
+    "reading": "やす.む",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-015-1",
+   "text": "あめ玉をひとつもらった。",
+   "target": {
+    "char": "玉",
+    "reading": "たま",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-015-2",
+   "text": "けん玉であそぶ。",
+   "target": {
+    "char": "玉",
+    "reading": "たま",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-016-1",
+   "text": "金ようびはカレーのひだ。",
+   "target": {
+    "char": "金",
+    "reading": "キン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-016-2",
+   "text": "お金をたいせつにつかう。",
+   "target": {
+    "char": "金",
+    "reading": "かね",
+    "start": 1,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-017-1",
+   "text": "空ににじがかかった。",
+   "target": {
+    "char": "空",
+    "reading": "そら",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-017-2",
+   "text": "あきの空はたかくてあおい。",
+   "target": {
+    "char": "空",
+    "reading": "そら",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-018-1",
+   "text": "まるい月がでている。",
+   "target": {
+    "char": "月",
+    "reading": "つき",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-018-2",
+   "text": "月ようびにあさがおにみずをやる。",
+   "target": {
+    "char": "月",
+    "reading": "ゲツ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-018-3",
+   "text": "さん月にひなまつりがある。",
+   "target": {
+    "char": "月",
+    "reading": "ガツ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-019-1",
+   "text": "おとうさんと犬のさんぽにいく。",
+   "target": {
+    "char": "犬",
+    "reading": "いぬ",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-019-2",
+   "text": "となりのいえの犬はおおきい。",
+   "target": {
+    "char": "犬",
+    "reading": "いぬ",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-020-1",
+   "text": "おまつりのはなびを見た。",
+   "target": {
+    "char": "見",
+    "reading": "み.る",
+    "start": 9,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-020-2",
+   "text": "けしきをゆっくり見る。",
+   "target": {
+    "char": "見",
+    "reading": "み.る",
+    "start": 8,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-021-1",
+   "text": "あさ五じにめがさめた。",
+   "target": {
+    "char": "五",
+    "reading": "ゴ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-021-2",
+   "text": "みかんが五つある。",
+   "target": {
+    "char": "五",
+    "reading": "いつ.つ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-022-1",
+   "text": "口をおおきくあけてうたう。",
+   "target": {
+    "char": "口",
+    "reading": "くち",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-022-2",
+   "text": "口のなかをきれいにする。",
+   "target": {
+    "char": "口",
+    "reading": "くち",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-023-1",
+   "text": "がっ校のもんのまえであいさつ。",
+   "target": {
+    "char": "校",
+    "reading": "コウ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-023-2",
+   "text": "校ていでおにごっこをする。",
+   "target": {
+    "char": "校",
+    "reading": "コウ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-024-1",
+   "text": "左あしでボールをけった。",
+   "target": {
+    "char": "左",
+    "reading": "ひだり",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-024-2",
+   "text": "左にまがるとこうえんだ。",
+   "target": {
+    "char": "左",
+    "reading": "ひだり",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-025-1",
+   "text": "三かくのおにぎりをたべた。",
+   "target": {
+    "char": "三",
+    "reading": "サン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-025-2",
+   "text": "どんぐりを三つひろった。",
+   "target": {
+    "char": "三",
+    "reading": "みっ.つ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-026-1",
+   "text": "山のうえからうみがみえた。",
+   "target": {
+    "char": "山",
+    "reading": "やま",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-026-2",
+   "text": "あきの山はもみじがきれいだ。",
+   "target": {
+    "char": "山",
+    "reading": "やま",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-027-1",
+   "text": "ねこの子がうまれた。",
+   "target": {
+    "char": "子",
+    "reading": "こ",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-027-2",
+   "text": "まいごの子をたすけた。",
+   "target": {
+    "char": "子",
+    "reading": "こ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-028-1",
+   "text": "四かいだてのビルがある。",
+   "target": {
+    "char": "四",
+    "reading": "よん",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-028-2",
+   "text": "いちごが四つのこっている。",
+   "target": {
+    "char": "四",
+    "reading": "よっ.つ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-029-1",
+   "text": "たこ糸をしっかりもつ。",
+   "target": {
+    "char": "糸",
+    "reading": "いと",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-029-2",
+   "text": "糸でんわであそんだ。",
+   "target": {
+    "char": "糸",
+    "reading": "いと",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-030-1",
+   "text": "かん字のれんしゅうをする。",
+   "target": {
+    "char": "字",
+    "reading": "ジ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-030-2",
+   "text": "ていねいな字でなまえをかく。",
+   "target": {
+    "char": "字",
+    "reading": "ジ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-031-1",
+   "text": "うさぎの耳はながい。",
+   "target": {
+    "char": "耳",
+    "reading": "みみ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-031-2",
+   "text": "耳をすますとむしのこえがする。",
+   "target": {
+    "char": "耳",
+    "reading": "みみ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-032-1",
+   "text": "よるの七じにおふろにはいる。",
+   "target": {
+    "char": "七",
+    "reading": "シチ",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-032-2",
+   "text": "七いろのにじがでた。",
+   "target": {
+    "char": "七",
+    "reading": "なな",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-032-3",
+   "text": "おはじきが七つある。",
+   "target": {
+    "char": "七",
+    "reading": "なな.つ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-033-1",
+   "text": "車にきをつけてわたる。",
+   "target": {
+    "char": "車",
+    "reading": "くるま",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-033-2",
+   "text": "でん車にのっておでかけする。",
+   "target": {
+    "char": "車",
+    "reading": "シャ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-034-1",
+   "text": "手をあらってからたべる。",
+   "target": {
+    "char": "手",
+    "reading": "て",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-034-2",
+   "text": "手ぶくろをはめてでかける。",
+   "target": {
+    "char": "手",
+    "reading": "て",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-035-1",
+   "text": "十えんだまをさいふにいれる。",
+   "target": {
+    "char": "十",
+    "reading": "ジュウ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-035-2",
+   "text": "十までかぞえてさがした。",
+   "target": {
+    "char": "十",
+    "reading": "とお",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-036-1",
+   "text": "げんきにへんじをしてまえに出る。",
+   "target": {
+    "char": "出",
+    "reading": "で.る",
+    "start": 13,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-036-2",
+   "text": "ポストにてがみを出す。",
+   "target": {
+    "char": "出",
+    "reading": "だ.す",
+    "start": 8,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-037-1",
+   "text": "女のこがなわとびをしている。",
+   "target": {
+    "char": "女",
+    "reading": "おんな",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-037-2",
+   "text": "女のひとにみちをきいた。",
+   "target": {
+    "char": "女",
+    "reading": "おんな",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-038-1",
+   "text": "小さいかえるがはねた。",
+   "target": {
+    "char": "小",
+    "reading": "ちい.さい",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-038-2",
+   "text": "小がっこうのうんどうかい。",
+   "target": {
+    "char": "小",
+    "reading": "ショウ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-039-1",
+   "text": "つくえの上をかたづける。",
+   "target": {
+    "char": "上",
+    "reading": "うえ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-039-2",
+   "text": "げんきよくてを上げる。",
+   "target": {
+    "char": "上",
+    "reading": "あ.げる",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-040-1",
+   "text": "森のなかはすずしかった。",
+   "target": {
+    "char": "森",
+    "reading": "もり",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-040-2",
+   "text": "森でかぶとむしをさがす。",
+   "target": {
+    "char": "森",
+    "reading": "もり",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-041-1",
+   "text": "こまっている人をたすける。",
+   "target": {
+    "char": "人",
+    "reading": "ひと",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-041-2",
+   "text": "しんせつな人におれいをいう。",
+   "target": {
+    "char": "人",
+    "reading": "ひと",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-042-1",
+   "text": "あさがおに水をやる。",
+   "target": {
+    "char": "水",
+    "reading": "みず",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-042-2",
+   "text": "水ようびはとしょかんのひ。",
+   "target": {
+    "char": "水",
+    "reading": "スイ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-043-1",
+   "text": "正しいしせいでいすにすわる。",
+   "target": {
+    "char": "正",
+    "reading": "ただ.しい",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-043-2",
+   "text": "お正がつにたこあげをした。",
+   "target": {
+    "char": "正",
+    "reading": "ショウ",
+    "start": 1,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-044-1",
+   "text": "せん生にほめられた。",
+   "target": {
+    "char": "生",
+    "reading": "セイ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-044-2",
+   "text": "いもうとが生まれた。",
+   "target": {
+    "char": "生",
+    "reading": "う.まれる",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-044-3",
+   "text": "かめはながく生きるといわれる。",
+   "target": {
+    "char": "生",
+    "reading": "い.きる",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-045-1",
+   "text": "青いえのぐでうみをぬる。",
+   "target": {
+    "char": "青",
+    "reading": "あお.い",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-045-2",
+   "text": "しんごうが青にかわった。",
+   "target": {
+    "char": "青",
+    "reading": "あお",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-046-1",
+   "text": "夕やけがまちをあかくそめた。",
+   "target": {
+    "char": "夕",
+    "reading": "ゆう",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-046-2",
+   "text": "夕はんはかぞくでカレーをたべた。",
+   "target": {
+    "char": "夕",
+    "reading": "ゆう",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-047-1",
+   "text": "まるい石をポケットにいれた。",
+   "target": {
+    "char": "石",
+    "reading": "いし",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-047-2",
+   "text": "石ころにつまずかないようにあるく。",
+   "target": {
+    "char": "石",
+    "reading": "いし",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-048-1",
+   "text": "赤いりんごをまるかじりした。",
+   "target": {
+    "char": "赤",
+    "reading": "あか.い",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-048-2",
+   "text": "しんごうが赤のあいだはまつ。",
+   "target": {
+    "char": "赤",
+    "reading": "あか",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-049-1",
+   "text": "おりづるを千ばおる。",
+   "target": {
+    "char": "千",
+    "reading": "セン",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-049-2",
+   "text": "千えんさつでかいものをした。",
+   "target": {
+    "char": "千",
+    "reading": "セン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-050-1",
+   "text": "川でさかなつりをした。",
+   "target": {
+    "char": "川",
+    "reading": "かわ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-050-2",
+   "text": "川のみずはつめたかった。",
+   "target": {
+    "char": "川",
+    "reading": "かわ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-051-1",
+   "text": "ゆびの先でそっとさわる。",
+   "target": {
+    "char": "先",
+    "reading": "さき",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-051-2",
+   "text": "先せいとあさのあいさつをする。",
+   "target": {
+    "char": "先",
+    "reading": "セン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-052-1",
+   "text": "おきるのが早いといいことがある。",
+   "target": {
+    "char": "早",
+    "reading": "はや.い",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-052-2",
+   "text": "早おきしてラジオたいそうをした。",
+   "target": {
+    "char": "早",
+    "reading": "はや",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-053-1",
+   "text": "にわの草むしりをてつだう。",
+   "target": {
+    "char": "草",
+    "reading": "くさ",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-053-2",
+   "text": "草はらでバッタをつかまえた。",
+   "target": {
+    "char": "草",
+    "reading": "くさ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-054-1",
+   "text": "たくさんあるいて足がつかれた。",
+   "target": {
+    "char": "足",
+    "reading": "あし",
+    "start": 8,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-054-2",
+   "text": "えん足でおべんとうをたべた。",
+   "target": {
+    "char": "足",
+    "reading": "ソク",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-055-1",
+   "text": "村のおまつりにでかけた。",
+   "target": {
+    "char": "村",
+    "reading": "むら",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-055-2",
+   "text": "おばあちゃんは村にすんでいる。",
+   "target": {
+    "char": "村",
+    "reading": "むら",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-056-1",
+   "text": "大きいこえでうたをうたった。",
+   "target": {
+    "char": "大",
+    "reading": "おお.きい",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-056-2",
+   "text": "ドッジボールが大すきだ。",
+   "target": {
+    "char": "大",
+    "reading": "ダイ",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-057-1",
+   "text": "男のこがてつぼうをしている。",
+   "target": {
+    "char": "男",
+    "reading": "おとこ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-057-2",
+   "text": "おとなりの男のひとはやさしい。",
+   "target": {
+    "char": "男",
+    "reading": "おとこ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-058-1",
+   "text": "竹とんぼをとばしてあそぶ。",
+   "target": {
+    "char": "竹",
+    "reading": "たけ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-058-2",
+   "text": "竹うまにのるれんしゅうをした。",
+   "target": {
+    "char": "竹",
+    "reading": "たけ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-059-1",
+   "text": "はこの中におもちゃをしまう。",
+   "target": {
+    "char": "中",
+    "reading": "なか",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-059-2",
+   "text": "プールの中でめをあけられた。",
+   "target": {
+    "char": "中",
+    "reading": "なか",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-060-1",
+   "text": "虫かごにばったをいれた。",
+   "target": {
+    "char": "虫",
+    "reading": "むし",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-060-2",
+   "text": "なつのよるは虫のこえがきこえる。",
+   "target": {
+    "char": "虫",
+    "reading": "むし",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-061-1",
+   "text": "町のパンやさんによった。",
+   "target": {
+    "char": "町",
+    "reading": "まち",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-061-2",
+   "text": "となり町までじてんしゃでいく。",
+   "target": {
+    "char": "町",
+    "reading": "まち",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-062-1",
+   "text": "天きよほうをテレビでみた。",
+   "target": {
+    "char": "天",
+    "reading": "テン",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-062-2",
+   "text": "よぞらに天のがわがみえた。",
+   "target": {
+    "char": "天",
+    "reading": "あま-",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-063-1",
+   "text": "田うえのようすをみにいった。",
+   "target": {
+    "char": "田",
+    "reading": "た",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-063-2",
+   "text": "いなかの田んぼでかえるをみた。",
+   "target": {
+    "char": "田",
+    "reading": "た",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-064-1",
+   "text": "土をほったらみみずがでてきた。",
+   "target": {
+    "char": "土",
+    "reading": "つち",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-064-2",
+   "text": "土ようびにおおそうじをした。",
+   "target": {
+    "char": "土",
+    "reading": "ド",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-065-1",
+   "text": "二かいのまどからそらをみる。",
+   "target": {
+    "char": "二",
+    "reading": "ニ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-065-2",
+   "text": "おにぎりを二つにぎった。",
+   "target": {
+    "char": "二",
+    "reading": "ふた.つ",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-066-1",
+   "text": "日があたるまどべはあたたかい。",
+   "target": {
+    "char": "日",
+    "reading": "ひ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-066-2",
+   "text": "日ようびにこうえんへいく。",
+   "target": {
+    "char": "日",
+    "reading": "ニチ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-067-1",
+   "text": "あたたかいおふろに入る。",
+   "target": {
+    "char": "入",
+    "reading": "はい.る",
+    "start": 9,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-067-2",
+   "text": "ランドセルにきょうかしょを入れる。",
+   "target": {
+    "char": "入",
+    "reading": "い.れる",
+    "start": 13,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-067-3",
+   "text": "入がくしきでしゃしんをとった。",
+   "target": {
+    "char": "入",
+    "reading": "ニュウ",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-068-1",
+   "text": "いち年せいになってともだちがふえた。",
+   "target": {
+    "char": "年",
+    "reading": "ネン",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-068-2",
+   "text": "お年よりにせきをゆずった。",
+   "target": {
+    "char": "年",
+    "reading": "とし",
+    "start": 1,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-069-1",
+   "text": "白いくもがうかんでいる。",
+   "target": {
+    "char": "白",
+    "reading": "しろ.い",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-069-2",
+   "text": "ゆきがつもってまちが白くなった。",
+   "target": {
+    "char": "白",
+    "reading": "しろ.い",
+    "start": 10,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-070-1",
+   "text": "よる八じにねるやくそくだ。",
+   "target": {
+    "char": "八",
+    "reading": "ハチ",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-070-2",
+   "text": "たまごが八つある。",
+   "target": {
+    "char": "八",
+    "reading": "やっ.つ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-071-1",
+   "text": "百までかぞえられるようになった。",
+   "target": {
+    "char": "百",
+    "reading": "ヒャク",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-071-2",
+   "text": "なわとびを百かいとんだ。",
+   "target": {
+    "char": "百",
+    "reading": "ヒャク",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-072-1",
+   "text": "さく文でいぬのことをかいた。",
+   "target": {
+    "char": "文",
+    "reading": "ブン",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-072-2",
+   "text": "みじかい文をこえにだしてよむ。",
+   "target": {
+    "char": "文",
+    "reading": "ブン",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-073-1",
+   "text": "木のえだにことりがとまった。",
+   "target": {
+    "char": "木",
+    "reading": "き",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-073-2",
+   "text": "木ようびにたいいくがある。",
+   "target": {
+    "char": "木",
+    "reading": "モク",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-074-1",
+   "text": "としょかんで本をかりた。",
+   "target": {
+    "char": "本",
+    "reading": "ホン",
+    "start": 6,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-074-2",
+   "text": "ねるまえに本をよんでもらう。",
+   "target": {
+    "char": "本",
+    "reading": "ホン",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-075-1",
+   "text": "名まえをよばれてへんじをした。",
+   "target": {
+    "char": "名",
+    "reading": "な",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-075-2",
+   "text": "はなの名まえをずかんでしらべた。",
+   "target": {
+    "char": "名",
+    "reading": "な",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-076-1",
+   "text": "目をとじてじゅうまでかぞえる。",
+   "target": {
+    "char": "目",
+    "reading": "め",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-076-2",
+   "text": "目ぐすりをさすのがにがてだ。",
+   "target": {
+    "char": "目",
+    "reading": "め",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-077-1",
+   "text": "せきから立ってあいさつをする。",
+   "target": {
+    "char": "立",
+    "reading": "た.つ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-077-2",
+   "text": "いすから立つときにおとがした。",
+   "target": {
+    "char": "立",
+    "reading": "た.つ",
+    "start": 4,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-078-1",
+   "text": "つなひきで力いっぱいひっぱった。",
+   "target": {
+    "char": "力",
+    "reading": "ちから",
+    "start": 5,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-078-2",
+   "text": "おもいにもつを力をあわせてはこぶ。",
+   "target": {
+    "char": "力",
+    "reading": "ちから",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-079-1",
+   "text": "林のなかでせみがないている。",
+   "target": {
+    "char": "林",
+    "reading": "はやし",
+    "start": 0,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-079-2",
+   "text": "まつの林をぬけるとうみだ。",
+   "target": {
+    "char": "林",
+    "reading": "はやし",
+    "start": 3,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-080-1",
+   "text": "あさ六じにめざましがなる。",
+   "target": {
+    "char": "六",
+    "reading": "ロク",
+    "start": 2,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  },
+  {
+   "id": "g1-080-2",
+   "text": "たこやきがあと六つのこっている。",
+   "target": {
+    "char": "六",
+    "reading": "むっ.つ",
+    "start": 7,
+    "len": 1
+   },
+   "use": [
+    "yomi",
+    "kaki"
+   ]
+  }
+ ]
+}
