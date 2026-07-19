@@ -1,0 +1,65 @@
+{
+ "schemaVersion": 1,
+ "auditedAt": "2026-07-19",
+ "policy": "表層読み＝登録読みを不変条件とする（除外方式）。該当文はA（差し替え）で修正",
+ "found": [
+  {
+   "id": "g1-015-1",
+   "char": "玉",
+   "registered": "たま",
+   "surface": "だま",
+   "phenomenon": "連濁",
+   "decision": "A",
+   "oldText": "あめ玉をひとつもらった。",
+   "newText": "うんどうかいで玉いれをした。"
+  },
+  {
+   "id": "g1-015-2",
+   "char": "玉",
+   "registered": "たま",
+   "surface": "だま",
+   "phenomenon": "連濁（発覚事案）",
+   "decision": "A",
+   "oldText": "けん玉であそぶ。",
+   "newText": "ゆきの玉をころがした。"
+  },
+  {
+   "id": "g1-009-2",
+   "char": "花",
+   "registered": "はな",
+   "surface": "か（花壇=音読み）",
+   "phenomenon": "音訓ずれ",
+   "decision": "A",
+   "oldText": "花だんにみずをやる。",
+   "newText": "にわに花のたねをまいた。"
+  },
+  {
+   "id": "g1-071-2",
+   "char": "百",
+   "registered": "ヒャク",
+   "surface": "ひゃっ",
+   "phenomenon": "促音化",
+   "decision": "A",
+   "oldText": "なわとびを百かいとんだ。",
+   "newText": "百えんだまをちょきんばこにいれた。"
+  }
+ ],
+ "checkedNoIssue": [
+  {
+   "id": "g1-062-2",
+   "note": "天のがわ: target.reading=あま- で表層一致（指示書⚠️の確認済み）"
+  },
+  {
+   "id": "g1-035-1",
+   "note": "十えんだま: 対象は十=ジュウ。だま(玉)はひらがな表記で対象外"
+  },
+  {
+   "id": "g1-049-1",
+   "note": "千ば(千羽): 対象は千=セン。ば(羽)はひらがな表記で対象外"
+  },
+  {
+   "id": "g1-034-2",
+   "note": "手ぶくろ: 対象は手=て。ぶくろ(袋)の連濁は対象外"
+  }
+ ]
+}

@@ -151,7 +151,8 @@ SENTENCES = {
     ],
     '花': [
         ('きいろい花がさいた。', 'はな', None),
-        ('花だんにみずをやる。', 'はな', None),
+        # Phase 3d: 「花だん」は音読み「かだん」であり「はな」と読めないため差し替え(A)
+        ('にわに花のたねをまいた。', 'はな', None),
     ],
     '貝': [
         ('おかあさんと貝がらをひろった。', 'かい', None),
@@ -174,8 +175,9 @@ SENTENCES = {
         ('すこしだけ休むことにした。', 'やす.む', None),
     ],
     '玉': [
-        ('あめ玉をひとつもらった。', 'たま', None),
-        ('けん玉であそぶ。', 'たま', None),
+        # Phase 3d: 「あめ玉(あめだま)」「けん玉(けんだま)」は連濁で「たま」と読めないため差し替え(A)
+        ('うんどうかいで玉いれをした。', 'たま', None),
+        ('ゆきの玉をころがした。', 'たま', None),
     ],
     '金': [
         ('金ようびはカレーのひだ。', 'キン', None),
@@ -403,7 +405,8 @@ SENTENCES = {
     ],
     '百': [
         ('百までかぞえられるようになった。', 'ヒャク', None),
-        ('なわとびを百かいとんだ。', 'ヒャク', None),
+        # Phase 3d: 「百かい」は促音化で「ひゃっかい」となり「ひゃく」と読めないため差し替え(A)
+        ('百えんだまをちょきんばこにいれた。', 'ヒャク', None),
     ],
     '文': [
         ('さく文でいぬのことをかいた。', 'ブン', None),
@@ -442,6 +445,64 @@ SENTENCES = {
         ('たこやきがあと六つのこっている。', 'むっ.つ', None),
     ],
 }
+
+# ---- Phase 3d: 表層読みの不変条件と連濁・音変化の監査 ----
+# 不変条件（採った設計 = 「除外」方式）:
+#   target.reading は「その文脈で実際にそう発音する読み」でなければならない。
+#   連濁・促音化で表層が登録読みとずれる文脈は文ごと避ける（修正は原則A=差し替え）。
+#   濁音表層を出題読みとして登録しない理由: 単独字の出題で「玉=だま」を
+#   正解にしかねない副作用があるため（連濁は語結合の派生であり字の読みではない）。
+#
+# 2026-07-19 全164文スキャンの結果（人手・言語知識による照合）:
+AUDIT = {
+    'auditedAt': '2026-07-19',
+    'policy': '表層読み＝登録読みを不変条件とする（除外方式）。該当文はA（差し替え）で修正',
+    'found': [
+        {'id': 'g1-015-1', 'char': '玉', 'registered': 'たま', 'surface': 'だま',
+         'phenomenon': '連濁', 'decision': 'A',
+         'oldText': 'あめ玉をひとつもらった。', 'newText': 'うんどうかいで玉いれをした。'},
+        {'id': 'g1-015-2', 'char': '玉', 'registered': 'たま', 'surface': 'だま',
+         'phenomenon': '連濁（発覚事案）', 'decision': 'A',
+         'oldText': 'けん玉であそぶ。', 'newText': 'ゆきの玉をころがした。'},
+        {'id': 'g1-009-2', 'char': '花', 'registered': 'はな', 'surface': 'か（花壇=音読み）',
+         'phenomenon': '音訓ずれ', 'decision': 'A',
+         'oldText': '花だんにみずをやる。', 'newText': 'にわに花のたねをまいた。'},
+        {'id': 'g1-071-2', 'char': '百', 'registered': 'ヒャク', 'surface': 'ひゃっ',
+         'phenomenon': '促音化', 'decision': 'A',
+         'oldText': 'なわとびを百かいとんだ。', 'newText': '百えんだまをちょきんばこにいれた。'},
+    ],
+    'checkedNoIssue': [
+        {'id': 'g1-062-2', 'note': '天のがわ: target.reading=あま- で表層一致（指示書⚠️の確認済み）'},
+        {'id': 'g1-035-1', 'note': '十えんだま: 対象は十=ジュウ。だま(玉)はひらがな表記で対象外'},
+        {'id': 'g1-049-1', 'note': '千ば(千羽): 対象は千=セン。ば(羽)はひらがな表記で対象外'},
+        {'id': 'g1-034-2', 'note': '手ぶくろ: 対象は手=て。ぶくろ(袋)の連濁は対象外'},
+    ],
+}
+
+# 連濁疑い警告の確認済みリスト（人手照合で表層一致を確認した文。新規文は載せない）
+RENDAKU_REVIEWED = {
+    'g1-012-1': 'げん気=げんき（音読みは連濁せず）',
+    'g1-012-2': 'てん気=てんき',
+    'g1-016-2': 'お金=おかね（美化語の お は連濁を起こさない）',
+    'g1-023-1': 'がっ校=がっこう',
+    'g1-033-2': 'でん車=でんしゃ',
+    'g1-041-1': 'こまっている人=ひと（節の切れ目で連濁なし）',
+    'g1-043-2': 'お正がつ=おしょうがつ',
+    'g1-044-1': 'せん生=せんせい',
+    'g1-054-2': 'えん足=えんそく',
+    'g1-068-2': 'お年より=おとしより',
+    'g1-070-1': '八じ=はちじ',
+    'g1-077-1': 'せきから立つ=たつ（から は助詞）',
+    'g1-077-2': 'いすから立つ=たつ',
+}
+
+# 語の切れ目とみなす直前文字（助詞・読点等＋形容詞語尾）。これ以外が直前なら語中の可能性
+BOUNDARY_CHARS = set('をにでとがはのへもや、。ないて')
+# 連濁しうる清音の頭（か・さ・た・は行）
+VOICEABLE_HEAD = set('かきくけこさしすせそたちつてとはひふへほ')
+# 促音化しやすい末尾と後続
+SOKUON_TAIL = set('くちつ')
+SOKUON_NEXT = set('かきくけこさしすせそたちつてとはひふへほぱぴぷぺぽ')
 
 KANJI_RE = re.compile(r'[一-鿿]')
 
@@ -491,6 +552,19 @@ def main():
                 after = text[start + 1:]
                 if not after.startswith(okuri):
                     warnings.append(f'{rid}: 送り仮名「{okuri}」と直後「{after[:3]}…」が不一致（活用形なら可）: {text}')
+            # ---- Phase 3d 警告装置: 連濁・促音化の疑い（機械は疑うだけ。判定は人）----
+            def hira(ch):
+                return chr(ord(ch) - 0x60) if 'ァ' <= ch <= 'ヶ' else ch
+            if rid not in RENDAKU_REVIEWED:
+                head = reading.lstrip('-').split('.')[0]
+                head_kana = hira(head[0]) if head else ''
+                if start > 0 and text[start - 1] not in BOUNDARY_CHARS and head_kana in VOICEABLE_HEAD:
+                    warnings.append(f'{rid}: 連濁疑い（語中の清音読み「{reading}」）: {text} → 人手確認のうえ RENDAKU_REVIEWED へ')
+                disp = reading.replace('.', '').replace('-', '')
+                last_kana = hira(disp[-1]) if disp else ''
+                nxt = text[start + 1] if start + 1 < len(text) else ''
+                if '.' not in reading and last_kana in SOKUON_TAIL and nxt in SOKUON_NEXT:
+                    warnings.append(f'{rid}: 促音化疑い（「{reading}」の直後が{nxt}）: {text} → 人手確認のうえ RENDAKU_REVIEWED へ')
             if 'yomi' in uses:
                 has_yomi = True
             if 'kaki' in uses:
@@ -544,6 +618,8 @@ def main():
         json.dumps(out1, ensure_ascii=False, indent=1), encoding='utf-8')
     (REPO / 'data' / 'sentences-g1.json').write_text(
         json.dumps(out2, ensure_ascii=False, indent=1), encoding='utf-8')
+    (REPO / 'data' / 'rendaku-audit-g1.json').write_text(
+        json.dumps({'schemaVersion': 1, **AUDIT}, ensure_ascii=False, indent=1), encoding='utf-8')
     n_r = sum(len(v['on']) + len(v['kun']) for v in SELECTED.values())
     print(f'OK: 出題読み{n_r}件・文{len(records)}件を出力（機械チェック全通過・警告{len(warnings)}件）')
 

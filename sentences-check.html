@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10級 問題データ照読ページ check v0.1</title>
+<title>10級 問題データ照読ページ check v0.2</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -28,22 +28,43 @@
 </style>
 </head>
 <body>
-  <h1>10級 問題データ照読ページ <small>（check v0.1）</small></h1>
+  <h1>10級 問題データ照読ページ <small>（check v0.2）</small></h1>
   <p class="note">
-    見てほしいのは「小1にとって自然か」だけ（形式は機械チェック済み）。
+    見てほしいのは「小1にとって自然か」と「<b>音のずれ（連濁・促音化）がないか</b>」（形式は機械チェック済み）。
     違和感のある行は <b>id</b>（例: g1-012-2）で指摘してください。読みの「.」から後ろは送り仮名です。
   </p>
+  <details id="auditBox" style="margin-bottom:12px;font-size:13px;">
+    <summary style="cursor:pointer;color:#555;">連濁・音変化の監査結果（Phase 3d）</summary>
+    <table id="auditTbl" style="margin-top:6px;">
+      <tr><th>id</th><th>字</th><th>現象</th><th>登録読み</th><th>実読み</th><th>対処</th><th>旧文 → 新文</th></tr>
+    </table>
+    <div id="auditNotes" style="margin-top:6px;color:#888;font-size:12px;line-height:1.7;"></div>
+  </details>
   <table id="tbl">
     <tr><th>字</th><th>出題読み（選定）</th><th>id</th><th>文</th><th>読み</th><th>用途</th></tr>
   </table>
-  <footer>check v0.1 ／ 文はすべて自前生成</footer>
+  <footer>check v0.2 ／ 文はすべて自前生成</footer>
 
 <script>
 (async () => {
-  const [readings, sentences] = await Promise.all([
+  const [readings, sentences, audit] = await Promise.all([
     fetch('data/exam-readings-g1.json').then(r => r.json()),
     fetch('data/sentences-g1.json').then(r => r.json()),
+    fetch('data/rendaku-audit-g1.json').then(r => r.json()).catch(() => null),
   ]);
+  if (audit) {
+    const t = document.getElementById('auditTbl');
+    for (const f of audit.found) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="id">${f.id}</td><td class="char">${f.char}</td>`
+        + `<td>${f.phenomenon}</td><td>${f.registered}</td><td>${f.surface}</td><td>${f.decision}</td>`
+        + `<td>${f.oldText} → <b>${f.newText}</b></td>`;
+      t.appendChild(tr);
+    }
+    document.getElementById('auditNotes').innerHTML =
+      `方針: ${audit.policy}<br>` +
+      audit.checkedNoIssue.map(c => `確認済み ${c.id}: ${c.note}`).join('<br>');
+  }
   const byChar = {};
   for (const s of sentences.sentences) {
     (byChar[s.target.char] = byChar[s.target.char] || []).push(s);
