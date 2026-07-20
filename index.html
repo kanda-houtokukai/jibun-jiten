@@ -22,28 +22,84 @@
   .screen.on { display: flex; flex-direction: column; align-items: center; }
   button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
-  /* ---- ホーム（暫定リカラー。モック組み込みは home-mock 受領後） ---- */
-  #scrHome h1 { font-size: 32px; margin: 36px 0 8px; color: var(--ink); letter-spacing: 3px; font-weight: 600; }
-  #scrHome .sub { font-size: 13px; color: var(--ghost); margin-bottom: 30px; }
-  .bigBtn {
-    display: block; width: 100%; max-width: 420px;
-    font-size: 22px; padding: 20px; margin: 9px 0;
-    border: none; border-radius: var(--radius-lg);
-    background: var(--ink); color: #fff;
-    box-shadow: var(--shadow-card);
+  /* ---- ホーム（home-mock.html 準拠） ---- */
+  #scrHome { max-width: 420px; padding: 0; }
+  #scrHome.on { display: block; }
+  .hTop { padding: 22px 24px 6px; display: flex; align-items: baseline; justify-content: space-between; }
+  .wordmark { font-size: 15px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .wordmark .dot { color: var(--grow); }
+  .hDate { font-size: 12px; color: var(--ghost); letter-spacing: 0.04em; font-family: var(--font-num); }
+  .wallLabel {
+    padding: 14px 24px 10px; font-size: 12.5px; color: var(--ink-soft);
+    letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px;
   }
-  .bigBtn.second {
-    background: #fff; color: var(--ink-soft);
-    border: 1px solid var(--paper-edge); font-size: 19px; padding: 16px;
+  .wallLabel .count { color: var(--grow); font-weight: 600; font-family: var(--font-num); }
+  .wall { padding: 2px 18px 8px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+  .wall .cell {
+    aspect-ratio: 1; border-radius: 9px; position: relative; padding: 3px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .bigBtn:active { opacity: 0.88; }
-  #homeProgress { font-size: 15px; color: var(--ink-soft); margin: 18px 0 4px; }
-  #homeBest { font-family: var(--font-num); }
-  #backupBox { margin-top: 40px; width: 100%; max-width: 420px; font-size: 12px; color: var(--ghost); }
+  .wall .cell svg { width: 100%; height: 100%; display: block; }
+  .wall .cell.done { background: #fff; border: 1px solid var(--paper-edge); box-shadow: 0 1px 0 rgba(27,42,74,0.04); }
+  .wall .cell.fresh { background: #fff; border: 1px solid var(--grow); }
+  .wall .cell.fresh::after {
+    content: ''; position: absolute; top: 5px; right: 5px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--grow);
+  }
+  .wall .cell.todo { background: transparent; border: 1px dashed var(--ghost-faint); }
+  .todayCard {
+    display: flex; align-items: center; justify-content: space-between;
+    width: calc(100% - 40px); margin: 16px 20px 8px;
+    background: var(--ink); border: none; border-radius: 16px;
+    padding: 20px 22px; color: #fff; text-align: left;
+    position: relative; overflow: hidden;
+  }
+  .todayCard::before {  /* 紙にインクがにじむ気配（新緑） */
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(120% 140% at 85% -20%, rgba(58,157,107,0.22), transparent 55%);
+    pointer-events: none;
+  }
+  .todayCard:active { opacity: 0.92; }
+  .todayCard .lead { position: relative; display: flex; flex-direction: column; }
+  .todayCard .k { font-size: 12px; letter-spacing: 0.1em; color: #9FB0CF; margin-bottom: 6px; }
+  .todayCard .t { font-size: 20px; font-weight: 600; letter-spacing: 0.02em; }
+  .todayCard .go {
+    position: relative; width: 46px; height: 46px; border-radius: 50%;
+    background: var(--grow); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .todayCard .go svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2.4; fill: none; }
+  .hProgress { margin: 6px 24px 2px; }
+  .hProgress .bar { height: 7px; border-radius: 4px; background: var(--ghost-faint); overflow: hidden; }
+  .hProgress .fill { height: 100%; width: 0%; background: var(--grow); border-radius: 4px; transition: width 300ms ease-out; }
+  .hProgress .meta {
+    display: flex; justify-content: space-between;
+    margin-top: 7px; font-size: 11.5px; color: var(--ghost); letter-spacing: 0.03em;
+  }
+  .hProgress .meta b { color: var(--ink-soft); font-weight: 600; }
+  #homeBest { font-size: 11px; color: var(--ghost); font-family: var(--font-num); margin-top: 4px; text-align: right; }
+  .hRow { margin: 16px 20px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile {
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: 14px;
+    padding: 16px 16px 15px; text-align: left;
+    display: flex; flex-direction: column; gap: 10px;
+    min-height: 104px; justify-content: space-between;
+  }
+  .tile:active { background: var(--paper-edge); }
+  .tile .ic { width: 30px; height: 30px; color: var(--ink-soft); }
+  .tile .ic svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.7; fill: none; }
+  .tile .nm { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .tile .sub { display: block; font-size: 11.5px; color: var(--ghost); margin-top: 2px; }
+  .tile.exam .badge {
+    align-self: flex-start; font-size: 10.5px; letter-spacing: 0.06em;
+    background: var(--grow-bg); color: var(--grow);
+    padding: 2px 8px; border-radius: 20px; font-weight: 600;
+  }
+  .footnote { text-align: center; font-size: 10.5px; color: var(--ghost-faint); padding: 0 0 14px; letter-spacing: 0.04em; }
+  #backupBox { margin: 0 20px 8px; width: auto; font-size: 12px; color: var(--ghost); }
   #backupBox summary { cursor: pointer; }
   #backupBox .inner { padding: 10px 4px; line-height: 1.7; color: var(--ink-soft); }
   #backupBox button { font-size: 12px; padding: 6px 12px; border: 1px solid var(--ghost); border-radius: 8px; background: #fff; color: var(--ink-soft); margin-right: 8px; }
-  .ver { margin-top: 18px; font-size: 11px; color: var(--ghost); }
+  .ver { margin: 0 0 16px; text-align: center; font-size: 11px; color: var(--ghost); }
 
   /* ---- れんしゅう ---- */
   #pTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
@@ -227,15 +283,52 @@
 </head>
 <body>
 
-  <!-- ホーム -->
+  <!-- ホーム（home-mock.html 準拠。壁が主役） -->
   <div id="scrHome" class="screen on">
-    <h1>じぶんじてん</h1>
-    <div class="sub">かいた じが たまっていく かんじの れんしゅう</div>
-    <button id="btnToday" class="bigBtn"></button>
-    <button id="btnExam" class="bigBtn second"></button>
-    <button id="btnDict" class="bigBtn second"></button>
-    <div id="homeProgress"></div>
-    <div id="homeBest" style="font-size:13px;color:#888;margin-top:4px;"></div>
+    <div class="hTop">
+      <div class="wordmark">じぶん字典<span class="dot">.</span></div>
+      <div class="hDate" id="hDate"></div>
+    </div>
+    <div class="wallLabel">
+      <span id="wallLabelText"></span>
+      <span class="count" id="wallCount"></span>
+    </div>
+    <div class="wall" id="homeWall"></div>
+    <button id="btnToday" class="todayCard" type="button">
+      <span class="lead">
+        <span class="k" id="todayK"></span>
+        <span class="t" id="todayT"></span>
+      </span>
+      <span class="go" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+      </span>
+    </button>
+    <div class="hProgress">
+      <div class="bar"><div class="fill" id="hFill"></div></div>
+      <div class="meta">
+        <span id="hLevel"></span>
+        <span id="homeProgress"></span>
+      </div>
+      <div id="homeBest"></div>
+    </div>
+    <div class="hRow">
+      <button id="btnExam" class="tile exam" type="button">
+        <span class="badge" id="examBadge"></span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span>
+        <span>
+          <span class="nm" id="examNm"></span>
+          <span class="sub" id="examSub"></span>
+        </span>
+      </button>
+      <button id="btnDict" class="tile" type="button">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.4"/></svg></span>
+        <span>
+          <span class="nm" id="dictNm"></span>
+          <span class="sub" id="dictSub"></span>
+        </span>
+      </button>
+    </div>
+    <div class="footnote" id="homeSign"></div>
     <details id="backupBox">
       <summary></summary>
       <div class="inner">
@@ -247,7 +340,7 @@
         </div>
       </div>
     </details>
-    <div class="ver">v0.7</div>
+    <div class="ver">v0.8</div>
   </div>
 
   <!-- テスト -->
@@ -329,11 +422,12 @@
   </div>
 
 <script type="module">
-import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js';
-import { openStore } from './js/store.js';
-import { TEXTS, formatReadings } from './js/texts.js';
-import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js';
-import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js';
+// ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.8';
+import { openStore } from './js/store.js?v=0.8';
+import { TEXTS, formatReadings } from './js/texts.js?v=0.8';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.8';
+import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.8';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -361,9 +455,17 @@ function show(id) {
 
 // ---- 静的文言の流し込み ----
 function applyTexts() {
-  $('btnToday').textContent = TEXTS.home.today;
-  $('btnExam').textContent = TEXTS.exam.entry;
-  $('btnDict').textContent = TEXTS.home.dict;
+  $('todayK').textContent = TEXTS.home.todayK;
+  $('todayT').textContent = TEXTS.home.todayT;
+  $('wallLabelText').textContent = TEXTS.home.wallLabel;
+  $('hLevel').textContent = TEXTS.home.level;
+  $('examBadge').textContent = '10きゅう';
+  $('examNm').textContent = TEXTS.home.examTile;
+  $('examSub').textContent = TEXTS.home.examTileSub;
+  $('dictNm').textContent = TEXTS.home.dict;
+  $('dictSub').textContent = TEXTS.home.dictTileSub;
+  const now = new Date();
+  $('hDate').textContent = TEXTS.home.date(now.getMonth() + 1, now.getDate());
   $('eQuit').textContent = TEXTS.exam.quit;
   $('eRedo').textContent = TEXTS.exam.redo;
   $('eSubmit').textContent = TEXTS.exam.submit;
@@ -386,11 +488,33 @@ function applyTexts() {
 async function refreshHome() {
   entries = await store.getAll();
   const n = Object.keys(entries).length;
-  $('homeProgress').textContent = n ? TEXTS.home.progress(n) : TEXTS.home.progressZero;
+  // 進み帯・カウント
+  $('hFill').style.width = (n / 80 * 100) + '%';
+  $('homeProgress').innerHTML = `<b>${n}</b> こ おぼえた`;
+  $('wallCount').textContent = TEXTS.home.wallCount(n);
+  $('homeSign').textContent = n ? TEXTS.dict.signature(n) : '';
+  // 壁: 習得済み（本人の定着筆跡）を先に、続きの未習得を ghost 破線で少し
+  const wall = $('homeWall');
+  wall.innerHTML = '';
+  const doneRecs = kanjiList.filter(k => entries[k.char]);
+  for (const rec of doneRecs) {
+    const e = entries[rec.char];
+    const d = document.createElement('div');
+    d.className = 'cell ' + (sameDay(e.latest.at, Date.now()) ? 'fresh' : 'done');
+    d.appendChild(settledSvg(e.best.strokes));
+    wall.appendChild(d);
+  }
+  const todoRecs = kanjiList.filter(k => !entries[k.char]).slice(0, Math.max(6, 12 - (doneRecs.length % 6)));
+  for (const rec of todoRecs) {
+    const d = document.createElement('div');
+    d.className = 'cell todo';
+    d.appendChild(makeSvg(rec.strokes.map(s => s.path), TK.ghost, 4));
+    wall.appendChild(d);
+  }
   const [progress, best] = await Promise.all([
     store.metaGet('examProgress'), store.metaGet('examBest'),
   ]);
-  $('btnExam').textContent = progress ? TEXTS.exam.entryResume : TEXTS.exam.entry;
+  $('examSub').textContent = progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub;
   $('homeBest').textContent = best ? TEXTS.exam.best(best.score) : '';
 }
 

@@ -13,6 +13,18 @@ export const TEXTS = {
     dict: 'じぶんじてん',
     progress: (n) => `おぼえた じ　${n}こ ／ 80こ`,
     progressZero: 'これから 80この じを おぼえるよ',
+    // ホーム（home-mock 準拠）
+    todayK: 'きょうの ぶん',
+    todayT: '5もじ を かこう',
+    wallLabel: 'これまで かいた じ',
+    wallCount: (n) => `${n}／80`,
+    level: '10きゅうレベル',
+    metaCount: (n) => `こ おぼえた`,
+    examTile: 'ためす',
+    examTileSub: 'じつりょくを みる',
+    examTileResume: 'つづきから',
+    dictTileSub: 'かいた じを みる',
+    date: (m, d) => `${m}がつ${d}にち`,
   },
 
   practice: {
