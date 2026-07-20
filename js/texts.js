@@ -37,6 +37,7 @@ export const TEXTS = {
   dict: {
     title: 'じぶんじてん',
     count: (n) => `あつまった じ　${n}こ ／ 80こ`,
+    signature: (n) => `じぶんの てで かいた ${n}もじ`,
     back: 'もどる',
     notYet: 'まだ れんしゅう していないよ',
     first: 'はじめて',
@@ -50,8 +51,8 @@ export const TEXTS = {
     entry: '10きゅうレベル テスト',
     entryResume: 'テストの つづきから',
     counter: (i, n) => `${i}もんめ ／ ${n}もん`,
-    yomiQ: 'あかい じの よみかたは どれ？',
-    kakiQ: 'あかい ところの かんじを マスに かこう',
+    yomiQ: 'せんの ついた じの よみかたは どれ？',
+    kakiQ: 'てんせんの ところの かんじを マスに かこう',
     kakusuuQ: 'この じは なんかくで かく？',
     kakusuuUnit: (n) => `${n}かく`,
     submit: 'できた',

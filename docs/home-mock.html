@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>じぶん字典 — ホーム モック</title>
+<style>
+  :root{
+    --paper:#F7F8FA;        /* 冷たい白・静かな机 */
+    --paper-edge:#EDEFF3;   /* かすかな段差 */
+    --ink:#1B2A4A;          /* 濃紺のインク（主役の字） */
+    --ink-soft:#3A4B6E;     /* インクの弱め */
+    --ghost:#C7CCD4;        /* 手本・未習得の脇役グレー */
+    --ghost-faint:#DDE1E7;
+    --grow:#3A9D6B;         /* 新緑の一点（達成・育つ） */
+    --grow-bg:#E8F3ED;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;justify-content:center;
+    overflow-x:hidden;
+  }
+  .device{
+    width:100%;max-width:420px;min-height:100vh;
+    background:var(--paper);
+    display:flex;flex-direction:column;
+    position:relative;
+  }
+
+  /* ── ヘッダー：小さく、静かに ── */
+  .top{
+    padding:22px 24px 6px;
+    display:flex;align-items:baseline;justify-content:space-between;
+  }
+  .wordmark{
+    font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--ink-soft);
+  }
+  .wordmark .dot{color:var(--grow);}
+  .date{font-size:12px;color:var(--ghost);letter-spacing:.04em;}
+
+  /* ── 主役：これまで書いた字が息づく壁 ── */
+  .wall-label{
+    padding:14px 24px 10px;
+    font-size:12.5px;color:var(--ink-soft);letter-spacing:.08em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .wall-label .count{color:var(--grow);font-weight:600;}
+  .wall{
+    padding:2px 18px 8px;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:7px;
+  }
+  .cell{
+    aspect-ratio:1;
+    border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    font-family:"Yu Mincho","Hiragino Mincho ProN",serif;
+    font-size:22px;line-height:1;
+  }
+  /* 習得済み＝自分の字（濃紺・作品として） */
+  .cell.done{
+    background:#fff;
+    border:1px solid var(--paper-edge);
+    color:var(--ink);
+    box-shadow:0 1px 0 rgba(27,42,74,.04);
+  }
+  /* 今日書いたばかり＝ふちに新緑 */
+  .cell.fresh{
+    background:#fff;
+    border:1px solid var(--grow);
+    color:var(--ink);
+  }
+  .cell.fresh::after{
+    content:"";position:absolute;top:5px;right:5px;
+    width:5px;height:5px;border-radius:50%;background:var(--grow);
+  }
+  /* 未習得＝淡い手本がうっすら */
+  .cell.todo{
+    background:transparent;
+    border:1px dashed var(--ghost-faint);
+    color:var(--ghost);
+    font-size:20px;
+  }
+
+  /* ── 今日やること：壁の中に静かに置かれた入口 ── */
+  .today{
+    margin:16px 20px 8px;
+    background:var(--ink);
+    border-radius:16px;
+    padding:20px 22px;
+    color:#fff;
+    display:flex;align-items:center;justify-content:space-between;
+    position:relative;overflow:hidden;
+  }
+  .today::before{ /* 紙にインクがにじむ気配 */
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 140% at 85% -20%,rgba(58,157,107,.22),transparent 55%);
+    pointer-events:none;
+  }
+  .today .lead{position:relative;}
+  .today .k{font-size:12px;letter-spacing:.1em;color:#9FB0CF;margin-bottom:6px;}
+  .today .t{font-size:20px;font-weight:600;letter-spacing:.02em;}
+  .today .t .n{color:#8FE0B8;}
+  .today .go{
+    position:relative;
+    width:46px;height:46px;border-radius:50%;
+    background:var(--grow);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .today .go svg{width:20px;height:20px;stroke:#fff;stroke-width:2.4;fill:none;}
+
+  /* ── 進み具合の帯 ── */
+  .progress{
+    margin:6px 24px 2px;
+  }
+  .progress .bar{
+    height:7px;border-radius:4px;background:var(--ghost-faint);overflow:hidden;
+  }
+  .progress .fill{
+    height:100%;width:34%;background:var(--grow);border-radius:4px;
+  }
+  .progress .meta{
+    display:flex;justify-content:space-between;
+    margin-top:7px;font-size:11.5px;color:var(--ghost);letter-spacing:.03em;
+  }
+  .progress .meta b{color:var(--ink-soft);font-weight:600;}
+
+  /* ── 下部の二枚：ためす／じぶんじてん ── */
+  .row{
+    margin:16px 20px 24px;
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  }
+  .tile{
+    background:#fff;border:1px solid var(--paper-edge);border-radius:14px;
+    padding:16px 16px 15px;
+    display:flex;flex-direction:column;gap:10px;
+    min-height:104px;justify-content:space-between;
+  }
+  .tile .ic{
+    width:30px;height:30px;color:var(--ink-soft);
+  }
+  .tile .ic svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.7;fill:none;}
+  .tile .nm{font-size:15px;font-weight:600;color:var(--ink);}
+  .tile .sub{font-size:11.5px;color:var(--ghost);margin-top:-4px;}
+  .tile.exam .badge{
+    align-self:flex-start;font-size:10.5px;letter-spacing:.06em;
+    background:var(--grow-bg);color:var(--grow);
+    padding:2px 8px;border-radius:20px;font-weight:600;
+  }
+
+  .footnote{
+    text-align:center;font-size:10.5px;color:var(--ghost-faint);
+    padding:0 0 18px;letter-spacing:.04em;
+  }
+</style>
+</head>
+<body>
+  <div class="device">
+
+    <div class="top">
+      <div class="wordmark">じぶん字典<span class="dot">.</span></div>
+      <div class="date">7がつ19にち</div>
+    </div>
+
+    <div class="wall-label">
+      <span>これまで かいた じ</span>
+      <span class="count">27／80</span>
+    </div>
+    <div class="wall" id="wall"></div>
+
+    <div class="today">
+      <div class="lead">
+        <div class="k">きょうの ぶん</div>
+        <div class="t">5もじ を かこう<span class="n"></span></div>
+      </div>
+      <div class="go" aria-label="はじめる">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="bar"><div class="fill"></div></div>
+      <div class="meta">
+        <span>10きゅうレベル</span>
+        <span><b>27</b> こ おぼえた</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tile exam">
+        <span class="badge">10きゅう</span>
+        <div class="ic">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+        </div>
+        <div>
+          <div class="nm">ためす</div>
+          <div class="sub">じつりょくを みる</div>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="ic">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.4"/></svg>
+        </div>
+        <div>
+          <div class="nm">じぶんじてん</div>
+          <div class="sub">かいた じを みる</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">じぶんの てで かいた 27もじ</div>
+
+  </div>
+
+<script>
+  // 壁を組み立てる：習得済み(自分の字)＋今日書いた＋未習得
+  var done = ["一","二","三","四","五","六","七","八","九","十",
+              "山","川","forest→森","水","火","木","金","土","日","月",
+              "right→右","left→左","name→名","circle→円","white→白","field→田","stone→石"];
+  var doneChars = ["一","二","三","四","五","六","七","八","九","十",
+                   "山","川","森","水","火","木","金","土","日","月",
+                   "右","左","名","円","白","田","石"];
+  var fresh = ["石"]; // 今日おぼえた最後の字
+  var todo = ["大","中","小","上","下","目","口","耳","手","足","力","気"];
+
+  var wall = document.getElementById("wall");
+  doneChars.forEach(function(c,i){
+    var d = document.createElement("div");
+    var isFresh = (i >= doneChars.length - 3); // 直近3字を今日ぶんとして緑
+    d.className = "cell " + (isFresh ? "fresh" : "done");
+    d.textContent = c;
+    wall.appendChild(d);
+  });
+  todo.forEach(function(c){
+    var d = document.createElement("div");
+    d.className = "cell todo";
+    d.textContent = c;
+    wall.appendChild(d);
+  });
+</script>
+</body>
+</html>

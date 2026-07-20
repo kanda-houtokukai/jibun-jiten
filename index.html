@@ -4,181 +4,225 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>じぶんじてん</title>
+<link rel="stylesheet" href="css/tokens.css">
 <style>
+  /* すべての色・形はトークン（css/tokens.css）を参照。ハードコード色を書かない */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     height: 100%;
-    font-family: -apple-system, "Hiragino Sans", sans-serif;
-    background: #fdfbf5;                 /* 背景明色 */
-    color: #3a3a3a;
+    font-family: var(--font-ui);
+    background: var(--paper);
+    color: var(--ink-soft);
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
     overscroll-behavior: none;
   }
-  :root {
-    --accent: #2f7cd6;                   /* アクセント1色 */
-    --good: #2e9e5b;                     /* 成功色 */
-  }
-  .screen { display: none; min-height: 100%; padding: 14px; max-width: 640px; margin: 0 auto; }
+  .screen { display: none; min-height: 100%; padding: var(--space); max-width: 640px; margin: 0 auto; }
   .screen.on { display: flex; flex-direction: column; align-items: center; }
   button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
-  /* ---- ホーム ---- */
-  #scrHome h1 { font-size: 34px; margin: 36px 0 8px; color: var(--accent); letter-spacing: 2px; }
-  #scrHome .sub { font-size: 14px; color: #888; margin-bottom: 30px; }
+  /* ---- ホーム（暫定リカラー。モック組み込みは home-mock 受領後） ---- */
+  #scrHome h1 { font-size: 32px; margin: 36px 0 8px; color: var(--ink); letter-spacing: 3px; font-weight: 600; }
+  #scrHome .sub { font-size: 13px; color: var(--ghost); margin-bottom: 30px; }
   .bigBtn {
     display: block; width: 100%; max-width: 420px;
-    font-size: 24px; padding: 22px; margin: 10px 0;
-    border: none; border-radius: 16px;
-    background: var(--accent); color: #fff;
+    font-size: 22px; padding: 20px; margin: 9px 0;
+    border: none; border-radius: var(--radius-lg);
+    background: var(--ink); color: #fff;
+    box-shadow: var(--shadow-card);
   }
-  .bigBtn.second { background: #fff; color: var(--accent); border: 2px solid var(--accent); }
-  .bigBtn:active { opacity: 0.85; }
-  #homeProgress { font-size: 16px; color: #666; margin: 18px 0 6px; }
-  #backupBox { margin-top: 40px; width: 100%; max-width: 420px; font-size: 12px; color: #888; }
+  .bigBtn.second {
+    background: #fff; color: var(--ink-soft);
+    border: 1px solid var(--paper-edge); font-size: 19px; padding: 16px;
+  }
+  .bigBtn:active { opacity: 0.88; }
+  #homeProgress { font-size: 15px; color: var(--ink-soft); margin: 18px 0 4px; }
+  #homeBest { font-family: var(--font-num); }
+  #backupBox { margin-top: 40px; width: 100%; max-width: 420px; font-size: 12px; color: var(--ghost); }
   #backupBox summary { cursor: pointer; }
-  #backupBox .inner { padding: 10px 4px; line-height: 1.7; }
-  #backupBox button { font-size: 12px; padding: 6px 12px; border: 1px solid #aaa; border-radius: 6px; background: #fff; margin-right: 8px; }
-  .ver { margin-top: 18px; font-size: 11px; color: #bbb; }
+  #backupBox .inner { padding: 10px 4px; line-height: 1.7; color: var(--ink-soft); }
+  #backupBox button { font-size: 12px; padding: 6px 12px; border: 1px solid var(--ghost); border-radius: 8px; background: #fff; color: var(--ink-soft); margin-right: 8px; }
+  .ver { margin-top: 18px; font-size: 11px; color: var(--ghost); }
 
   /* ---- れんしゅう ---- */
   #pTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
-  #pCounter { font-size: 14px; color: #888; }
-  #pQuit { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #888; }
+  #pCounter { font-size: 13px; color: var(--ghost); }
+  #pQuit { font-size: 13px; padding: 6px 14px; border: 1px solid var(--ghost); border-radius: 10px; background: #fff; color: var(--ink-soft); }
+  #pQuit:active { background: var(--paper-edge); }
   #pReadings { min-height: 44px; margin: 6px 0 2px; text-align: center; line-height: 1.5; }
-  #pReadings .kun { font-size: 20px; color: #3a3a3a; }
-  #pReadings .on { font-size: 14px; color: #888; }
-  #pMsg { min-height: 30px; font-size: 18px; font-weight: 600; margin: 4px 0; text-align: center; }
-  #pMsg.good { color: var(--good); }
-  #pMsg.accent { color: var(--accent); }
+  #pReadings .kun { font-size: 21px; color: var(--ink); font-weight: 600; }
+  #pReadings .on { font-size: 13px; color: var(--ghost); letter-spacing: 1px; }
+  #pMsg { min-height: 30px; font-size: 17px; font-weight: 600; margin: 4px 0; text-align: center; }
+  #pMsg.good { color: var(--grow); }
+  #pMsg.accent { color: var(--ink-soft); }
   #pCell {
     width: min(88vw, 440px, calc(100dvh - 320px));
     aspect-ratio: 1;
     background: #fff;
-    border: 3px solid #c9c2ae;
-    border-radius: 10px;
+    border: 1px solid var(--paper-edge);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-cell);
     touch-action: none;
     display: block;
   }
   #pDots { display: flex; gap: 8px; margin: 10px 0 4px; min-height: 14px; }
-  #pDots span { width: 12px; height: 12px; border-radius: 50%; background: #ddd; }
-  #pDots span.done { background: var(--good); }
+  #pDots span { width: 10px; height: 10px; border-radius: 50%; background: var(--ghost-faint); }
+  #pDots span.done { background: var(--grow); }
   #pBtns { margin-top: 8px; display: flex; gap: 12px; }
   #pAction {
-    font-size: 20px; padding: 14px 34px; border: none; border-radius: 14px;
-    background: var(--accent); color: #fff;
+    font-size: 19px; padding: 14px 36px; border: none; border-radius: var(--radius-lg);
+    background: var(--ink); color: #fff; box-shadow: var(--shadow-card);
   }
-  #pAction:active { opacity: 0.85; }
+  #pAction:active { opacity: 0.88; }
   #pAction[hidden] { display: none; }
 
-  /* ---- テスト ---- */
+  /* ---- テスト（測る場の静けさ） ---- */
   #eTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
-  #eCounter { font-size: 14px; color: #888; }
-  #eQuit { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #888; }
-  #ePrompt { font-size: 16px; font-weight: 600; color: var(--accent); margin: 10px 0 6px; text-align: center; }
-  #eSentence { font-size: 22px; line-height: 1.9; margin: 6px 0 10px; text-align: center; max-width: 480px; }
-  #eSentence .target { color: #c62828; font-weight: 600; }
+  #eCounter { font-size: 13px; color: var(--ghost); font-family: var(--font-num); }
+  #eQuit { font-size: 13px; padding: 6px 14px; border: 1px solid var(--ghost); border-radius: 10px; background: #fff; color: var(--ink-soft); }
+  #eQuit:active { background: var(--paper-edge); }
+  #ePrompt { font-size: 15px; font-weight: 600; color: var(--ink-soft); margin: 12px 0 6px; text-align: center; }
+  #eSentence { font-size: 22px; line-height: 1.9; margin: 6px 0 10px; text-align: center; max-width: 480px; color: var(--ink); }
+  #eSentence .target {
+    color: var(--ink); font-weight: 600;
+    border-bottom: 3px solid var(--grow); padding-bottom: 1px;
+  }
   #eSentence .kblank {
     display: inline-block; min-width: 1.7em; text-align: center;
-    border: 2px dashed #c62828; border-radius: 6px; color: #c62828;
-    font-size: 15px; padding: 2px 4px; margin: 0 2px; vertical-align: baseline;
+    border: 2px dashed var(--ink-soft); border-radius: 8px; color: var(--ink-soft);
+    font-size: 15px; padding: 2px 5px; margin: 0 2px; vertical-align: baseline; background: #fff;
   }
-  #eCharBox { width: min(50vw, 200px); aspect-ratio: 1; background: #fff; border: 2px solid #c9c2ae; border-radius: 10px; margin: 6px 0 10px; }
+  #eCharBox {
+    width: min(50vw, 200px); aspect-ratio: 1; background: #fff;
+    border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    box-shadow: var(--shadow-cell); margin: 6px 0 10px;
+  }
   #eCharBox svg { width: 100%; height: 100%; display: block; }
   #eChoices { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 400px; }
   #eChoices button {
-    font-size: 22px; padding: 16px; border: 2px solid var(--accent); border-radius: 14px;
-    background: #fff; color: #3a3a3a;
+    font-size: 22px; padding: 16px; border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    background: #fff; color: var(--ink); box-shadow: var(--shadow-cell);
   }
-  #eChoices button:active { background: #e8f0fb; }
+  #eChoices button:active { background: var(--paper-edge); }
   #eCell {
     width: min(80vw, 380px, calc(100dvh - 340px));
-    aspect-ratio: 1; background: #fff; border: 3px solid #c9c2ae;
-    border-radius: 10px; touch-action: none; display: none;
+    aspect-ratio: 1; background: #fff; border: 1px solid var(--paper-edge);
+    border-radius: var(--radius); box-shadow: var(--shadow-cell);
+    touch-action: none; display: none;
   }
   #eKakiBtns { display: none; gap: 12px; margin-top: 10px; }
-  #eKakiBtns button { font-size: 17px; padding: 12px 26px; border-radius: 12px; border: 1px solid #aaa; background: #fff; }
-  #eKakiBtns #eSubmit { background: var(--accent); color: #fff; border: none; }
+  #eKakiBtns button { font-size: 16px; padding: 12px 28px; border-radius: var(--radius); border: 1px solid var(--ghost); background: #fff; color: var(--ink-soft); }
+  #eKakiBtns #eSubmit { background: var(--ink); color: #fff; border: none; }
 
-  /* ---- けっか ---- */
-  #scrResult h2 { font-size: 22px; color: var(--accent); margin: 26px 0 10px; }
-  #rScore { font-size: 34px; font-weight: 700; margin: 6px 0; }
-  #rMsg { font-size: 19px; font-weight: 600; min-height: 28px; margin: 4px 0 2px; text-align: center; }
-  #rMsg.good { color: var(--good); }
-  #rMsg.accent { color: var(--accent); }
-  #rBest { font-size: 13px; color: #888; margin-bottom: 14px; }
-  #rReviewLabel { font-size: 14px; color: #666; margin-top: 8px; }
-  #rReviewNote { font-size: 12px; color: #999; margin-bottom: 8px; }
+  /* ---- けっか（点数は作品のように） ---- */
+  #scrResult h2 { font-size: 16px; color: var(--ghost); margin: 30px 0 6px; letter-spacing: 4px; font-weight: 600; }
+  #rScore { font-family: var(--font-num); font-size: 52px; font-weight: 600; color: var(--ink); margin: 2px 0 6px; }
+  #rMsg { font-size: 18px; font-weight: 600; min-height: 28px; margin: 4px 0 2px; text-align: center; }
+  #rMsg.good { color: var(--grow); }
+  #rMsg.accent { color: var(--ink-soft); }
+  #rBest { font-size: 13px; color: var(--ghost); font-family: var(--font-num); margin-bottom: 14px; }
+  #rReviewLabel { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
+  #rReviewNote { font-size: 12px; color: var(--ghost); margin-bottom: 8px; }
   #rReviewGrid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 420px; }
-  #rReviewGrid .rv { width: 52px; height: 52px; background: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 3px; }
   #rReviewGrid svg { width: 100%; height: 100%; }
 
   /* ---- ふりかえり（なんでかな？）---- */
-  #rReviewGrid .rv { display: flex; flex-direction: column; align-items: center; width: 64px; height: auto; padding: 3px 3px 4px; cursor: pointer; }
+  #rReviewGrid .rv {
+    display: flex; flex-direction: column; align-items: center;
+    width: 64px; padding: 3px 3px 4px; cursor: pointer;
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    box-shadow: var(--shadow-cell);
+  }
   #rReviewGrid .rv svg { width: 52px; height: 52px; }
-  #rReviewGrid .rv .why { font-size: 10px; color: var(--accent); margin-top: 2px; }
+  #rReviewGrid .rv .why { font-size: 10px; color: var(--ink-soft); margin-top: 2px; }
   #wDetail {
-    display: none; position: fixed; inset: 0; background: rgba(60,50,30,0.45);
+    display: none; position: fixed; inset: 0; background: rgba(27, 42, 74, 0.35);
     align-items: center; justify-content: center; padding: 14px; z-index: 6;
   }
   #wDetail.on { display: flex; }
   #wPanel {
-    background: #fff; border-radius: 14px; padding: 16px;
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card); padding: 18px;
     width: min(94vw, 430px); max-height: 92vh; overflow-y: auto;
     display: flex; flex-direction: column; align-items: center;
   }
-  #wTitle { font-size: 17px; font-weight: 600; color: var(--accent); margin-bottom: 2px; min-height: 24px; }
-  #wTitle.good { color: var(--good); }
-  #wSub { font-size: 13px; color: #888; min-height: 20px; margin-bottom: 6px; }
+  #wTitle { font-size: 17px; font-weight: 600; color: var(--ink-soft); margin-bottom: 2px; min-height: 24px; }
+  #wTitle.good { color: var(--grow); }
+  #wSub { font-size: 13px; color: var(--ghost); min-height: 20px; margin-bottom: 6px; }
   #wCell {
-    width: min(80vw, 330px); aspect-ratio: 1; background: #fdfbf5;
-    border: 2px solid #c9c2ae; border-radius: 10px; touch-action: none; display: block;
+    width: min(80vw, 330px); aspect-ratio: 1; background: var(--paper);
+    border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    touch-action: none; display: block;
   }
-  #wLegend { font-size: 11px; color: #999; margin-top: 6px; }
-  #wAnswer { font-size: 20px; margin: 14px 0; min-height: 28px; }
+  #wLegend { font-size: 11px; color: var(--ghost); margin-top: 6px; }
+  #wAnswer { font-size: 20px; color: var(--ink); margin: 14px 0; min-height: 28px; }
   #wBtns { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
-  #wBtns button { font-size: 15px; padding: 10px 18px; border-radius: 10px; border: 1px solid #aaa; background: #fff; }
-  #wBtns #wRewrite, #wBtns #wSubmit { border: none; background: var(--accent); color: #fff; }
+  #wBtns button { font-size: 15px; padding: 10px 20px; border-radius: var(--radius); border: 1px solid var(--ghost); background: #fff; color: var(--ink-soft); }
+  #wBtns #wRewrite, #wBtns #wSubmit { border: none; background: var(--ink); color: #fff; }
 
-  /* ---- じぶんじてん ---- */
-  #dTop { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  #dTop h2 { font-size: 20px; color: var(--accent); }
-  #dBack { font-size: 14px; padding: 8px 16px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
-  #dCount { width: 100%; font-size: 14px; color: #888; margin-bottom: 10px; }
+  /* ---- じぶんじてん（作品集。定着した字が一番美しく見える画面） ---- */
+  #dTop { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  #dTop h2 { font-size: 19px; color: var(--ink); letter-spacing: 2px; font-weight: 600; }
+  #dBack { font-size: 14px; padding: 8px 18px; border: 1px solid var(--ghost); border-radius: 10px; background: #fff; color: var(--ink-soft); }
+  #dBack:active { background: var(--paper-edge); }
+  #dCount { width: 100%; font-size: 13px; color: var(--ghost); font-family: var(--font-num); margin-bottom: 12px; }
   #dGrid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+    gap: 8px;
   }
   #dGrid .cellBtn {
-    aspect-ratio: 1; border: 1px solid #e0d9c8; border-radius: 8px; background: #fff; padding: 3px;
+    position: relative;
+    aspect-ratio: 1; padding: 4px;
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    box-shadow: var(--shadow-cell);
   }
-  #dGrid .cellBtn.got { border-color: var(--accent); }
+  #dGrid .cellBtn.got { border-color: var(--ghost-faint); }
+  #dGrid .cellBtn.today::after {
+    /* 今日ぶん: ふちに新緑の点 */
+    content: ''; position: absolute; right: 5px; bottom: 5px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--grow); box-shadow: 0 0 0 3px var(--grow-bg);
+  }
   #dGrid svg { width: 100%; height: 100%; display: block; }
-  /* 詳細 */
+  #dSign {
+    width: 100%; text-align: center; margin-top: 18px;
+    font-size: 13px; color: var(--ink-soft); letter-spacing: 1px;
+  }
+  #dSign::before { content: '― '; color: var(--ghost); }
+  #dSign::after { content: ' ―'; color: var(--ghost); }
+  /* 詳細（額装） */
   #dDetail {
-    display: none; position: fixed; inset: 0; background: rgba(60,50,30,0.45);
+    display: none; position: fixed; inset: 0; background: rgba(27, 42, 74, 0.35);
     align-items: center; justify-content: center; padding: 14px; z-index: 5;
   }
   #dDetail.on { display: flex; }
   #dPanel {
-    background: #fff; border-radius: 14px; padding: 16px;
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card); padding: 18px;
     width: min(94vw, 560px); max-height: 92vh; overflow-y: auto;
   }
-  #dPanel h3 { font-size: 22px; margin-bottom: 10px; color: #3a3a3a; }
-  #dThree { display: flex; gap: 10px; flex-wrap: wrap; }
+  #dPanel h3 { font-size: 21px; margin-bottom: 12px; color: var(--ink); }
+  #dPanel h3 small { font-family: var(--font-num); font-size: 13px; color: var(--ghost); font-weight: 400; }
+  #dThree { display: flex; gap: 12px; flex-wrap: wrap; }
   #dThree .slot { flex: 1 1 140px; text-align: center; }
-  #dThree .slot .cap { font-size: 14px; color: var(--accent); font-weight: 600; }
-  #dThree .slot .date { font-size: 11px; color: #aaa; margin-bottom: 4px; }
-  #dThree svg { width: 100%; aspect-ratio: 1; background: #fdfbf5; border: 1px solid #eee; border-radius: 8px; }
-  #dThree .slot button {
-    margin-top: 6px; font-size: 13px; padding: 6px 16px;
-    border: 1px solid var(--accent); color: var(--accent); background: #fff; border-radius: 8px;
+  #dThree .slot .cap { font-size: 13px; color: var(--ink-soft); font-weight: 600; letter-spacing: 1px; }
+  #dThree .slot .date { font-size: 11px; color: var(--ghost); font-family: var(--font-num); margin-bottom: 5px; }
+  #dThree svg {
+    width: 100%; aspect-ratio: 1;
+    background: var(--paper);
+    border: 1px solid var(--paper-edge); border-radius: var(--radius);
+    box-shadow: inset 0 1px 2px rgba(27, 42, 74, 0.04);   /* 額装のわずかな奥行き */
   }
-  #dNotYet { font-size: 15px; color: #888; padding: 10px 0 4px; }
-  #dClose { margin-top: 14px; width: 100%; font-size: 16px; padding: 12px; border: none; border-radius: 10px; background: #eee; }
+  #dThree .slot button {
+    margin-top: 7px; font-size: 13px; padding: 6px 18px;
+    border: 1px solid var(--ghost); color: var(--ink-soft); background: #fff; border-radius: 10px;
+  }
+  #dThree .slot button:active { background: var(--paper-edge); }
+  #dNotYet { font-size: 14px; color: var(--ghost); padding: 10px 0 4px; }
+  #dClose { margin-top: 16px; width: 100%; font-size: 16px; padding: 12px; border: none; border-radius: var(--radius); background: var(--paper-edge); color: var(--ink-soft); }
 </style>
 </head>
 <body>
@@ -273,6 +317,7 @@
     </div>
     <div id="dCount"></div>
     <div id="dGrid"></div>
+    <div id="dSign"></div>
     <div id="dDetail">
       <div id="dPanel">
         <h3></h3>
@@ -293,6 +338,13 @@ import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js';
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const $ = id => document.getElementById(id);
+
+// canvas 描画用のデザイントークン（css/tokens.css と同値。正本はデザイン言語）
+const TK = {
+  ink: '#1B2A4A', inkSoft: '#3A4B6E',
+  ghost: '#C7CCD4', ghostFaint: '#DDE1E7',
+  paperEdge: '#EDEFF3', grow: '#3A9D6B',
+};
 
 let kanjiList = [];
 let byCharApp = {};      // {char: kanjiレコード}
@@ -394,7 +446,7 @@ function setSpace() {
 
 function drawCross() {
   ctx.save();
-  ctx.strokeStyle = '#efece2';
+  ctx.strokeStyle = TK.paperEdge;
   ctx.lineWidth = 0.6;
   ctx.setLineDash([2.4, 1.8]);
   ctx.beginPath();
@@ -414,7 +466,7 @@ function redrawCell() {
   ctx.clearRect(0, 0, 109, 109);
   drawCross();
   if (guideVisible()) {
-    ctx.strokeStyle = P.phase === 'watch' ? '#e8e4d8' : '#d8d2c0'; // 薄いガイド
+    ctx.strokeStyle = P.phase === 'watch' ? TK.ghostFaint : TK.ghost; // 手本ガイドは脇役
     ctx.lineWidth = 3.6;
     for (const p2d of P.tmplPaths) ctx.stroke(p2d);
   }
@@ -592,7 +644,7 @@ function onStrokeEnd(points) {
   } else {
     setMsg(TEXTS.practice.close(i + 1), 'accent');
   }
-  animateStroke(i, '#2f7cd6', 18, () => { P.timers.push(setTimeout(redrawCell, 250)); });
+  animateStroke(i, TK.inkSoft, 18, () => { P.timers.push(setTimeout(redrawCell, 250)); });
 }
 
 // ---- 手書き入力（Phase 0 方式） ----
@@ -709,14 +761,22 @@ function makeSvg(paths, color, width) {
   return svg;
 }
 
+function sameDay(a, b) {
+  const da = new Date(a), db = new Date(b);
+  return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+}
+
 function renderDict() {
-  $('dCount').textContent = TEXTS.dict.count(Object.keys(entries).length);
+  const n = Object.keys(entries).length;
+  $('dCount').textContent = TEXTS.dict.count(n);
+  $('dSign').textContent = n ? TEXTS.dict.signature(n) : '';
   const grid = $('dGrid');
   grid.innerHTML = '';
   for (const rec of kanjiList) {
     const e = entries[rec.char];
+    const today = e && sameDay(e.latest.at, Date.now());   // 今日ぶん=ふちに新緑の点
     const btn = document.createElement('button');
-    btn.className = 'cellBtn' + (e ? ' got' : '');
+    btn.className = 'cellBtn' + (e ? ' got' : '') + (today ? ' today' : '');
     const svg = e
       ? settledSvg(e.best.strokes)                              // 定着後の完成形と同一の見た目
       : makeSvg(rec.strokes.map(s => s.path), '#C7CCD4', 4);   // 未習得=ghost の模範(KanjiVG)
@@ -737,7 +797,7 @@ function fmtDate(at) {
 function openDetail(rec) {
   clearDetailTimers();
   const e = entries[rec.char];
-  document.querySelector('#dPanel h3').textContent = rec.char + '（' + rec.strokeCount + 'かく）';
+  document.querySelector('#dPanel h3').innerHTML = rec.char + ' <small>' + rec.strokeCount + 'かく</small>';
   const three = $('dThree');
   three.innerHTML = '';
   $('dNotYet').hidden = !!e;
@@ -988,7 +1048,7 @@ function redrawExamCell() {
   eSpace();
   ectx.clearRect(0, 0, 109, 109);
   ectx.save();
-  ectx.strokeStyle = '#efece2';
+  ectx.strokeStyle = TK.paperEdge;
   ectx.lineWidth = 0.6;
   ectx.setLineDash([2.4, 1.8]);
   ectx.beginPath();
@@ -996,7 +1056,7 @@ function redrawExamCell() {
   ectx.moveTo(0, 54.5); ectx.lineTo(109, 54.5);
   ectx.stroke();
   ectx.restore();
-  ectx.strokeStyle = '#1a1a1a';
+  ectx.strokeStyle = wetColor(SETTLE);   // 書いている最中の線は常に生乾き
   ectx.lineWidth = 2.8;
   for (const s of E.strokes) drawExamPoly(s);
   if (E.current) drawExamPoly(E.current);
@@ -1018,7 +1078,7 @@ eCanvas.addEventListener('pointerdown', (e) => {
   eRect = eCanvas.getBoundingClientRect();
   E.current = [{ x: (e.clientX - eRect.left) / eCss, y: (e.clientY - eRect.top) / eCss }];
   eSpace();
-  ectx.strokeStyle = '#1a1a1a';
+  ectx.strokeStyle = wetColor(SETTLE);
   ectx.lineWidth = 2.8;
   drawExamPoly(E.current);
   e.preventDefault();
@@ -1029,7 +1089,7 @@ eCanvas.addEventListener('pointermove', (e) => {
   const prev = E.current[E.current.length - 1];
   E.current.push(p);
   eSpace();
-  ectx.strokeStyle = '#1a1a1a';
+  ectx.strokeStyle = wetColor(SETTLE);
   ectx.lineWidth = 2.8;
   ectx.beginPath();
   ectx.moveTo(prev.x * 109, prev.y * 109);
@@ -1106,7 +1166,7 @@ function wPoly(points, color, width) {
 
 function wCross() {
   wctx.save();
-  wctx.strokeStyle = '#efece2';
+  wctx.strokeStyle = TK.paperEdge;
   wctx.lineWidth = 0.6;
   wctx.setLineDash([2.4, 1.8]);
   wctx.beginPath();
@@ -1116,20 +1176,23 @@ function wCross() {
   wctx.restore();
 }
 
-// 重ね表示: 手本（基準色・問題画は強調）＋ 自分の筆跡（別色・問題画は赤）
+// 重ね表示: 手本=あお（ink-soft、問題画は濃く太く）／自分=くろ（ink、問題画以外は薄く）
+// 強調は色を増やさず「濃さと太さ」で行う（トークン8色の維持）
 function wDrawOverlay(matchResult) {
   wSpace();
   wctx.clearRect(0, 0, 109, 109);
   wCross();
   const failing = matchResult ? matchResult.failing : [];
   W.rec.strokes.forEach((s, i) => {
-    wctx.strokeStyle = failing.includes(i) ? '#2f7cd6' : '#b9c8e0';
-    wctx.lineWidth = failing.includes(i) ? 4.4 : 3.6;
+    wctx.strokeStyle = failing.includes(i) ? TK.inkSoft : TK.ghostFaint;
+    wctx.lineWidth = failing.includes(i) ? 4.6 : 3.6;
     wctx.stroke(new Path2D(s.path));
   });
   W.strokes.forEach((s, i) => {
     const bad = matchResult && (failing.includes(i) || i >= W.rec.strokeCount);
-    wPoly(s, bad ? '#c62828' : '#1a1a1a', 2.8);
+    wctx.globalAlpha = bad || !matchResult ? 1 : 0.35;
+    wPoly(s, TK.ink, bad ? 3.2 : 2.8);
+    wctx.globalAlpha = 1;
   });
 }
 
@@ -1144,7 +1207,7 @@ function wAnimate(indices, base) {
     const step = () => {
       wDrawOverlay(W.lastResult);
       wSpace();
-      wPoly(pts.slice(0, k).map(p => ({ x: p.x / 109, y: p.y / 109 })), '#2f7cd6', 4.6);
+      wPoly(pts.slice(0, k).map(p => ({ x: p.x / 109, y: p.y / 109 })), TK.inkSoft, 4.8);
       if (k < pts.length) {
         k += 2;
         W.timers.push(setTimeout(step, 24));
@@ -1226,7 +1289,7 @@ function openReview(char, info) {
     wctx.clearRect(0, 0, 109, 109);
     wCross();
     for (const s of W.rec.strokes) {
-      wctx.strokeStyle = '#1a1a1a';
+      wctx.strokeStyle = TK.ink;
       wctx.lineWidth = 3.6;
       wctx.stroke(new Path2D(s.path));
     }
@@ -1271,11 +1334,11 @@ $('wSubmit').addEventListener('click', () => {
     $('wTitle').className = 'good';
     $('wSub').textContent = '';
     wSetButtons('done');
-    // 書けた字をそのまま見せる（強調なし）
+    // 書けた字をそのまま見せる（強調なし・ink で静かに）
     wSpace();
     wctx.clearRect(0, 0, 109, 109);
     wCross();
-    for (const s of W.writeStrokes) wPoly(s, '#1a1a1a', 2.8);
+    for (const s of W.writeStrokes) wPoly(s, TK.ink, 2.8);
   } else {
     // 中立にもう一度重ねて見せる（新しい筆跡で比較し直す）
     W.strokes = W.writeStrokes;
@@ -1299,7 +1362,7 @@ wCanvas.addEventListener('pointerdown', (e) => {
   wRect = wCanvas.getBoundingClientRect();
   W.current = [{ x: (e.clientX - wRect.left) / wCss, y: (e.clientY - wRect.top) / wCss }];
   wSpace();
-  wPoly(W.current, '#1a1a1a', 2.8);
+  wPoly(W.current, wetColor(SETTLE), 2.8);   // 書き直し中も生乾き
   e.preventDefault();
 });
 wCanvas.addEventListener('pointermove', (e) => {
@@ -1308,7 +1371,7 @@ wCanvas.addEventListener('pointermove', (e) => {
   const prev = W.current[W.current.length - 1];
   W.current.push(p);
   wSpace();
-  wctx.strokeStyle = '#1a1a1a';
+  wctx.strokeStyle = wetColor(SETTLE);
   wctx.lineWidth = 2.8;
   wctx.beginPath();
   wctx.moveTo(prev.x * 109, prev.y * 109);

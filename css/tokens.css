@@ -1,0 +1,56 @@
+/* tokens.css — デザイン言語のトークン一元化（Phase D2）
+   正本: docs/jibun-jiten-デザイン言語.md（8色・書体・原則）
+   全画面はこのトークンだけで組む。個別画面でハードコード色を書かない。 */
+
+:root {
+  /* 8色（増やさない） */
+  --paper: #F7F8FA;        /* 背景。かすかに青い冷たい白＝静かな机 */
+  --paper-edge: #EDEFF3;   /* カードのふち・かすかな段差 */
+  --ink: #1B2A4A;          /* 主役の字（子どもの筆跡）。万年筆の青黒 */
+  --ink-soft: #3A4B6E;     /* インクの弱め（ラベル等） */
+  --ghost: #C7CCD4;        /* 手本(KanjiVG)・未習得の脇役グレー */
+  --ghost-faint: #DDE1E7;  /* さらに淡い */
+  --grow: #3A9D6B;         /* 達成・育つの新緑の一点 */
+  --grow-bg: #E8F3ED;      /* 新緑の淡い地 */
+
+  /* 書体（2ウェイトまで） */
+  --font-ui: -apple-system, "Hiragino Sans", sans-serif;
+  --font-num: "Hiragino Mincho ProN", "Yu Mincho", serif; /* 点数・画数の数字は性格のある明朝 */
+
+  /* 形・影・余白 */
+  --radius: 12px;
+  --radius-lg: 18px;
+  --shadow-card: 0 1px 2px rgba(27, 42, 74, 0.05), 0 6px 18px rgba(27, 42, 74, 0.05);
+  --shadow-cell: 0 1px 3px rgba(27, 42, 74, 0.06);
+  --space: 14px;
+}
+
+/* 共有コンポーネント（全画面同じ手触りにする最小セット） */
+.card {
+  background: #fff;
+  border: 1px solid var(--paper-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.btn-ink {          /* 濃紺の塊は画面に1つだけ（主アクション） */
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn-ink:active { opacity: 0.88; }
+
+.btn-quiet {        /* それ以外は静かなボタン */
+  background: #fff;
+  color: var(--ink-soft);
+  border: 1px solid var(--ghost);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn-quiet:active { background: var(--paper-edge); }
