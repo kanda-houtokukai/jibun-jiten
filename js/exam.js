@@ -30,6 +30,16 @@ export function readingStem(reading) {
   return displayReading(reading.split('.')[0]);
 }
 
+// よみ問題の選択肢表示（Phase 3e・方向A）:
+// 正解・誤答のすべての肢をこの1関数で整形する（語幹のみ・送り仮名なし）。
+// 送り仮名は文中にひらがなで見えているため、問うのは字の部分の読みだけ。
+// かき問題の空欄ヒント（readingStem）と同じ規則＝アプリ内で一貫。
+// ⚠️正解との衝突除外・モーラ数の近さ判定も、必ずこの整形後の文字列で行うこと
+//   （「片方だけ送り仮名付き」という不揃いを構造的に起こさないための集約）。
+export function readingForChoice(reading) {
+  return readingStem(reading);
+}
+
 // 送り仮名部分。「う.まれる」→「まれる」（ドットなしなら空）
 export function readingOkurigana(reading) {
   const i = reading.indexOf('.');
@@ -77,11 +87,11 @@ export function buildExam(data, rng = Math.random) {
   const need = EXAM_SPEC.yomi + EXAM_SPEC.kaki + EXAM_SPEC.kakusuu;
   if (chars.length < need) throw new Error('字数が不足');
 
-  // 全字の表示読みプール（誤答肢用）: {display, char}
+  // 全字の表示読みプール（誤答肢用）: {display, char}。整形は readingForChoice に集約
   const pool = [];
   for (const [char, sel] of Object.entries(readings)) {
     for (const r of [...sel.on, ...sel.kun]) {
-      pool.push({ display: displayReading(r), char });
+      pool.push({ display: readingForChoice(r), char });
     }
   }
 
@@ -93,10 +103,10 @@ export function buildExam(data, rng = Math.random) {
     const char = chars[cursor++];
     const cands = (sentByChar[char] || []).filter(s => s.use.includes('yomi'));
     const s = pick(cands, rng);
-    const correct = displayReading(s.target.reading);
-    // 対象字の全読み（表示形）と衝突する肢は除外
+    const correct = readingForChoice(s.target.reading);
+    // 対象字の全読み（整形後）と衝突する肢は除外（語幹化の字間衝突もここで落ちる）
     const own = new Set(
-      [...byChar[char].readings.on, ...byChar[char].readings.kun].map(displayReading));
+      [...byChar[char].readings.on, ...byChar[char].readings.kun].map(readingForChoice));
     const wrongPool = pool.filter(p =>
       p.char !== char && p.display !== correct && !own.has(p.display));
     // モーラ数（かな文字数で近似）が近いものを優先

@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  EXAM_SPEC, buildExam, scoreExam, mulberry32, displayReading,
+  EXAM_SPEC, buildExam, scoreExam, mulberry32, displayReading, readingForChoice,
 } from '../js/exam.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -79,6 +79,49 @@ check('誤答肢が正解・対象字の読みと衝突しない', problems.filt
 check('3択の成立（よみ・かくすう）', problems.filter(p => p.includes('3択')).length === 0);
 check(`全80字が出題されうる（${N}回で ${seenChars.size}/80 字出現）`, seenChars.size === 80);
 if (problems.length) problems.slice(0, 10).forEach(p => console.log('    !', p));
+
+// --- Phase 3e: よみ選択肢の整形一貫性（全肢語幹・送り仮名の不揃いゼロ） ---
+{
+  const sentById = Object.fromEntries(sentences.map(s => [s.id, s]));
+  // 語幹プール（全選定読みの整形後集合）: 全肢はこの集合の要素でなければならない
+  const stemPool = new Set();
+  for (const sel of Object.values(readings)) {
+    for (const r of [...sel.on, ...sel.kun]) stemPool.add(readingForChoice(r));
+  }
+  let bad = [];
+  for (let i = 0; i < N; i++) {
+    const exam = buildExam(data, mulberry32(5000 + i));
+    for (const q of exam.questions) {
+      if (q.type !== 'yomi') continue;
+      const correct = q.choices[q.answerIndex];
+      const expected = readingForChoice(sentById[q.sentenceId].target.reading);
+      if (correct !== expected) bad.push(`run${i}: 正解肢「${correct}」≠ 語幹「${expected}」`);
+      for (const c of q.choices) {
+        if (!stemPool.has(c)) bad.push(`run${i}: 肢「${c}」が語幹プール外（送り仮名混入の疑い）`);
+        if (/[ァ-ヶ.\-]/.test(c)) bad.push(`run${i}: 肢「${c}」に未整形文字`);
+      }
+    }
+  }
+  check(`よみ全肢が語幹整形で一貫（${N}回生成・混入ゼロ）`, bad.length === 0, bad[0]);
+
+  // 枯渇チェック: 全80字×全選定読みで「正解1＋誤答2」が必ず構成できるか（悉皆）
+  const pool = [];
+  for (const [char, sel] of Object.entries(readings)) {
+    for (const r of [...sel.on, ...sel.kun]) pool.push({ display: readingForChoice(r), char });
+  }
+  const starved = [];
+  for (const [char, sel] of Object.entries(readings)) {
+    const own = new Set([...byChar[char].readings.on, ...byChar[char].readings.kun].map(readingForChoice));
+    for (const r of [...sel.on, ...sel.kun]) {
+      const correct = readingForChoice(r);
+      const candidates = new Set(pool
+        .filter(p => p.char !== char && p.display !== correct && !own.has(p.display))
+        .map(p => p.display));
+      if (candidates.size < 2) starved.push(`${char}「${correct}」: 誤答候補${candidates.size}件`);
+    }
+  }
+  check('全80字・全選定読みで3択が構成可能（誤答プール枯渇なし・悉皆）', starved.length === 0, starved.join(' / '));
+}
 
 // 採点の検証
 {
