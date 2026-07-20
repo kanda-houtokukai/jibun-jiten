@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>定着 お試しページ settle-test v0.1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --paper: #F7F8FA; --paper-edge: #EDEFF3;
+    --ink: #1B2A4A; --ink-soft: #3A4B6E;
+    --ghost: #C7CCD4; --ghost-faint: #DDE1E7;
+    --grow: #3A9D6B; --grow-bg: #E8F3ED;
+  }
+  html, body {
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: var(--paper); color: var(--ink-soft);
+    -webkit-user-select: none; user-select: none;
+    -webkit-touch-callout: none; overscroll-behavior: none;
+  }
+  body { max-width: 900px; margin: 0 auto; padding: 14px; }
+  h1 { font-size: 15px; font-weight: 600; color: var(--ink-soft); margin-bottom: 10px; }
+  h1 small { font-weight: 400; color: var(--ghost); }
+  #layout { display: flex; flex-wrap: wrap; gap: 18px; }
+  #left { flex: 1 1 320px; max-width: 460px; }
+  #right { flex: 1 1 260px; min-width: 260px; }
+  #picker { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  #picker select {
+    font-size: 17px; padding: 6px 10px; border: 1px solid var(--ghost);
+    border-radius: 8px; background: #fff; font-family: inherit; color: var(--ink);
+  }
+  #picker label { font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
+  #cellWrap { position: relative; width: 100%; max-width: 440px; }
+  #cell {
+    width: 100%; aspect-ratio: 1; display: block;
+    background: #fff;
+    border: 1px solid var(--paper-edge);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(27,42,74,0.06);
+    touch-action: none;
+  }
+  #msg { min-height: 26px; font-size: 15px; margin: 10px 0 2px; color: var(--ink-soft); }
+  #msg.grow { color: var(--grow); font-weight: 600; }
+  #btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  #btns button {
+    font-size: 14px; padding: 10px 16px; border: 1px solid var(--ghost);
+    border-radius: 10px; background: #fff; color: var(--ink-soft);
+    font-family: inherit; cursor: pointer; touch-action: manipulation;
+  }
+  #btns button:active { background: var(--paper-edge); }
+  #sliders .row { margin-bottom: 12px; }
+  #sliders label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 3px; }
+  #sliders input[type=range] { width: 100%; accent-color: var(--ink); }
+  #sliders select { font-size: 13px; padding: 4px 8px; border: 1px solid var(--ghost); border-radius: 6px; background: #fff; font-family: inherit; }
+  #configOut {
+    font-size: 11px; font-family: ui-monospace, Menlo, monospace;
+    background: #fff; border: 1px solid var(--paper-edge); border-radius: 8px;
+    padding: 8px; line-height: 1.7; word-break: break-all; color: var(--ink-soft);
+  }
+  #wetSwatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; border: 1px solid var(--paper-edge); }
+  footer { margin-top: 16px; font-size: 11px; color: var(--ghost); text-align: center; }
+</style>
+</head>
+<body>
+  <h1>「定着」お試しページ <small>settle-test v0.1 ／ 書く→合格→定着 を何度でも</small></h1>
+  <div id="layout">
+    <div id="left">
+      <div id="picker">
+        <select id="charSel"></select>
+        <label><input type="checkbox" id="guideChk" checked> うすい手本を出す</label>
+      </div>
+      <div id="cellWrap">
+        <canvas id="cell"></canvas>
+      </div>
+      <div id="msg"></div>
+      <div id="btns">
+        <button id="undo" type="button">1画もどす</button>
+        <button id="clear" type="button">ぜんぶ消す</button>
+        <button id="force" type="button">はんていなしで定着を見る</button>
+      </div>
+    </div>
+    <div id="right">
+      <div id="sliders">
+        <div class="row">
+          <label>沈む時間 durationMs = <span id="vDur"></span> ms</label>
+          <input type="range" id="sDur" min="150" max="900" step="10">
+        </div>
+        <div class="row">
+          <label>にじみ量 bleedOpacity = <span id="vBleedO"></span></label>
+          <input type="range" id="sBleedO" min="0" max="0.4" step="0.01">
+        </div>
+        <div class="row">
+          <label>にじみ幅 bleedWidth = <span id="vBleedW"></span>倍</label>
+          <input type="range" id="sBleedW" min="1.0" max="2.8" step="0.05">
+        </div>
+        <div class="row">
+          <label>生乾きの薄さ wetMix = <span id="vWet"></span> <span id="wetSwatch"></span></label>
+          <input type="range" id="sWet" min="0.2" max="0.9" step="0.02">
+        </div>
+        <div class="row">
+          <label>締まり tighten = <span id="vTighten"></span></label>
+          <input type="range" id="sTighten" min="0.80" max="1.00" step="0.01">
+        </div>
+        <div class="row">
+          <label>イージング</label>
+          <select id="sEase">
+            <option value="cubic-bezier(0.18, 0.62, 0.22, 1)">すっと吸い込まれる（標準）</option>
+            <option value="cubic-bezier(0.05, 0.7, 0.1, 1)">もっとぬるっと</option>
+            <option value="cubic-bezier(0.33, 0.0, 0.4, 1)">ひかえめ</option>
+            <option value="linear">リニア（比較用）</option>
+          </select>
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="sGrow" checked> 定着後に隅へ新緑の印</label>
+        </div>
+        <button id="resetCfg" type="button" style="font-size:12px;padding:6px 12px;border:1px solid var(--ghost);border-radius:8px;background:#fff;color:var(--ink-soft);">初期値にもどす</button>
+      </div>
+      <div id="configOut" style="margin-top:10px;"></div>
+    </div>
+  </div>
+  <footer>筆順データ: KanjiVG © Ulrich Apel（CC BY-SA 3.0）／ settle-test v0.1</footer>
+
+<script type="module">
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes } from './js/matcher.js';
+import { SETTLE, wetColor, settleOverlay } from './js/settle.js';
+
+const cfg = { ...DEFAULT_CONFIG };
+const params = { ...SETTLE };          // スライダーで上書きするローカルコピー
+const $ = id => document.getElementById(id);
+const canvas = $('cell');
+const ctx = canvas.getContext('2d', { desynchronized: true });
+
+let kanjiList = [], rec = null, tmpl = [], tmplPaths = [];
+let strokes = [], current = null;
+let settled = null;                    // 実行中の定着オーバーレイ
+let cssSize = 0, rect = null, activePointer = null;
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  cssSize = canvas.clientWidth;
+  canvas.width = Math.round(cssSize * dpr);
+  canvas.height = Math.round(cssSize * dpr);
+  redraw();
+}
+
+function space() {
+  const dpr = window.devicePixelRatio || 1;
+  const k = (cssSize * dpr) / 109;
+  ctx.setTransform(k, 0, 0, k, 0, 0);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+
+function drawPoly(points, color, width) {
+  if (!points.length) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x * 109, points[0].y * 109);
+  if (points.length === 1) ctx.lineTo(points[0].x * 109 + 0.01, points[0].y * 109);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x * 109, points[i].y * 109);
+  ctx.stroke();
+}
+
+function redraw() {
+  if (!rec) return;
+  space();
+  ctx.clearRect(0, 0, 109, 109);
+  if ($('guideChk').checked) {
+    ctx.strokeStyle = '#DDE1E7';        // ghost-faint（手本は脇役）
+    ctx.lineWidth = 3.4;
+    for (const p of tmplPaths) ctx.stroke(p);
+  }
+  const wet = wetColor(params);
+  for (const s of strokes) drawPoly(s, wet, params.width);
+  if (current) drawPoly(current, wet, params.width);
+}
+
+function resetWriting(msg) {
+  if (settled) { settled.remove(); settled = null; }
+  strokes = [];
+  current = null;
+  $('msg').textContent = msg || '';
+  $('msg').className = '';
+  redraw();
+}
+
+function setChar(char) {
+  rec = kanjiList.find(k => k.char === char);
+  tmpl = templateStrokes(rec, cfg.samplePoints);
+  tmplPaths = rec.strokes.map(s => new Path2D(s.path));
+  resetWriting('');
+}
+
+// ---- 定着 ----
+function runSettle() {
+  if (settled) settled.remove();
+  // canvas から生乾き線を消し、SVG オーバーレイに引き継いで演出
+  const toShow = strokes.slice();
+  strokes = [];
+  redraw();                    // ガイドだけ残る
+  strokes = toShow;            // データは保持（もどす・消すが効くように）
+  settled = settleOverlay($('cellWrap'), toShow, params);
+  settled.finished.then(() => {
+    $('msg').textContent = 'ていちゃく';
+    $('msg').className = 'grow';
+  });
+}
+
+function judgeAndMaybeSettle() {
+  const res = matchKanji(strokes, rec, cfg);
+  if (res.verdict === 'ok') {
+    runSettle();
+  } else {
+    $('msg').textContent = 'もういっかい（ぜんぶ消す → かきなおし）';
+    $('msg').className = '';
+  }
+}
+
+// ---- 手書き（Phase 0 方式・生描画。演出は書き終え後のみ）----
+function toPoint(e) {
+  return { x: (e.clientX - rect.left) / cssSize, y: (e.clientY - rect.top) / cssSize };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (activePointer !== null || !rec) return;
+  if (settled) { settled.remove(); settled = null; strokes = []; $('msg').textContent = ''; $('msg').className = ''; redraw(); }
+  if (strokes.length >= rec.strokeCount) return;
+  activePointer = e.pointerId;
+  canvas.setPointerCapture(e.pointerId);
+  rect = canvas.getBoundingClientRect();
+  current = [toPoint(e)];
+  space();
+  drawPoly(current, wetColor(params), params.width);
+  e.preventDefault();
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== activePointer || !current) return;
+  const p = toPoint(e);
+  const prev = current[current.length - 1];
+  current.push(p);
+  space();
+  ctx.strokeStyle = wetColor(params);
+  ctx.lineWidth = params.width;
+  ctx.beginPath();
+  ctx.moveTo(prev.x * 109, prev.y * 109);
+  ctx.lineTo(p.x * 109, p.y * 109);
+  ctx.stroke();
+  e.preventDefault();
+});
+
+function endStroke(e) {
+  if (e.pointerId !== activePointer) return;
+  activePointer = null;
+  if (!current) return;
+  strokes.push(current);
+  current = null;
+  if (strokes.length === rec.strokeCount) judgeAndMaybeSettle();
+}
+canvas.addEventListener('pointerup', endStroke);
+canvas.addEventListener('pointercancel', endStroke);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+$('undo').addEventListener('click', () => {
+  if (settled) { settled.remove(); settled = null; }
+  strokes.pop();
+  $('msg').textContent = '';
+  $('msg').className = '';
+  redraw();
+});
+$('clear').addEventListener('click', () => resetWriting(''));
+$('force').addEventListener('click', () => { if (strokes.length) runSettle(); });
+$('guideChk').addEventListener('change', redraw);
+
+// ---- スライダー ----
+const sliders = [
+  ['sDur', 'vDur', 'durationMs', 1],
+  ['sBleedO', 'vBleedO', 'bleedOpacity', 1],
+  ['sBleedW', 'vBleedW', 'bleedWidth', 1],
+  ['sWet', 'vWet', 'wetMix', 1],
+  ['sTighten', 'vTighten', 'tighten', 1],
+];
+
+function syncSliders() {
+  for (const [sid, vid, key] of sliders) {
+    $(sid).value = params[key];
+    $(vid).textContent = params[key];
+  }
+  $('sEase').value = params.easing;
+  if ($('sEase').selectedIndex < 0) $('sEase').selectedIndex = 0;
+  $('sGrow').checked = params.grow;
+  $('wetSwatch').style.background = wetColor(params);
+  $('configOut').textContent = '現在の設定: ' + JSON.stringify({
+    durationMs: params.durationMs, bleedOpacity: params.bleedOpacity,
+    bleedWidth: params.bleedWidth, wetMix: params.wetMix,
+    tighten: params.tighten, easing: params.easing, grow: params.grow,
+  });
+}
+
+for (const [sid, , key] of sliders) {
+  $(sid).addEventListener('input', (e) => {
+    params[key] = parseFloat(e.target.value);
+    syncSliders();
+    redraw();   // 生乾き色・線幅は即反映
+  });
+}
+$('sEase').addEventListener('change', (e) => { params.easing = e.target.value; syncSliders(); });
+$('sGrow').addEventListener('change', (e) => { params.grow = e.target.checked; syncSliders(); });
+$('resetCfg').addEventListener('click', () => { Object.assign(params, SETTLE); syncSliders(); redraw(); });
+
+// ---- 起動 ----
+fetch('data/kanji-g1.json').then(r => r.json()).then(data => {
+  kanjiList = data.kanji;
+  for (const k of kanjiList) {
+    const o = document.createElement('option');
+    o.value = k.char;
+    o.textContent = k.char;
+    $('charSel').appendChild(o);
+  }
+  $('charSel').value = '石';
+  $('charSel').addEventListener('change', () => setChar($('charSel').value));
+  syncSliders();
+  setChar('石');
+  resize();
+});
+window.addEventListener('resize', resize);
+</script>
+</body>
+</html>
