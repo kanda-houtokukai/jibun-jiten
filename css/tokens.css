@@ -54,3 +54,43 @@
   touch-action: manipulation;
 }
 .btn-quiet:active { background: var(--paper-edge); }
+
+/* ═══════════════════════════════════════════════════════════
+   R1: 積み木トークン（外の器）— 追加のみ。上の ink 系は「中の道場」で存続
+   正本: デザイン言語 追記2026-07-20〜22（積み木質感・二層構造）
+   確定モック: ホーム-レイアウト3案.html 案Y ／ 案3-右下段差.html パターンC
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* 外（おもちゃ）の器 */
+  --block-bg: #FBF7F0;          /* 温かいオフホワイト背景 */
+  --block-text: #33322E;        /* ブランド/文字＝濃い墨 */
+  --block-text-edge: #1A1916;   /* 墨ブロックの段差色 */
+  --block-muted: #8A8070;       /* 弱め文字 */
+  --block-muted-soft: #A89E8E;  /* さらに弱め */
+  --block-muted-faint: #B0A692; /* 未到達の駅の文字 */
+
+  /* 機能ブロック（背景／右下段差の濃い同色） */
+  --block-hero: #E8894A;        --block-hero-edge: #C56A34;   /* きょうの（ヒーロー） */
+  --block-prac: #5EA9A0;        --block-prac-edge: #47857D;   /* 練習・済んだ学年 */
+  --block-exam: #F0C348;        --block-exam-edge: #CFA02F;   /* 腕だめし */
+  --block-exam-text: #5A4A18;   /* 黄ブロック上の文字 */
+  --block-dict: #7C93C4;        --block-dict-edge: #5E74A6;   /* じてん */
+  --block-dash: #DDD2C0;        --block-dash-edge: #EDE4D5;   /* 破線（もっと上・未到達） */
+  --block-go-edge: #E4D9C8;     /* 白ボタン（きょうのぶん→）の段差 */
+  --block-road: #E4DBCB;        /* みちの破線 */
+
+  /* 形（ブロックらしいふっくらした角） */
+  --block-radius: 22px;
+  --block-radius-sm: 16px;
+}
+
+/* 段差＝パターンC（右下3px・斜め・淡い落ち影）。色ごとにワンセット */
+.blk { border-radius: var(--block-radius); position: relative; }
+.blk-sh-hero { box-shadow: 3px 3px 0 var(--block-hero-edge), 5px 6px 12px rgba(51,50,46,.10); }
+.blk-sh-prac { box-shadow: 3px 3px 0 var(--block-prac-edge), 5px 6px 12px rgba(51,50,46,.09); }
+.blk-sh-exam { box-shadow: 3px 3px 0 var(--block-exam-edge), 5px 6px 12px rgba(51,50,46,.09); }
+.blk-sh-dict { box-shadow: 3px 3px 0 var(--block-dict-edge), 5px 6px 12px rgba(51,50,46,.09); }
+.blk-sh-dash { box-shadow: 3px 3px 0 var(--block-dash-edge), 5px 6px 12px rgba(51,50,46,.07); }
+.blk-sh-text { box-shadow: 2px 3px 0 var(--block-text-edge); }
+.blk-sh-go   { box-shadow: 2px 2px 0 var(--block-go-edge); }

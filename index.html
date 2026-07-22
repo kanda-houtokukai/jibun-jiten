@@ -101,6 +101,65 @@
   #backupBox button { font-size: 12px; padding: 6px 12px; border: 1px solid var(--ghost); border-radius: 8px; background: #fff; color: var(--ink-soft); margin-right: 8px; }
   .ver { margin: 0 0 16px; text-align: center; font-size: 11px; color: var(--ghost); }
 
+  /* ---- 学年をえらぶ（R1新設・モック未合意画面＝情報設計の範囲で素直に組む） ----
+     外の器（積み木）: 温かいオフホワイト＋色ブロック＋右下3px段差（パターンC） */
+  #scrGradeSelect {
+    max-width: none;
+    min-height: 100dvh;
+    background: var(--block-bg);
+    color: var(--block-text);
+    justify-content: center;
+    gap: 16px;
+    padding: 28px 24px;
+  }
+  #gsTitle { font-size: 25px; font-weight: 800; letter-spacing: 0.02em; }
+  #gsSub { font-size: 13.5px; color: var(--block-muted); }
+  #gsGrid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(84px, 116px));
+    gap: 14px;
+    margin: 12px 0 6px;
+  }
+  @media (max-width: 740px) {
+    #gsGrid { grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 400px; }
+  }
+  #gsGrid button {
+    aspect-ratio: 1;
+    border-radius: var(--block-radius);
+    border: 2px dashed var(--block-dash);
+    background: #fff;
+    color: var(--block-muted);
+    font-size: 15px;
+    font-weight: 800;
+    font-family: var(--font-ui);
+    box-shadow: 3px 3px 0 var(--block-dash-edge);
+  }
+  #gsGrid button .num {
+    display: block;
+    font-family: var(--font-num);
+    font-size: 32px;
+    line-height: 1.1;
+    margin-bottom: 3px;
+  }
+  #gsGrid button.sel {
+    background: var(--block-hero);
+    border: 2px solid var(--block-hero);
+    color: #fff;
+    box-shadow: 3px 3px 0 var(--block-hero-edge), 5px 6px 12px rgba(51,50,46,.10);
+  }
+  #gsConfirm {
+    font-size: 17px;
+    font-weight: 800;
+    font-family: var(--font-ui);
+    padding: 15px 44px;
+    border: none;
+    border-radius: var(--block-radius);
+    background: var(--block-text);
+    color: #fff;
+    box-shadow: 3px 3px 0 var(--block-text-edge), 5px 6px 12px rgba(51,50,46,.10);
+  }
+  #gsConfirm:disabled { opacity: 0.35; box-shadow: none; }
+
   /* ---- れんしゅう ---- */
   #pTop { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; }
   #pCounter { font-size: 13px; color: var(--ghost); }
@@ -340,7 +399,15 @@
         </div>
       </div>
     </details>
-    <div class="ver">v0.9</div>
+    <div class="ver">v0.10.1</div>
+  </div>
+
+  <!-- 学年をえらぶ（R1・初回に1度。あとで変更可） -->
+  <div id="scrGradeSelect" class="screen">
+    <div id="gsTitle"></div>
+    <div id="gsSub"></div>
+    <div id="gsGrid"></div>
+    <button id="gsConfirm" type="button" disabled></button>
   </div>
 
   <!-- テスト -->
@@ -423,11 +490,12 @@
 
 <script type="module">
 // ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
-import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.9';
-import { openStore } from './js/store.js?v=0.9';
-import { TEXTS, formatReadings } from './js/texts.js?v=0.9';
-import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.9';
-import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.9';
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.1';
+import { openStore } from './js/store.js?v=0.10.1';
+import { TEXTS, formatReadings } from './js/texts.js?v=0.10.1';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.1';
+import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.1';
+import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.1';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -446,6 +514,7 @@ let sentencesData = [];  // sentences-g1.json
 let readingsData = {};   // exam-readings-g1.json
 let store = null;
 let entries = {};    // {char: {first,best,latest}} のキャッシュ
+let settings = { grade: null, rubyEnabled: true };  // 学年設定（meta 'settings'）
 
 // ---- 画面切替 ----
 function show(id) {
@@ -517,6 +586,47 @@ async function refreshHome() {
   $('examSub').textContent = progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub;
   $('homeBest').textContent = best ? TEXTS.exam.best(best.score) : '';
 }
+
+// ============================================================
+// 学年をえらぶ（R1）
+// ============================================================
+// 誤タップで確定しない二段構え: ブロックを選ぶ →「これに きめる」で確定（§5-5）
+
+let gsPick = null;
+
+function renderGradeSelect() {
+  $('gsTitle').textContent = TEXTS.settings.title;
+  $('gsSub').textContent = TEXTS.settings.sub;
+  $('gsConfirm').textContent = TEXTS.settings.confirm;
+  const grid = $('gsGrid');
+  grid.innerHTML = '';
+  for (let g = GRADE_MIN; g <= GRADE_MAX; g++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = `<span class="num">${g}</span>` + TEXTS.settings.gradeSuffix;
+    b.addEventListener('click', () => {
+      gsPick = g;
+      for (const el of grid.children) el.classList.remove('sel');
+      b.classList.add('sel');
+      $('gsConfirm').disabled = false;
+    });
+    grid.appendChild(b);
+  }
+  gsPick = settings.grade;   // 変更で開いたときは現在値を選択済みに
+  if (gsPick != null && grid.children[gsPick - 1]) {
+    grid.children[gsPick - 1].classList.add('sel');
+    $('gsConfirm').disabled = false;
+  } else {
+    $('gsConfirm').disabled = true;
+  }
+}
+
+$('gsConfirm').addEventListener('click', async () => {
+  if (gsPick == null) return;
+  settings = await saveSettings(store, { ...settings, grade: gsPick });
+  await refreshHome();
+  show('scrHome');
+});
 
 // ============================================================
 // れんしゅう
@@ -1553,6 +1663,7 @@ $('fileImport').addEventListener('change', async (ev) => {
 (async () => {
   applyTexts();
   store = await openStore();
+  settings = await loadSettings(store);   // 学年設定（未設定なら grade=null）
   const [kd, sd, rd] = await Promise.all([
     fetch('data/kanji-g1.json').then(r => r.json()),
     fetch('data/sentences-g1.json').then(r => r.json()),
@@ -1563,6 +1674,11 @@ $('fileImport').addEventListener('change', async (ev) => {
   sentencesData = sd.sentences;
   readingsData = rd.readings;
   await refreshHome();
+  // 初回だけ学年をえらぶ（保存済みならそのままホーム）
+  if (settings.grade == null) {
+    renderGradeSelect();
+    show('scrGradeSelect');
+  }
 
   // 開発用: 結果画面の文言確認（本番導線からは見えない）
   // 例: index.html?dev-result=115&dev-wrong=右左山
