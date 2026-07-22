@@ -22,6 +22,10 @@
   .screen.on { display: flex; flex-direction: column; align-items: center; }
   button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
 
+  /* UI文言のルビ（種類1）。行の高さを壊さない控えめなルビ */
+  ruby { ruby-align: center; }
+  ruby rt { font-size: 0.5em; font-weight: 400; opacity: 0.85; letter-spacing: 0; }
+
   /* ---- ホーム（home-mock.html 準拠） ---- */
   #scrHome { max-width: 420px; padding: 0; }
   #scrHome.on { display: block; }
@@ -399,7 +403,7 @@
         </div>
       </div>
     </details>
-    <div class="ver">v0.10.1</div>
+    <div class="ver">v0.10.2</div>
   </div>
 
   <!-- 学年をえらぶ（R1・初回に1度。あとで変更可） -->
@@ -490,12 +494,13 @@
 
 <script type="module">
 // ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
-import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.1';
-import { openStore } from './js/store.js?v=0.10.1';
-import { TEXTS, formatReadings } from './js/texts.js?v=0.10.1';
-import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.1';
-import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.1';
-import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.1';
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.2';
+import { openStore } from './js/store.js?v=0.10.2';
+import { TEXTS, formatReadings } from './js/texts.js?v=0.10.2';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.2';
+import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.2';
+import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.2';
+import { configureRuby, setRenderGrade, rubyHTML } from './js/ruby.js?v=0.10.2';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -523,35 +528,40 @@ function show(id) {
 }
 
 // ---- 静的文言の流し込み ----
+// UI文言（種類1）は rubyHTML を通す＝学年設定に応じて漢字/かな＋ルビが決まる。
+// 問題文（種類2）・学ぶ対象の漢字（種類3）はこの機構を通さない。
+// 学年変更後は applyTexts() を呼び直す。
+const T = (el, s) => { el.innerHTML = rubyHTML(s); };
 function applyTexts() {
-  $('todayK').textContent = TEXTS.home.todayK;
-  $('todayT').textContent = TEXTS.home.todayT;
-  $('wallLabelText').textContent = TEXTS.home.wallLabel;
-  $('hLevel').textContent = TEXTS.home.level;
-  $('examBadge').textContent = '10きゅう';
-  $('examNm').textContent = TEXTS.home.examTile;
-  $('examSub').textContent = TEXTS.home.examTileSub;
-  $('dictNm').textContent = TEXTS.home.dict;
-  $('dictSub').textContent = TEXTS.home.dictTileSub;
+  T($('todayK'), TEXTS.home.todayK);
+  T($('todayT'), TEXTS.home.todayT);
+  T($('wallLabelText'), TEXTS.home.wallLabel);
+  T($('hLevel'), TEXTS.home.level);
+  T($('examBadge'), TEXTS.home.levelBadge);
+  T($('examNm'), TEXTS.home.examTile);
+  T($('examSub'), TEXTS.home.examTileSub);
+  T($('dictNm'), TEXTS.home.dict);
+  T($('dictSub'), TEXTS.home.dictTileSub);
   const now = new Date();
-  $('hDate').textContent = TEXTS.home.date(now.getMonth() + 1, now.getDate());
-  $('eQuit').textContent = TEXTS.exam.quit;
-  $('eRedo').textContent = TEXTS.exam.redo;
-  $('eSubmit').textContent = TEXTS.exam.submit;
-  $('rTitle').textContent = TEXTS.exam.resultTitle;
-  $('rHome').textContent = TEXTS.exam.backHome;
-  $('wRewrite').textContent = TEXTS.review.rewrite;
-  $('wRedo').textContent = TEXTS.exam.redo;
-  $('wSubmit').textContent = TEXTS.exam.submit;
-  $('wClose').textContent = TEXTS.review.close;
+  T($('hDate'), TEXTS.home.date(now.getMonth() + 1, now.getDate()));
+  T($('eQuit'), TEXTS.exam.quit);
+  T($('eRedo'), TEXTS.exam.redo);
+  T($('eSubmit'), TEXTS.exam.submit);
+  T($('rTitle'), TEXTS.exam.resultTitle);
+  T($('rHome'), TEXTS.exam.backHome);
+  T($('wRewrite'), TEXTS.review.rewrite);
+  T($('wRedo'), TEXTS.exam.redo);
+  T($('wSubmit'), TEXTS.exam.submit);
+  T($('wClose'), TEXTS.review.close);
+  // ほごしゃ向け（漢字可・変換対象外）
   document.querySelector('#backupBox summary').textContent = TEXTS.backup.summary;
   $('backupNote').textContent = TEXTS.backup.note;
   $('btnExport').textContent = TEXTS.backup.export;
   $('btnImport').textContent = TEXTS.backup.import;
-  $('pQuit').textContent = TEXTS.practice.quit;
-  document.querySelector('#dTop h2').textContent = TEXTS.dict.title;
-  $('dBack').textContent = TEXTS.dict.back;
-  $('dClose').textContent = TEXTS.dict.close;
+  T($('pQuit'), TEXTS.practice.quit);
+  T(document.querySelector('#dTop h2'), TEXTS.dict.title);
+  T($('dBack'), TEXTS.dict.back);
+  T($('dClose'), TEXTS.dict.close);
 }
 
 async function refreshHome() {
@@ -559,9 +569,9 @@ async function refreshHome() {
   const n = Object.keys(entries).length;
   // 進み帯・カウント
   $('hFill').style.width = (n / 80 * 100) + '%';
-  $('homeProgress').innerHTML = `<b>${n}</b> こ おぼえた`;
+  $('homeProgress').innerHTML = `<b>${n}</b> ` + rubyHTML(TEXTS.home.metaCount(n));
   $('wallCount').textContent = TEXTS.home.wallCount(n);
-  $('homeSign').textContent = n ? TEXTS.dict.signature(n) : '';
+  $('homeSign').innerHTML = n ? rubyHTML(TEXTS.dict.signature(n)) : '';
   // 壁: 習得済み（本人の定着筆跡）を先に、続きの未習得を ghost 破線で少し
   const wall = $('homeWall');
   wall.innerHTML = '';
@@ -583,8 +593,8 @@ async function refreshHome() {
   const [progress, best] = await Promise.all([
     store.metaGet('examProgress'), store.metaGet('examBest'),
   ]);
-  $('examSub').textContent = progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub;
-  $('homeBest').textContent = best ? TEXTS.exam.best(best.score) : '';
+  $('examSub').innerHTML = rubyHTML(progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub);
+  $('homeBest').innerHTML = best ? rubyHTML(TEXTS.exam.best(best.score)) : '';
 }
 
 // ============================================================
@@ -595,15 +605,15 @@ async function refreshHome() {
 let gsPick = null;
 
 function renderGradeSelect() {
-  $('gsTitle').textContent = TEXTS.settings.title;
-  $('gsSub').textContent = TEXTS.settings.sub;
-  $('gsConfirm').textContent = TEXTS.settings.confirm;
+  $('gsTitle').innerHTML = rubyHTML(TEXTS.settings.title);
+  $('gsSub').innerHTML = rubyHTML(TEXTS.settings.sub);
+  $('gsConfirm').innerHTML = rubyHTML(TEXTS.settings.confirm);
   const grid = $('gsGrid');
   grid.innerHTML = '';
   for (let g = GRADE_MIN; g <= GRADE_MAX; g++) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.innerHTML = `<span class="num">${g}</span>` + TEXTS.settings.gradeSuffix;
+    b.innerHTML = `<span class="num">${g}</span>` + rubyHTML(TEXTS.settings.gradeSuffix);
     b.addEventListener('click', () => {
       gsPick = g;
       for (const el of grid.children) el.classList.remove('sel');
@@ -624,6 +634,8 @@ function renderGradeSelect() {
 $('gsConfirm').addEventListener('click', async () => {
   if (gsPick == null) return;
   settings = await saveSettings(store, { ...settings, grade: gsPick });
+  setRenderGrade(settings.grade);   // 学年が決まったのでUI文言の漢字度を更新
+  applyTexts();
   await refreshHome();
   show('scrHome');
 });
@@ -758,7 +770,7 @@ function animateAll(i = 0) {
 
 function setMsg(text, cls) {
   const el = $('pMsg');
-  el.textContent = text || '';
+  el.innerHTML = text ? rubyHTML(text) : '';
   el.className = cls || '';
 }
 
@@ -771,7 +783,7 @@ function setDots() {
 function showAction(label) {
   const b = $('pAction');
   b.hidden = false;
-  b.textContent = label;
+  b.innerHTML = rubyHTML(label);
 }
 function hideAction() { $('pAction').hidden = true; }
 
@@ -796,7 +808,7 @@ function startChar() {
   P.accepted = []; P.scores = []; P.current = null;
   P.stumbles = 0; P.consecFails = 0; P.rescueGuide = false;
   P.phase = 'watch'; P.drawing = false;
-  $('pCounter').textContent = TEXTS.practice.counter(P.idx + 1, P.chars.length);
+  $('pCounter').innerHTML = rubyHTML(TEXTS.practice.counter(P.idx + 1, P.chars.length));
   setReadings(rec);
   setMsg(TEXTS.practice.watchTitle, 'accent');
   setDots();
@@ -1002,8 +1014,8 @@ function sameDay(a, b) {
 
 function renderDict() {
   const n = Object.keys(entries).length;
-  $('dCount').textContent = TEXTS.dict.count(n);
-  $('dSign').textContent = n ? TEXTS.dict.signature(n) : '';
+  $('dCount').innerHTML = rubyHTML(TEXTS.dict.count(n));
+  $('dSign').innerHTML = n ? rubyHTML(TEXTS.dict.signature(n)) : '';
   const grid = $('dGrid');
   grid.innerHTML = '';
   for (const rec of kanjiList) {
@@ -1025,7 +1037,7 @@ function clearDetailTimers() { for (const t of detailTimers) clearTimeout(t); de
 
 function fmtDate(at) {
   const d = new Date(at);
-  return `${d.getMonth() + 1}がつ${d.getDate()}にち`;
+  return TEXTS.home.date(d.getMonth() + 1, d.getDate());   // 表記は home.date と共通
 }
 
 function openDetail(rec) {
@@ -1036,7 +1048,7 @@ function openDetail(rec) {
   three.innerHTML = '';
   $('dNotYet').hidden = !!e;
   if (!e) {
-    $('dNotYet').textContent = TEXTS.dict.notYet;
+    $('dNotYet').innerHTML = rubyHTML(TEXTS.dict.notYet);
     const slot = document.createElement('div');
     slot.className = 'slot';
     slot.appendChild(makeSvg(rec.strokes.map(s => s.path), '#d5cfc0', 4));
@@ -1046,11 +1058,11 @@ function openDetail(rec) {
       const a = e[key];
       const slot = document.createElement('div');
       slot.className = 'slot';
-      slot.innerHTML = `<div class="cap">${cap}</div><div class="date">${fmtDate(a.at)}</div>`;
+      slot.innerHTML = `<div class="cap">${rubyHTML(cap)}</div><div class="date">${rubyHTML(fmtDate(a.at))}</div>`;
       const svg = settledSvg(a.strokes);   // 定着後の完成形と同一の見た目
       slot.appendChild(svg);
       const btn = document.createElement('button');
-      btn.textContent = TEXTS.dict.replay;
+      btn.innerHTML = rubyHTML(TEXTS.dict.replay);
       btn.addEventListener('click', () => replaySvg(svg));
       slot.appendChild(btn);
       three.appendChild(slot);
@@ -1133,7 +1145,7 @@ async function startExam() {
 
 function renderExamQ() {
   const q = E.questions[E.idx];
-  $('eCounter').textContent = TEXTS.exam.counter(E.idx + 1, E.questions.length);
+  $('eCounter').innerHTML = rubyHTML(TEXTS.exam.counter(E.idx + 1, E.questions.length));
   $('eSentence').innerHTML = '';
   $('eCharBox').hidden = true;
   $('eChoices').innerHTML = '';
@@ -1141,7 +1153,7 @@ function renderExamQ() {
   $('eKakiBtns').style.display = 'none';
 
   if (q.type === 'yomi') {
-    $('ePrompt').textContent = TEXTS.exam.yomiQ;
+    $('ePrompt').innerHTML = rubyHTML(TEXTS.exam.yomiQ);
     $('eSentence').innerHTML =
       esc(q.text.slice(0, q.start))
       + '<span class="target">' + esc(q.text.substr(q.start, q.len)) + '</span>'
@@ -1154,7 +1166,7 @@ function renderExamQ() {
       $('eChoices').appendChild(b);
     }
   } else if (q.type === 'kaki') {
-    $('ePrompt').textContent = TEXTS.exam.kakiQ;
+    $('ePrompt').innerHTML = rubyHTML(TEXTS.exam.kakiQ);
     $('eSentence').innerHTML =
       esc(q.text.slice(0, q.start))
       + '<span class="kblank">' + esc(q.kana) + '</span>'
@@ -1165,7 +1177,7 @@ function renderExamQ() {
     $('eKakiBtns').style.display = 'flex';
     resizeExamCell();
   } else { // kakusuu
-    $('ePrompt').textContent = TEXTS.exam.kakusuuQ;
+    $('ePrompt').innerHTML = rubyHTML(TEXTS.exam.kakusuuQ);
     const box = $('eCharBox');
     box.hidden = false;
     box.innerHTML = '';
@@ -1174,7 +1186,7 @@ function renderExamQ() {
     for (let i = 0; i < q.choices.length; i++) {
       const b = document.createElement('button');
       b.type = 'button';
-      b.textContent = TEXTS.exam.kakusuuUnit(q.choices[i]);
+      b.innerHTML = rubyHTML(TEXTS.exam.kakusuuUnit(q.choices[i]));
       b.addEventListener('click', () => answerExam({ chosenIndex: i }));
       $('eChoices').appendChild(b);
     }
@@ -1216,19 +1228,19 @@ async function finishExam() {
 }
 
 function showResult(res, detail) {
-  $('rScore').textContent = TEXTS.exam.score(res.score);
+  $('rScore').innerHTML = rubyHTML(TEXTS.exam.score(res.score));
   const msg = $('rMsg');
-  if (res.score >= EXAM_SPEC.fullScore) { msg.textContent = TEXTS.exam.perfect; msg.className = 'good'; }
-  else if (res.passed) { msg.textContent = TEXTS.exam.passed; msg.className = 'good'; }
-  else { msg.textContent = TEXTS.exam.failed(EXAM_SPEC.passScore - res.score); msg.className = 'accent'; }
+  if (res.score >= EXAM_SPEC.fullScore) { msg.innerHTML = rubyHTML(TEXTS.exam.perfect); msg.className = 'good'; }
+  else if (res.passed) { msg.innerHTML = rubyHTML(TEXTS.exam.passed); msg.className = 'good'; }
+  else { msg.innerHTML = rubyHTML(TEXTS.exam.failed(EXAM_SPEC.passScore - res.score)); msg.className = 'accent'; }
   store.metaGet('examBest').then(b => {
-    $('rBest').textContent = b ? TEXTS.exam.best(b.score) : '';
+    $('rBest').innerHTML = b ? rubyHTML(TEXTS.exam.best(b.score)) : '';
   });
   const grid = $('rReviewGrid');
   grid.innerHTML = '';
   if (res.wrong.length) {
-    $('rReviewLabel').textContent = TEXTS.exam.reviewList;
-    $('rReviewNote').textContent = TEXTS.exam.reviewNote;
+    $('rReviewLabel').innerHTML = rubyHTML(TEXTS.exam.reviewList);
+    $('rReviewNote').innerHTML = rubyHTML(TEXTS.exam.reviewNote);
     for (const c of res.wrong) {
       const d = document.createElement('div');
       d.className = 'rv';
@@ -1237,14 +1249,14 @@ function showResult(res, detail) {
       if (info) {
         const w = document.createElement('div');
         w.className = 'why';
-        w.textContent = TEXTS.review.why;
+        w.innerHTML = rubyHTML(TEXTS.review.why);
         d.appendChild(w);
         d.addEventListener('click', () => openReview(c, info));
       }
       grid.appendChild(d);
     }
   } else {
-    $('rReviewLabel').textContent = TEXTS.exam.noReview;
+    $('rReviewLabel').innerHTML = rubyHTML(TEXTS.exam.noReview);
     $('rReviewNote').textContent = '';
   }
   show('scrResult');
@@ -1467,7 +1479,7 @@ function viewReview() {
   const res = matchKanji(W.strokes, W.rec, cfg);
   W.lastResult = res;
   const title = $('wTitle');
-  title.textContent = TEXTS.review.look;
+  title.innerHTML = rubyHTML(TEXTS.review.look);
   title.className = '';
   let sub = '';
   let animIdx = [];
@@ -1485,8 +1497,8 @@ function viewReview() {
     }
     // 形ずれのみ: 言葉での指摘はしない（重ね表示だけ）
   }
-  $('wSub').textContent = sub;
-  $('wLegend').textContent = TEXTS.review.legend;
+  $('wSub').innerHTML = sub ? rubyHTML(sub) : '';
+  $('wLegend').innerHTML = rubyHTML(TEXTS.review.legend);
   $('wAnswer').textContent = '';
   wCanvas.style.display = 'block';
   wSetButtons('view');
@@ -1512,9 +1524,9 @@ function openReview(char, info) {
   $('wLegend').textContent = '';
   wSetButtons('answer');
   if (q.type === 'yomi') {
-    $('wSub').textContent = q.text;
+    $('wSub').textContent = q.text;   // 問題文（種類2）は変換しない
     wCanvas.style.display = 'none';
-    $('wAnswer').textContent = TEXTS.review.answerIs(q.choices[q.answerIndex]);
+    $('wAnswer').innerHTML = rubyHTML(TEXTS.review.answerIs(q.choices[q.answerIndex]));
   } else {
     $('wSub').textContent = '';
     wCanvas.style.display = 'block';
@@ -1527,8 +1539,8 @@ function openReview(char, info) {
       wctx.lineWidth = 3.6;
       wctx.stroke(new Path2D(s.path));
     }
-    $('wAnswer').textContent = q.type === 'kakusuu'
-      ? TEXTS.review.answerIs(TEXTS.exam.kakusuuUnit(q.strokeCount))
+    $('wAnswer').innerHTML = q.type === 'kakusuu'
+      ? rubyHTML(TEXTS.review.answerIs(TEXTS.exam.kakusuuUnit(q.strokeCount)))
       : '';
   }
 }
@@ -1564,7 +1576,7 @@ $('wSubmit').addEventListener('click', () => {
     wClearTimers();
     W.mode = 'done';
     W.lastResult = null;
-    $('wTitle').textContent = TEXTS.review.done;
+    $('wTitle').innerHTML = rubyHTML(TEXTS.review.done);
     $('wTitle').className = 'good';
     $('wSub').textContent = '';
     wSetButtons('done');
@@ -1661,18 +1673,32 @@ $('fileImport').addEventListener('change', async (ev) => {
 // ============================================================
 
 (async () => {
-  applyTexts();
   store = await openStore();
   settings = await loadSettings(store);   // 学年設定（未設定なら grade=null）
-  const [kd, sd, rd] = await Promise.all([
+  const [kd, sd, rd, ut] = await Promise.all([
     fetch('data/kanji-g1.json').then(r => r.json()),
     fetch('data/sentences-g1.json').then(r => r.json()),
     fetch('data/exam-readings-g1.json').then(r => r.json()),
+    fetch('data/ui-text.json').then(r => r.json()),
   ]);
   kanjiList = kd.kanji;
   byCharApp = Object.fromEntries(kanjiList.map(k => [k.char, k]));
   sentencesData = sd.sentences;
   readingsData = rd.readings;
+  // UI文言（種類1）の学年別表示。低学年の許可リストはChat承認待ち＝空
+  configureRuby({
+    kanjiGrades: ut.kanjiGrades,
+    lowGradeAllow: [],
+    grade: settings.grade,
+    rubyEnabled: settings.rubyEnabled,
+  });
+  // 開発用: 表示学年の上書き（保存しない）。例: index.html?dev-grade=6
+  const qp = new URLSearchParams(location.search);
+  if (qp.has('dev-grade')) {
+    const g = parseInt(qp.get('dev-grade'), 10);
+    if (g >= GRADE_MIN && g <= GRADE_MAX) setRenderGrade(g);
+  }
+  applyTexts();   // ルビ設定が済んでから文言を流し込む
   await refreshHome();
   // 初回だけ学年をえらぶ（保存済みならそのままホーム）
   if (settings.grade == null) {
@@ -1682,7 +1708,6 @@ $('fileImport').addEventListener('change', async (ev) => {
 
   // 開発用: 結果画面の文言確認（本番導線からは見えない）
   // 例: index.html?dev-result=115&dev-wrong=右左山
-  const qp = new URLSearchParams(location.search);
   if (qp.has('dev-result')) {
     const score = Math.max(0, Math.min(150, parseInt(qp.get('dev-result'), 10) || 0));
     const wrong = [...(qp.get('dev-wrong') || '')].filter(c => byCharApp[c]);
