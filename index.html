@@ -92,6 +92,45 @@
     .yDock { grid-template-columns: 1fr; }
   }
 
+  /* ---- 学年でまなぶ（R1④・モック未合意画面＝情報設計の範囲で素直に組む） ---- */
+  #scrShelf {
+    max-width: none;
+    min-height: 100dvh;
+    background: var(--block-bg);
+    color: var(--block-text);
+    padding: 22px 26px;
+  }
+  #scrShelf.on { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
+  .shTop { display: flex; justify-content: space-between; align-items: center; }
+  .shTitle { font-size: 20px; font-weight: 800; line-height: 2.1; }
+  #shBack {
+    font-size: 13.5px; font-weight: 700; font-family: var(--font-ui); line-height: 2.1;
+    padding: 6px 16px; border: none; border-radius: 12px;
+    background: #fff; color: var(--block-muted);
+    box-shadow: 2px 2px 0 var(--block-dash-edge);
+  }
+  #shGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 740px) { #shGrid { grid-template-columns: 1fr; } }
+  .shRow {
+    background: #fff; border-radius: var(--block-radius); padding: 14px 18px 16px;
+    box-shadow: 3px 3px 0 var(--block-dash-edge), 5px 6px 12px rgba(51,50,46,.07);
+    border: 2px solid transparent;
+  }
+  .shRow.prepRow { background: transparent; border: 1.5px dashed var(--block-dash); box-shadow: none; }
+  .shRow.own { border-color: var(--block-hero); }   /* prepRow より後に置く（自学年の枠を破線色より優先） */
+  .shHead { display: flex; align-items: baseline; gap: 10px; }
+  .shName { font-size: 17px; font-weight: 800; line-height: 2.1; }
+  .shLv { font-size: 11px; color: var(--block-muted); font-weight: 700; line-height: 2.1; }
+  .shPrep { font-size: 11.5px; color: var(--block-muted-soft); line-height: 2.1; margin-top: 2px; }
+  .shDoors { display: flex; gap: 10px; margin-top: 8px; }
+  .shDoors button {
+    flex: 1; border: none; border-radius: var(--block-radius-sm);
+    padding: 10px 12px; font-weight: 800; font-family: var(--font-ui);
+    font-size: 13.5px; line-height: 2.1; color: #fff;
+  }
+  .shDoorPrac { background: var(--block-prac); box-shadow: 2px 2px 0 var(--block-prac-edge); }
+  .shDoorExam { background: var(--block-exam); color: var(--block-exam-text); box-shadow: 2px 2px 0 var(--block-exam-edge); }
+
   /* ---- 旧ホーム（home-mock.html 準拠・v0.9。橋渡しのためDOMに温存・導線からは外す） ---- */
   #scrHomeOld { max-width: 420px; padding: 0; }
   #scrHomeOld.on { display: block; }
@@ -445,7 +484,7 @@
           </div>
         </div>
       </details>
-      <div class="ver">v0.10.3</div>
+      <div class="ver">v0.10.4</div>
     </div>
   </div>
 
@@ -495,6 +534,15 @@
       </button>
     </div>
     <div class="footnote" id="homeSign"></div>
+  </div>
+
+  <!-- 学年でまなぶ（R1④・モック未合意画面＝素直に組む） -->
+  <div id="scrShelf" class="screen">
+    <div class="shTop">
+      <div class="shTitle" id="shTitle"></div>
+      <button id="shBack" type="button"></button>
+    </div>
+    <div id="shGrid"></div>
   </div>
 
   <!-- 学年をえらぶ（R1・初回に1度。あとで変更可） -->
@@ -585,13 +633,13 @@
 
 <script type="module">
 // ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
-import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.3';
-import { openStore } from './js/store.js?v=0.10.3';
-import { TEXTS, LOW_GRADE_KANJI_ALLOW, formatReadings } from './js/texts.js?v=0.10.3';
-import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.3';
-import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.3';
-import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.3';
-import { configureRuby, setRenderGrade, getRenderGrade, rubyHTML } from './js/ruby.js?v=0.10.3';
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.4';
+import { openStore } from './js/store.js?v=0.10.4';
+import { TEXTS, LOW_GRADE_KANJI_ALLOW, formatReadings } from './js/texts.js?v=0.10.4';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.4';
+import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.4';
+import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.4';
+import { configureRuby, setRenderGrade, getRenderGrade, rubyHTML } from './js/ruby.js?v=0.10.4';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -687,7 +735,11 @@ function renderRoad(n) {
     road.appendChild(st);
   }
   const today = $('yToday');
-  if (today) today.addEventListener('click', startToday);
+  if (today) today.addEventListener('click', () => { startToday().catch(console.error); });
+  // 駅タップ → 学年でまなぶ（その学年の区画へ）
+  for (const b of road.querySelectorAll('button.b[data-grade]')) {
+    b.addEventListener('click', () => openShelf(parseInt(b.dataset.grade, 10)));
+  }
 }
 
 async function refreshHome() {
@@ -780,10 +832,51 @@ $('yGradePill').addEventListener('click', () => {
   renderGradeSelect();          // 現在値を選択済みの状態で開く（あとで変更可）
   show('scrGradeSelect');
 });
-// ③暫定: 練習ドアは現行れんしゅうへ直行（④で「学年でまなぶ」へ差し替える）
-$('yDoorPrac').addEventListener('click', () => { startToday().catch(console.error); });
+$('yDoorPrac').addEventListener('click', () => { openShelf(); });
 $('yDoorExam').addEventListener('click', () => { startExam().catch(console.error); });
 $('yDoorDict').addEventListener('click', () => { openDict().catch(console.error); });
+
+// ============================================================
+// 学年でまなぶ（R1④）— 棚。1年=現行機能への橋渡し／他学年=準備中（押しても壊れない）
+// ============================================================
+
+function renderShelf() {
+  const cur = getRenderGrade();
+  T($('shTitle'), TEXTS.shelf.title);
+  T($('shBack'), TEXTS.dict.back);
+  const grid = $('shGrid');
+  grid.innerHTML = '';
+  for (let g = 1; g <= 6; g++) {
+    const hasData = g === 1;   // いまデータがあるのは10級80字（1年）だけ
+    const row = document.createElement('div');
+    row.className = 'shRow' + (g === cur ? ' own' : '') + (hasData ? '' : ' prepRow');
+    row.id = 'shRow' + g;
+    let inner =
+      `<div class="shHead"><span class="shName">${rubyHTML(TEXTS.settings.gradeName(g))}</span>` +
+      `<span class="shLv">${rubyHTML(hasData ? TEXTS.homeY.stationLevel1 : TEXTS.homeY.stationLevel(11 - g))}</span></div>`;
+    if (hasData) {
+      inner +=
+        `<div class="shDoors">` +
+        `<button class="shDoorPrac" type="button" data-act="prac">${rubyHTML(TEXTS.shelf.practice)}</button>` +
+        `<button class="shDoorExam" type="button" data-act="exam">${rubyHTML(TEXTS.shelf.exam)}</button></div>`;
+    } else {
+      inner += `<div class="shPrep">${rubyHTML(TEXTS.shelf.prepNote)}</div>`;
+    }
+    row.innerHTML = inner;
+    grid.appendChild(row);
+  }
+  grid.querySelector('[data-act=prac]').addEventListener('click', () => { startToday().catch(console.error); });
+  grid.querySelector('[data-act=exam]').addEventListener('click', () => { startExam().catch(console.error); });
+}
+
+function openShelf(focusGrade) {
+  renderShelf();
+  show('scrShelf');
+  const row = $('shRow' + (focusGrade || getRenderGrade() || 1));
+  if (row) row.scrollIntoView({ block: 'nearest' });
+}
+
+$('shBack').addEventListener('click', goHome);
 
 // ============================================================
 // れんしゅう
