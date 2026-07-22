@@ -78,44 +78,19 @@
  },
  "audit": {
   "confirmedCount": 61,
-  "unconfirmedReadings": [
+  "jukujikunApproved": [
    {
     "kanji": "今日",
     "yomi": "きょう",
-    "candidates": {
-     "今": [
-      "いま",
-      "きん",
-      "こん"
-     ],
-     "日": [
-      "か",
-      "じつ",
-      "にち",
-      "ひ",
-      "び"
-     ]
-    }
+    "reason": "熟字訓（Chat承認 2026-07-22）"
    },
    {
     "kanji": "文字",
     "yomi": "もじ",
-    "candidates": {
-     "文": [
-      "あや",
-      "ふみ",
-      "ぶん",
-      "もん"
-     ],
-     "字": [
-      "あざ",
-      "あざな",
-      "じ",
-      "な"
-     ]
-    }
+    "reason": "熟字訓（Chat承認 2026-07-22）"
    }
   ],
+  "unconfirmedReadings": [],
   "beyondElementary": [
    "戻",
    "途"

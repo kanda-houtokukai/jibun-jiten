@@ -496,7 +496,7 @@
 // ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
 import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.2';
 import { openStore } from './js/store.js?v=0.10.2';
-import { TEXTS, formatReadings } from './js/texts.js?v=0.10.2';
+import { TEXTS, LOW_GRADE_KANJI_ALLOW, formatReadings } from './js/texts.js?v=0.10.2';
 import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.2';
 import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.2';
 import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.2';
@@ -1685,10 +1685,10 @@ $('fileImport').addEventListener('change', async (ev) => {
   byCharApp = Object.fromEntries(kanjiList.map(k => [k.char, k]));
   sentencesData = sd.sentences;
   readingsData = rd.readings;
-  // UI文言（種類1）の学年別表示。低学年の許可リストはChat承認待ち＝空
+  // UI文言（種類1）の学年別表示。低学年の許可リストはChat確定の12字（texts.js が正本）
   configureRuby({
     kanjiGrades: ut.kanjiGrades,
-    lowGradeAllow: [],
+    lowGradeAllow: LOW_GRADE_KANJI_ALLOW,
     grade: settings.grade,
     rubyEnabled: settings.rubyEnabled,
   });

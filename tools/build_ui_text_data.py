@@ -37,6 +37,14 @@ OUT = REPO / "data" / "ui-text.json"
 MARKUP_RE = re.compile(r"\{([^{}|]+)\|([^{}|]+)\}")
 KANJI_RE = re.compile(r"[一-鿿]")
 
+# 熟字訓の承認済み例外（Chat確定 2026-07-22・R1②回答）
+# 音訓の合成では作れない読み。表示は語全体に1つのルビ（グループルビ）で、字ごとに割らない。
+# 新しい語がここに増えるときは必ずChatの確認を経ること（Codeが読みを選ばない）。
+JUKUJIKUN_APPROVED = {
+    "今日": "きょう",
+    "文字": "もじ",
+}
+
 KATA_TO_HIRA = {chr(k): chr(k - 0x60) for k in range(0x30A1, 0x30F7)}
 
 RENDAKU = {
@@ -59,6 +67,8 @@ def extract_segments():
     # コメント行（説明中の例）と backup ブロック（保護者向け・変換対象外）は対象外
     src = "\n".join(ln for ln in src.splitlines() if not ln.lstrip().startswith("//"))
     src = re.sub(r"backup:\s*\{.*?\n  \},", "", src, flags=re.S)
+    # 許可リスト定義（表記ポリシーのデータ。文言ではない）は対象外
+    src = re.sub(r"export const LOW_GRADE_KANJI_ALLOW = \[.*?\];", "", src, flags=re.S)
     segs = []
     seen = set()
     for m in MARKUP_RE.finditer(src):
@@ -179,10 +189,12 @@ def main():
                     if dic[c]["grade"] and 1 <= dic[c]["grade"] <= 6}
     beyond = [c for c in all_chars if c not in kanji_grades]
 
-    confirmed, unconfirmed = [], []
+    confirmed, unconfirmed, jukujikun = [], [], []
     for s in segs:
         entry = {"kanji": s["kanji"], "yomi": s["yomi"]}
-        if compose_ok(s["kanji"], s["yomi"], dic):
+        if JUKUJIKUN_APPROVED.get(s["kanji"]) == s["yomi"]:
+            jukujikun.append({**entry, "reason": "熟字訓（Chat承認 2026-07-22）"})
+        elif compose_ok(s["kanji"], s["yomi"], dic):
             confirmed.append(entry)
         else:
             entry["candidates"] = {
@@ -203,6 +215,7 @@ def main():
 
     audit = {
         "confirmedCount": len(confirmed),
+        "jukujikunApproved": jukujikun,       # 承認済み例外（グループルビで表示）
         "unconfirmedReadings": unconfirmed,   # ⚠️Chat確認事項（機械で読みを確定できない）
         "beyondElementary": beyond,           # 小学配当外 → 全学年で常にひらがな表示
         "lowGradeCandidates": low_candidates, # ⚠️低学年の漢字許可リスト候補（採否はChat）
@@ -221,9 +234,11 @@ def main():
     }
 
     print(f"セグメント: {len(segs)} / 使用字: {len(all_chars)}")
-    print(f"  読みの機械確認: 済 {len(confirmed)} ／ 未確認 {len(unconfirmed)}")
+    print(f"  読みの機械確認: 済 {len(confirmed)} ／ 熟字訓（承認済み例外） {len(jukujikun)} ／ 未確認 {len(unconfirmed)}")
+    for e in jukujikun:
+        print(f"    熟字訓: {e['kanji']}＝{e['yomi']}")
     for e in unconfirmed:
-        print(f"    未確認: {e['kanji']}＝{e['yomi']}")
+        print(f"    ⚠️未確認: {e['kanji']}＝{e['yomi']}（Chat確認が必要）")
     print(f"  小学配当外（常にひらがな）: {''.join(beyond) or 'なし'}")
     print(f"  低学年許可リスト候補: {len(low_candidates)} 語")
     for e in low_candidates:
