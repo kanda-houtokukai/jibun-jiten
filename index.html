@@ -26,9 +26,75 @@
   ruby { ruby-align: center; }
   ruby rt { font-size: 0.5em; font-weight: 400; opacity: 0.85; letter-spacing: 0; }
 
-  /* ---- ホーム（home-mock.html 準拠） ---- */
-  #scrHome { max-width: 420px; padding: 0; }
-  #scrHome.on { display: block; }
+  /* ---- ホーム 案Y「みち型」（R1③・確定モック準拠・積み木の器） ----
+     ルビの有無でブロック高さが変わらないよう、ルビが載りうる行は line-height で高さを常に確保する */
+  #scrHome {
+    max-width: none;
+    min-height: 100dvh;
+    background: var(--block-bg);
+    color: var(--block-text);
+    padding: 20px 26px 14px;
+  }
+  #scrHome.on { display: flex; flex-direction: column; align-items: stretch; }
+  .yBar { display: flex; justify-content: space-between; align-items: center; }
+  .yBrand { font-size: 20px; font-weight: 800; }
+  .yBrand span { color: var(--block-hero); }
+  #yGradePill {
+    color: #fff; background: var(--block-text);
+    border: none; border-radius: 12px;
+    padding: 8px 15px; font-size: 13.5px; font-weight: 700;
+    font-family: var(--font-ui); line-height: 2.1;
+    box-shadow: 2px 3px 0 var(--block-text-edge);
+  }
+  .yRoad { flex: 1; display: flex; align-items: center; gap: 0; padding: 14px 4px; position: relative; min-height: 170px; }
+  .yRoad::before { content: ""; position: absolute; left: 2%; right: 2%; top: 50%; border-top: 3px dashed var(--block-road); }
+  .ySt { position: relative; display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; }
+  .ySt .b {
+    border-radius: var(--block-radius-sm); padding: 12px 10px; text-align: center;
+    color: #fff; width: 86%; font-family: var(--font-ui);
+    border: 1.5px solid transparent;   /* 破線状態と高さを揃える（状態切替で高さを動かさない） */
+  }
+  .ySt .y { font-size: 14px; font-weight: 800; display: block; line-height: 2.1; }
+  .ySt .p { font-size: 9.5px; opacity: .9; display: block; margin-top: 2px; line-height: 2.1; }
+  .ySt.data .b { background: var(--block-prac); box-shadow: 2px 2px 0 var(--block-prac-edge); }
+  .ySt.now { flex: 1.9; }
+  .ySt.now .b { background: var(--block-hero); box-shadow: 3px 3px 0 var(--block-hero-edge), 5px 6px 12px rgba(51,50,46,.12); padding: 16px 12px; }
+  .ySt.now .y { font-size: 19px; }
+  .ySt.now .go {
+    margin-top: 9px; background: #fff; color: var(--block-hero);
+    border: none; border-radius: 20px; font-size: 13px; font-weight: 800;
+    font-family: var(--font-ui); line-height: 2.1;
+    padding: 9px 0; width: 100%; box-shadow: 2px 2px 0 var(--block-go-edge);
+  }
+  .ySt.next .b { background: #fff; color: var(--block-muted-faint); border: 1.5px dashed var(--block-dash); box-shadow: none; }
+  .yDock { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .yDoor {
+    padding: 12px 16px; display: flex; align-items: center; gap: 13px;
+    color: #fff; border: none; text-align: left;
+    border-radius: var(--block-radius); font-family: var(--font-ui);
+  }
+  .yDoor .ic { width: 26px; height: 26px; flex-shrink: 0; }
+  .yDoor .ic svg { width: 100%; height: 100%; fill: none; stroke-width: 2.1; stroke: currentColor; }
+  .yDoor .nm { font-size: 14.5px; font-weight: 800; display: block; line-height: 2.1; }
+  .yDoor .ds { font-size: 10.5px; opacity: .85; margin-top: 2px; display: block; line-height: 2.1; }
+  .yDoor.prac { background: var(--block-prac); box-shadow: 3px 3px 0 var(--block-prac-edge), 5px 6px 12px rgba(51,50,46,.09); }
+  .yDoor.exam { background: var(--block-exam); color: var(--block-exam-text); box-shadow: 3px 3px 0 var(--block-exam-edge), 5px 6px 12px rgba(51,50,46,.09); }
+  .yDoor.dict { background: var(--block-dict); box-shadow: 3px 3px 0 var(--block-dict-edge), 5px 6px 12px rgba(51,50,46,.09); }
+  .yFoot { margin-top: 14px; }
+  .yFoot #backupBox { margin: 0; font-size: 12px; color: var(--block-muted-soft); }
+  .yFoot .ver { margin: 8px 0 0; color: var(--block-muted-soft); }
+  /* 縦スマホ: みちは折り返し（破線は消す）・ドックは1列。破綻させないことを優先 */
+  @media (max-width: 740px) {
+    .yRoad { flex-wrap: wrap; gap: 10px; min-height: 0; }
+    .yRoad::before { display: none; }
+    .ySt { flex: 1 1 30%; }
+    .ySt.now { flex: 1 1 100%; }
+    .yDock { grid-template-columns: 1fr; }
+  }
+
+  /* ---- 旧ホーム（home-mock.html 準拠・v0.9。橋渡しのためDOMに温存・導線からは外す） ---- */
+  #scrHomeOld { max-width: 420px; padding: 0; }
+  #scrHomeOld.on { display: block; }
   .hTop { padding: 22px 24px 6px; display: flex; align-items: baseline; justify-content: space-between; }
   .wordmark { font-size: 15px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-soft); }
   .wordmark .dot { color: var(--grow); }
@@ -202,7 +268,7 @@
   #eQuit { font-size: 13px; padding: 6px 14px; border: 1px solid var(--ghost); border-radius: 10px; background: #fff; color: var(--ink-soft); }
   #eQuit:active { background: var(--paper-edge); }
   #ePrompt { font-size: 15px; font-weight: 600; color: var(--ink-soft); margin: 12px 0 6px; text-align: center; }
-  #eSentence { font-size: 22px; line-height: 1.9; margin: 6px 0 10px; text-align: center; max-width: 480px; color: var(--ink); }
+  #eSentence { font-size: 22px; line-height: 2.1; margin: 6px 0 10px; text-align: center; max-width: 480px; color: var(--ink); }
   #eSentence .target {
     color: var(--ink); font-weight: 600;
     border-bottom: 3px solid var(--grow); padding-bottom: 1px;
@@ -346,8 +412,45 @@
 </head>
 <body>
 
-  <!-- ホーム（home-mock.html 準拠。壁が主役） -->
+  <!-- ホーム 案Y「みち型」（R1③・確定モック準拠） -->
   <div id="scrHome" class="screen on">
+    <div class="yBar">
+      <div class="yBrand">じぶん<span>字典</span></div>
+      <button id="yGradePill" type="button"></button>
+    </div>
+    <div class="yRoad" id="yRoad"></div>
+    <div class="yDock">
+      <button id="yDoorPrac" class="yDoor prac" type="button">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 19l1-4L16 4l3 3L8 18z"/><path d="M14 6l3 3"/></svg></span>
+        <span><span class="nm" id="yPracNm"></span><span class="ds" id="yPracSub"></span></span>
+      </button>
+      <button id="yDoorExam" class="yDoor exam" type="button">
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/></svg></span>
+        <span><span class="nm" id="yExamNm"></span><span class="ds" id="yExamSub"></span></span>
+      </button>
+      <button id="yDoorDict" class="yDoor dict" type="button">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 5v14M9 5v14"/></svg></span>
+        <span><span class="nm" id="yDictNm"></span><span class="ds" id="yDictSub"></span></span>
+      </button>
+    </div>
+    <div class="yFoot">
+      <details id="backupBox">
+        <summary></summary>
+        <div class="inner">
+          <div id="backupNote"></div>
+          <div style="margin-top:6px;">
+            <button id="btnExport"></button>
+            <button id="btnImport"></button>
+            <input type="file" id="fileImport" accept="application/json" hidden>
+          </div>
+        </div>
+      </details>
+      <div class="ver">v0.10.3</div>
+    </div>
+  </div>
+
+  <!-- 旧ホーム（v0.9・home-mock準拠。橋渡しのためDOMに温存。導線からは外れている） -->
+  <div id="scrHomeOld" class="screen">
     <div class="hTop">
       <div class="wordmark">じぶん字典<span class="dot">.</span></div>
       <div class="hDate" id="hDate"></div>
@@ -392,18 +495,6 @@
       </button>
     </div>
     <div class="footnote" id="homeSign"></div>
-    <details id="backupBox">
-      <summary></summary>
-      <div class="inner">
-        <div id="backupNote"></div>
-        <div style="margin-top:6px;">
-          <button id="btnExport"></button>
-          <button id="btnImport"></button>
-          <input type="file" id="fileImport" accept="application/json" hidden>
-        </div>
-      </div>
-    </details>
-    <div class="ver">v0.10.2</div>
   </div>
 
   <!-- 学年をえらぶ（R1・初回に1度。あとで変更可） -->
@@ -494,13 +585,13 @@
 
 <script type="module">
 // ?v= はデプロイごとに更新（実機ブラウザのモジュールキャッシュ滞留対策）
-import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.2';
-import { openStore } from './js/store.js?v=0.10.2';
-import { TEXTS, LOW_GRADE_KANJI_ALLOW, formatReadings } from './js/texts.js?v=0.10.2';
-import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.2';
-import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.2';
-import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.2';
-import { configureRuby, setRenderGrade, rubyHTML } from './js/ruby.js?v=0.10.2';
+import { DEFAULT_CONFIG, scoreStroke, matchKanji, templateStrokes, samplePath, userStrokeTo109 } from './js/matcher.js?v=0.10.3';
+import { openStore } from './js/store.js?v=0.10.3';
+import { TEXTS, LOW_GRADE_KANJI_ALLOW, formatReadings } from './js/texts.js?v=0.10.3';
+import { buildExam, scoreExam, EXAM_SPEC } from './js/exam.js?v=0.10.3';
+import { SETTLE, wetColor, settleOverlay, settledSvg } from './js/settle.js?v=0.10.3';
+import { GRADE_MIN, GRADE_MAX, loadSettings, saveSettings } from './js/settings.js?v=0.10.3';
+import { configureRuby, setRenderGrade, getRenderGrade, rubyHTML } from './js/ruby.js?v=0.10.3';
 
 const cfg = { ...DEFAULT_CONFIG }; // しきい値は暫定確定値（台帳）
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -562,6 +653,41 @@ function applyTexts() {
   T(document.querySelector('#dTop h2'), TEXTS.dict.title);
   T($('dBack'), TEXTS.dict.back);
   T($('dClose'), TEXTS.dict.close);
+  // 新ホーム（案Y）のドック
+  T($('yPracNm'), TEXTS.shelf.practice);
+  T($('yPracSub'), TEXTS.homeY.practiceDoorSub);
+  T($('yExamNm'), TEXTS.shelf.exam);
+  T($('yDictNm'), TEXTS.shelf.dictDoor);
+  T($('yDictSub'), TEXTS.home.dictTileSub);
+}
+
+// ---- ホーム 案Y: 学年のみち ----
+// 駅の状態: now=現在学年（きょうのぶん） / data=1年（10級80字あり） / next=その他（破線）
+// ⚠️「済学年✓」の状態は完了判定が未定義のため未実装（素直に倒した点・報告済み想定）
+function renderRoad(n) {
+  const cur = getRenderGrade();
+  const road = $('yRoad');
+  road.innerHTML = '';
+  for (let g = 1; g <= 6; g++) {
+    const st = document.createElement('div');
+    const state = g === cur ? 'now' : (g === 1 ? 'data' : 'next');
+    st.className = 'ySt ' + state;
+    if (state === 'now') {
+      const sub = g === 1 ? TEXTS.homeY.stationProgress1(n) : TEXTS.homeY.stationLevel(11 - g);
+      st.innerHTML =
+        `<div class="b"><span class="y">${rubyHTML(TEXTS.homeY.stationNow(g))}</span>` +
+        `<span class="p">${rubyHTML(sub)}</span>` +
+        `<button class="go" id="yToday" type="button">${rubyHTML(TEXTS.homeY.todayGo)}</button></div>`;
+    } else {
+      const sub = g === 1 ? TEXTS.homeY.stationLevel1 : TEXTS.homeY.stationLevel(11 - g);
+      st.innerHTML =
+        `<button class="b" type="button" data-grade="${g}"><span class="y">${rubyHTML(TEXTS.homeY.station(g))}</span>` +
+        `<span class="p">${rubyHTML(sub)}</span></button>`;
+    }
+    road.appendChild(st);
+  }
+  const today = $('yToday');
+  if (today) today.addEventListener('click', startToday);
 }
 
 async function refreshHome() {
@@ -595,6 +721,12 @@ async function refreshHome() {
   ]);
   $('examSub').innerHTML = rubyHTML(progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub);
   $('homeBest').innerHTML = best ? rubyHTML(TEXTS.exam.best(best.score)) : '';
+  // 新ホーム（案Y）
+  $('yGradePill').innerHTML = settings.grade
+    ? rubyHTML(TEXTS.settings.gradeName(settings.grade)) + ' ▾'
+    : '▾';
+  $('yExamSub').innerHTML = rubyHTML(progress ? TEXTS.home.examTileResume : TEXTS.home.examTileSub);
+  renderRoad(n);
 }
 
 // ============================================================
@@ -639,6 +771,19 @@ $('gsConfirm').addEventListener('click', async () => {
   await refreshHome();
   show('scrHome');
 });
+
+// ============================================================
+// ホーム 案Y: ナビ（R1③）
+// ============================================================
+
+$('yGradePill').addEventListener('click', () => {
+  renderGradeSelect();          // 現在値を選択済みの状態で開く（あとで変更可）
+  show('scrGradeSelect');
+});
+// ③暫定: 練習ドアは現行れんしゅうへ直行（④で「学年でまなぶ」へ差し替える）
+$('yDoorPrac').addEventListener('click', () => { startToday().catch(console.error); });
+$('yDoorExam').addEventListener('click', () => { startExam().catch(console.error); });
+$('yDoorDict').addEventListener('click', () => { openDict().catch(console.error); });
 
 // ============================================================
 // れんしゅう
@@ -963,13 +1108,14 @@ function goHome() {
 
 $('pQuit').addEventListener('click', goHome);
 
-$('btnToday').addEventListener('click', async () => {
+async function startToday() {
   entries = await store.getAll();
   P.chars = await pickToday();
   P.idx = 0;
   show('scrPractice');
   startChar();
-});
+}
+$('btnToday').addEventListener('click', () => { startToday().catch(console.error); });
 
 window.addEventListener('resize', () => {
   if ($('scrPractice').classList.contains('on')) resizeCell();
@@ -1103,11 +1249,12 @@ function replaySvg(svg) {
   }
 }
 
-$('btnDict').addEventListener('click', async () => {
+async function openDict() {
   entries = await store.getAll();
   renderDict();
   show('scrDict');
-});
+}
+$('btnDict').addEventListener('click', () => { openDict().catch(console.error); });
 $('dBack').addEventListener('click', () => { clearDetailTimers(); goHome(); });
 $('dClose').addEventListener('click', () => { clearDetailTimers(); $('dDetail').classList.remove('on'); });
 $('dDetail').addEventListener('click', (e) => {
