@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案B 洗練2案</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:#33373E;font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;padding:20px 14px 60px;color:#fff;}
+  .head{text-align:center;max-width:920px;margin:0 auto 22px;}
+  .head h1{font-size:17px;font-weight:600;}
+  .head p{font-size:12.5px;color:#AAB0BC;margin-top:8px;line-height:1.7;}
+  .wrap{display:flex;flex-direction:column;gap:36px;align-items:center;}
+  .case{width:100%;max-width:920px;}
+  .caselabel{font-size:13.5px;font-weight:700;margin-bottom:4px;padding-left:4px;display:flex;align-items:center;gap:10px;}
+  .caselabel .num{background:#F0C348;color:#5A4A18;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;}
+  .rationale{font-size:11.5px;color:#AAB0BC;margin-bottom:10px;padding-left:36px;line-height:1.6;}
+  .frame{width:100%;aspect-ratio:10/7;border-radius:18px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.3);}
+
+  /* ── 共通：外側の余白を広げた ── */
+  .scr{background:#FBF7F0;height:100%;padding:24px 32px 28px;display:flex;flex-direction:column;color:#33322E;}
+  .mincho{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-feature-settings:"palt";}
+
+  .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .back{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#8A8070;font-weight:700;
+    background:#fff;border-radius:13px;padding:8px 15px 8px 12px;box-shadow:2px 2px 0 #EDE4D5;}
+  .back svg{width:15px;height:15px;stroke:#8A8070;stroke-width:2.5;fill:none;}
+  .hgroup{text-align:center;}
+  .hgroup .t{font-size:20px;font-weight:800;letter-spacing:.03em;}
+  .hgroup .s{font-size:11px;color:#A89E8E;font-weight:700;margin-top:3px;letter-spacing:.06em;}
+  .grade{color:#fff;border-radius:13px;padding:8px 15px;font-size:13px;font-weight:700;background:#33322E;box-shadow:2px 3px 0 #1A1916;}
+
+  /* にがて帯：厚みと表情を足した */
+  .weak{background:#fff;border-radius:17px;padding:13px 15px 13px 19px;display:flex;align-items:center;gap:15px;
+    box-shadow:3px 3px 0 #EDE4D5,5px 7px 14px rgba(51,50,46,.07);margin-bottom:18px;
+    border:1.5px solid #F2EADC;}
+  .weak .mark{width:38px;height:38px;border-radius:12px;background:#FDF0E4;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 -2px 0 rgba(200,150,100,.10);}
+  .weak .mark svg{width:20px;height:20px;stroke:#E8894A;stroke-width:2.3;fill:none;}
+  .weak .body{flex:1;}
+  .weak .lb{font-size:10px;font-weight:800;color:#B5AB98;letter-spacing:.1em;}
+  .weak .txt{font-size:16px;font-weight:800;margin-top:3px;}
+  .weak .txt em{font-style:normal;color:#E8894A;}
+  .weak .txt .n{font-size:17px;}
+  .weak .btn{background:#E8894A;color:#fff;font-size:13.5px;font-weight:800;border-radius:14px;padding:11px 20px;
+    box-shadow:2px 3px 0 #C56A34;flex-shrink:0;display:flex;align-items:center;gap:7px;}
+
+  /* ── 入口ブロック：内側を詰め、中身を意味で埋めた ── */
+  .doors{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:20px;}
+  .door{border-radius:22px;padding:17px 19px 15px;display:flex;flex-direction:column;color:#fff;position:relative;overflow:hidden;}
+  .door::before{content:"";position:absolute;top:0;left:0;right:0;height:38%;
+    background:linear-gradient(rgba(255,255,255,.13),transparent);pointer-events:none;}
+  .d-yomu{background:#5EA9A0;box-shadow:3px 3px 0 #47857D,6px 8px 16px rgba(51,50,46,.11);}
+  .d-kaku{background:#E8894A;box-shadow:3px 3px 0 #C56A34,6px 8px 16px rgba(51,50,46,.11);}
+  .d-kata{background:#7C93C4;box-shadow:3px 3px 0 #5E74A6,6px 8px 16px rgba(51,50,46,.11);}
+  .d-koto{background:#F0C348;color:#5A4A18;box-shadow:3px 3px 0 #CFA02F,6px 8px 16px rgba(51,50,46,.11);}
+
+  .door .hd{display:flex;align-items:center;gap:12px;position:relative;}
+  .door .plate{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.20);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35);}
+  .d-koto .plate{background:rgba(90,74,24,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);}
+  .door .plate svg{width:22px;height:22px;fill:none;stroke-width:2.3;}
+  .door .nm{font-size:25px;font-weight:800;letter-spacing:.03em;line-height:1;}
+  .door .lead{font-size:11.5px;font-weight:600;opacity:.9;margin-top:9px;letter-spacing:.02em;}
+  .door .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}
+  .door .chip{font-size:11px;font-weight:700;background:rgba(255,255,255,.22);border-radius:9px;padding:4px 9px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18);}
+  .d-koto .chip{background:rgba(90,74,24,.14);}
+  .door .foot{margin-top:auto;padding-top:12px;}
+
+  /* ══ B-1：進捗＝積み木を積む（世界観に合わせた） ══ */
+  .seg{display:flex;gap:3.5px;align-items:flex-end;height:20px;}
+  .seg i{flex:1;border-radius:3px;background:rgba(255,255,255,.26);height:9px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);}
+  .seg i.on{background:#fff;height:16px;box-shadow:0 1px 0 rgba(0,0,0,.06);}
+  .d-koto .seg i{background:rgba(90,74,24,.16);} .d-koto .seg i.on{background:#5A4A18;}
+  .metaline{display:flex;align-items:baseline;justify-content:space-between;margin-top:8px;}
+  .metaline .l{font-size:10.5px;font-weight:700;opacity:.88;letter-spacing:.04em;}
+  .metaline .r{font-size:11px;font-weight:700;opacity:.95;}
+  .metaline .r b{font-size:17px;font-weight:600;letter-spacing:.02em;}
+
+  /* ══ B-2：進捗＝めもり（文房具の物差し） ══ */
+  .ruler{position:relative;height:22px;}
+  .ruler .track{position:absolute;left:0;right:0;top:7px;height:8px;border-radius:5px;background:rgba(255,255,255,.24);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.06);}
+  .ruler .fill{position:absolute;left:0;top:7px;height:8px;border-radius:5px;background:#fff;}
+  .d-koto .ruler .fill{background:#5A4A18;}
+  .ruler .ticks{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;}
+  .ruler .ticks i{width:1.5px;height:5px;background:rgba(255,255,255,.42);border-radius:1px;}
+  .d-koto .ruler .ticks i{background:rgba(90,74,24,.3);}
+  .ruler .knob{position:absolute;top:2px;width:18px;height:18px;border-radius:6px;background:#fff;
+    box-shadow:0 2px 0 rgba(0,0,0,.10);transform:translateX(-9px);}
+  .d-koto .ruler .knob{background:#5A4A18;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>案B 洗練2案（iPad横・3年生）</h1>
+    <p>直したところ：外側の余白を広げ／ブロック内の空洞を一行説明で埋め／進捗表現を作り込み／数字を明朝に／上辺に光沢で素材感。<br>B-1とB-2の違いは<b>進捗の見せ方</b>です。</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- B-1 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">1</span>進捗＝積み木を積む</div>
+      <div class="rationale">世界観に合わせ、進捗を「積み上がったブロック」で表現。積まれた段が育っていくのが一目で分かる。数字は明朝で作品性を持たせ、「のこり◯もん」で背中を押す（残量提示は前進を促す）。</div>
+      <div class="frame"><div class="scr">
+        <div class="bar">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="hgroup"><div class="t">練習</div><div class="s">3年生・8きゅう そうとう</div></div>
+          <div class="grade">3年生 ▾</div>
+        </div>
+
+        <div class="weak">
+          <div class="mark"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></div>
+          <div class="body">
+            <div class="lb">いま にがてなのは</div>
+            <div class="txt"><em>おくりがな</em>　のこり <span class="n mincho">24</span> もん</div>
+          </div>
+          <div class="btn">ここから やる →</div>
+        </div>
+
+        <div class="doors">
+          <div class="door d-yomu">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M3 6h7a3 3 0 013 3v10a2.5 2.5 0 00-2.5-2.5H3z"/><path d="M21 6h-7a3 3 0 00-3 3v10a2.5 2.5 0 012.5-2.5H21z"/></svg></div><div class="nm">よむ</div></div>
+            <div class="lead">よみかたを こたえる</div>
+            <div class="chips"><span class="chip">よみ</span><span class="chip">おなじ字のよみ</span></div>
+            <div class="foot">
+              <div class="seg"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+              <div class="metaline"><div class="l">おぼえた ことば</div><div class="r"><b class="mincho">38</b>／60</div></div>
+            </div>
+          </div>
+
+          <div class="door d-kaku">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/><path d="M14 6l3 3"/></svg></div><div class="nm">かく</div></div>
+            <div class="lead">じぶんの てで 書く</div>
+            <div class="chips"><span class="chip">書き</span><span class="chip">おくりがな</span></div>
+            <div class="foot">
+              <div class="seg"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="metaline"><div class="l">かけた 字</div><div class="r"><b class="mincho">76</b>／200</div></div>
+            </div>
+          </div>
+
+          <div class="door d-kata">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 4h7v7H4z"/><path d="M13 13h7v7h-7z"/><path d="M4 15h7M17 4v7"/></svg></div><div class="nm">かたち</div></div>
+            <div class="lead">じゅんばん・かたちを 見る</div>
+            <div class="chips"><span class="chip">ひつじゅん</span><span class="chip">画かず</span><span class="chip">ぶしゅ</span></div>
+            <div class="foot">
+              <div class="seg"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="metaline"><div class="l">たしかめた 字</div><div class="r"><b class="mincho">102</b>／200</div></div>
+            </div>
+          </div>
+
+          <div class="door d-koto">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8l-4 4 4 4"/></svg></div><div class="nm">ことば</div></div>
+            <div class="lead">はんたい・にた いみを さがす</div>
+            <div class="chips"><span class="chip">はんたいの ことば</span></div>
+            <div class="foot">
+              <div class="seg"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="metaline"><div class="l">はじめた ばかり</div><div class="r"><b class="mincho">4</b>／32</div></div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- B-2 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">2</span>進捗＝めもり（文房具の物差し）</div>
+      <div class="rationale">同じ構成で、進捗を目盛りつきの物差しに。連続量として今どこかが読み取れ、つまみが自分の位置を示す。積み木より少し大人びた精度感。他は B-1 と同一。</div>
+      <div class="frame"><div class="scr">
+        <div class="bar">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="hgroup"><div class="t">練習</div><div class="s">3年生・8きゅう そうとう</div></div>
+          <div class="grade">3年生 ▾</div>
+        </div>
+
+        <div class="weak">
+          <div class="mark"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></div>
+          <div class="body">
+            <div class="lb">いま にがてなのは</div>
+            <div class="txt"><em>おくりがな</em>　のこり <span class="n mincho">24</span> もん</div>
+          </div>
+          <div class="btn">ここから やる →</div>
+        </div>
+
+        <div class="doors">
+          <div class="door d-yomu">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M3 6h7a3 3 0 013 3v10a2.5 2.5 0 00-2.5-2.5H3z"/><path d="M21 6h-7a3 3 0 00-3 3v10a2.5 2.5 0 012.5-2.5H21z"/></svg></div><div class="nm">よむ</div></div>
+            <div class="lead">よみかたを こたえる</div>
+            <div class="chips"><span class="chip">よみ</span><span class="chip">おなじ字のよみ</span></div>
+            <div class="foot">
+              <div class="ruler">
+                <div class="track"></div><div class="fill" style="width:63%"></div>
+                <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="knob" style="left:63%"></div>
+              </div>
+              <div class="metaline"><div class="l">おぼえた ことば</div><div class="r"><b class="mincho">38</b>／60</div></div>
+            </div>
+          </div>
+
+          <div class="door d-kaku">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/><path d="M14 6l3 3"/></svg></div><div class="nm">かく</div></div>
+            <div class="lead">じぶんの てで 書く</div>
+            <div class="chips"><span class="chip">書き</span><span class="chip">おくりがな</span></div>
+            <div class="foot">
+              <div class="ruler">
+                <div class="track"></div><div class="fill" style="width:38%"></div>
+                <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="knob" style="left:38%"></div>
+              </div>
+              <div class="metaline"><div class="l">かけた 字</div><div class="r"><b class="mincho">76</b>／200</div></div>
+            </div>
+          </div>
+
+          <div class="door d-kata">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 4h7v7H4z"/><path d="M13 13h7v7h-7z"/><path d="M4 15h7M17 4v7"/></svg></div><div class="nm">かたち</div></div>
+            <div class="lead">じゅんばん・かたちを 見る</div>
+            <div class="chips"><span class="chip">ひつじゅん</span><span class="chip">画かず</span><span class="chip">ぶしゅ</span></div>
+            <div class="foot">
+              <div class="ruler">
+                <div class="track"></div><div class="fill" style="width:51%"></div>
+                <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="knob" style="left:51%"></div>
+              </div>
+              <div class="metaline"><div class="l">たしかめた 字</div><div class="r"><b class="mincho">102</b>／200</div></div>
+            </div>
+          </div>
+
+          <div class="door d-koto">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8l-4 4 4 4"/></svg></div><div class="nm">ことば</div></div>
+            <div class="lead">はんたい・にた いみを さがす</div>
+            <div class="chips"><span class="chip">はんたいの ことば</span></div>
+            <div class="foot">
+              <div class="ruler">
+                <div class="track"></div><div class="fill" style="width:12%"></div>
+                <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="knob" style="left:12%"></div>
+              </div>
+              <div class="metaline"><div class="l">はじめた ばかり</div><div class="r"><b class="mincho">4</b>／32</div></div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</body>
+</html>

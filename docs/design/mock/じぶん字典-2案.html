@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>じぶん字典 2案</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:#33373E;font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;padding:20px 14px 60px;color:#fff;}
+  .head{text-align:center;max-width:900px;margin:0 auto 24px;}
+  .head h1{font-size:17px;font-weight:600;}
+  .head p{font-size:12.5px;color:#AAB0BC;margin-top:8px;line-height:1.6;}
+  .wrap{display:flex;flex-direction:column;gap:34px;align-items:center;}
+  .case{width:100%;max-width:920px;}
+  .caselabel{font-size:13px;font-weight:600;margin-bottom:10px;padding-left:4px;display:flex;align-items:center;gap:10px;}
+  .caselabel .num{background:#8FCFAD;color:#1B2A4A;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .caselabel .desc{color:#AAB0BC;font-weight:400;font-size:11.5px;}
+  .frame{width:100%;aspect-ratio:10/7;border-radius:18px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.3);}
+
+  /* 共通トークン */
+  .paper{background:#FBF7F0;}
+  .ink{color:#1B2A4A;}
+
+  /* ═══ 案1：静かな展示室（棚に整然と・字が主役・器を引く） ═══ */
+  .g1{background:#FBF7F0;padding:22px 26px;display:flex;flex-direction:column;height:100%;color:#33322E;}
+  .g1 .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .g1 .back{display:flex;align-items:center;gap:8px;font-size:13px;color:#8A8070;font-weight:600;}
+  .g1 .back svg{width:15px;height:15px;stroke:#8A8070;stroke-width:2;fill:none;}
+  .g1 .title{font-size:19px;font-weight:800;color:#33322E;}
+  .g1 .count{font-size:12px;color:#A89E8E;font-weight:600;}
+  .g1 .subline{font-size:11.5px;color:#A89E8E;margin-bottom:16px;}
+  .g1 .shelf{flex:1;display:grid;grid-template-columns:repeat(10,1fr);gap:10px;align-content:start;overflow:hidden;}
+  .g1 .ch{aspect-ratio:1;border-radius:11px;display:flex;align-items:center;justify-content:center;
+    font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:23px;position:relative;}
+  /* 習得＝白い台に濃紺の字（額装） */
+  .g1 .ch.on{background:#fff;color:#1B2A4A;box-shadow:2px 2px 0 #EDE4D5;}
+  /* 今日＝新緑の点 */
+  .g1 .ch.fresh{background:#fff;color:#1B2A4A;box-shadow:2px 2px 0 #C9E4D5;}
+  .g1 .ch.fresh::after{content:"";position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:#3A9D6B;}
+  /* 未習得＝台だけ空いている（うっすら） */
+  .g1 .ch.off{background:transparent;border:1.5px dashed #E4DBCB;color:#D8CEBE;font-size:19px;}
+
+  /* ═══ 案2：学年の区画に分けた図鑑（背骨=学年が見える） ═══ */
+  .g2{background:#FBF7F0;padding:20px 24px;display:flex;flex-direction:column;height:100%;color:#33322E;}
+  .g2 .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .g2 .back{display:flex;align-items:center;gap:8px;font-size:13px;color:#8A8070;font-weight:600;}
+  .g2 .back svg{width:15px;height:15px;stroke:#8A8070;stroke-width:2;fill:none;}
+  .g2 .title{font-size:18px;font-weight:800;}
+  .g2 .count{font-size:12px;color:#A89E8E;font-weight:600;}
+  .g2 .rows{flex:1;display:flex;flex-direction:column;gap:11px;overflow:hidden;}
+  .g2 .grow{display:flex;align-items:center;gap:14px;}
+  .g2 .tag{width:66px;flex-shrink:0;border-radius:12px;padding:9px 0;text-align:center;color:#fff;box-shadow:2px 2px 0 rgba(0,0,0,.12);}
+  .g2 .tag .y{font-size:15px;font-weight:800;display:block;line-height:1.1;}
+  .g2 .tag .p{font-size:9px;opacity:.9;}
+  .g2 .tag.y1{background:#E8894A;} .g2 .tag.y2{background:#5EA9A0;} .g2 .tag.y3{background:#7C93C4;}
+  .g2 .chs{flex:1;display:flex;gap:7px;flex-wrap:wrap;align-content:center;}
+  .g2 .c{width:34px;height:34px;border-radius:8px;background:#fff;color:#1B2A4A;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Yu Mincho",serif;font-size:18px;box-shadow:1.5px 1.5px 0 #EDE4D5;}
+  .g2 .c.fresh{box-shadow:1.5px 1.5px 0 #C9E4D5;position:relative;}
+  .g2 .c.fresh::after{content:"";position:absolute;top:3px;right:3px;width:4px;height:4px;border-radius:50%;background:#3A9D6B;}
+  .g2 .c.off{background:transparent;border:1.5px dashed #E4DBCB;color:#D8CEBE;box-shadow:none;font-size:15px;}
+  .g2 .more{font-size:11px;color:#B0A692;align-self:center;padding-left:4px;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>じぶん字典 2案（iPad横）</h1>
+    <p>宿題だった「積み木の器 × 濃紺インクの字」の接続を試しています。<br>字典は器を引いて字を主役に。案1=静かな展示室／案2=学年の区画に分けた図鑑。</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 案1 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">1</span>静かな展示室<span class="desc">棚に整然と・字だけが主役・器を最小に</span></div>
+      <div class="frame"><div class="g1">
+        <div class="top">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="title">じぶんじてん</div>
+          <div class="count">3年生 ・ 62／200</div>
+        </div>
+        <div class="subline">じぶんの てで かいた 字</div>
+        <div class="shelf" id="shelf1"></div>
+      </div></div>
+    </div>
+
+    <!-- 案2 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">2</span>学年の区画に分けた図鑑<span class="desc">背骨=学年が見える・級も併記</span></div>
+      <div class="frame"><div class="g2">
+        <div class="top">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="title">じぶんじてん</div>
+          <div class="count">ぜんぶで 158／1026</div>
+        </div>
+        <div class="rows">
+          <div class="grow">
+            <div class="tag y1"><span class="y">1年</span><span class="p">10きゅう</span></div>
+            <div class="chs" id="r1"></div>
+          </div>
+          <div class="grow">
+            <div class="tag y2"><span class="y">2年</span><span class="p">9きゅう</span></div>
+            <div class="chs" id="r2"></div>
+          </div>
+          <div class="grow">
+            <div class="tag y3"><span class="y">3年</span><span class="p">8きゅう</span></div>
+            <div class="chs" id="r3"></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+<script>
+  // 案1：3年生の字を展示（習得多め・今日ぶん・未習得混在）
+  var s1done="休糸字耳竹貝町村森水石青白田目口足手力名円王音貝羽雲園遠".split("");
+  var s1fresh="遠雲".split("");
+  var s1off="歌画会海界絵開階寒感漢館岸起".split("");
+  var shelf=document.getElementById("shelf1");
+  s1done.forEach(function(c){var d=document.createElement("div");d.className="ch "+(s1fresh.indexOf(c)>=0?"fresh":"on");d.textContent=c;shelf.appendChild(d);});
+  s1off.forEach(function(c){var d=document.createElement("div");d.className="ch off";d.textContent=c;shelf.appendChild(d);});
+
+  // 案2：学年ごとの区画（1年満杯・2年ほぼ・3年途中）
+  function fill(id,done,fresh,off){
+    var e=document.getElementById(id);
+    done.forEach(function(c){var d=document.createElement("div");d.className="c "+(fresh.indexOf(c)>=0?"fresh":"");d.textContent=c;e.appendChild(d);});
+    off.forEach(function(c){var d=document.createElement("div");d.className="c off";d.textContent=c;e.appendChild(d);});
+    var m=document.createElement("div");m.className="more";
+    m.textContent = (id==="r3") ? "…あと138" : "ぜんぶ おぼえた！";
+    e.appendChild(m);
+  }
+  fill("r1","一右雨円王音下火花貝学気九休玉金空月犬見".split(""),[],[]);
+  fill("r2","引羽雲園遠何科夏家歌画回会海絵外角楽活間".split(""),[],[]);
+  fill("r3","悪安暗医委意育員院飲".split(""),"飲院".split(""),"運泳駅央横屋温化荷界開".split(""));
+</script>
+</body>
+</html>

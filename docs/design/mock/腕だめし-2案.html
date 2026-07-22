@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>腕だめし 2案</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:#33373E;font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;padding:20px 14px 60px;color:#fff;}
+  .head{text-align:center;max-width:920px;margin:0 auto 22px;}
+  .head h1{font-size:17px;font-weight:600;}
+  .head p{font-size:12.5px;color:#AAB0BC;margin-top:8px;line-height:1.7;}
+  .wrap{display:flex;flex-direction:column;gap:36px;align-items:center;}
+  .case{width:100%;max-width:920px;}
+  .caselabel{font-size:13.5px;font-weight:700;margin-bottom:4px;padding-left:4px;display:flex;align-items:center;gap:10px;}
+  .caselabel .num{background:#F0C348;color:#5A4A18;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;}
+  .rationale{font-size:11.5px;color:#AAB0BC;margin-bottom:10px;padding-left:36px;line-height:1.6;}
+  .frame{width:100%;aspect-ratio:10/7;border-radius:18px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.3);}
+
+  /* 確定トークン */
+  .scr{background:#FBF7F0;height:100%;padding:24px 32px 28px;display:flex;flex-direction:column;color:#33322E;}
+  .mincho{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-feature-settings:"palt";}
+  .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .back{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#8A8070;font-weight:700;
+    background:#fff;border-radius:13px;padding:8px 15px 8px 12px;box-shadow:2px 2px 0 #EDE4D5;}
+  .back svg{width:15px;height:15px;stroke:#8A8070;stroke-width:2.5;fill:none;}
+  .hgroup{text-align:center;}
+  .hgroup .t{font-size:20px;font-weight:800;letter-spacing:.03em;}
+  .hgroup .s{font-size:11px;color:#A89E8E;font-weight:700;margin-top:3px;letter-spacing:.06em;}
+  .grade{color:#fff;border-radius:13px;padding:8px 15px;font-size:13px;font-weight:700;background:#33322E;box-shadow:2px 3px 0 #1A1916;}
+
+  .blk{border-radius:22px;position:relative;overflow:hidden;}
+  .blk::before{content:"";position:absolute;top:0;left:0;right:0;height:36%;
+    background:linear-gradient(rgba(255,255,255,.12),transparent);pointer-events:none;}
+
+  /* 本番＝墨（別格） */
+  .mock{background:#33322E;color:#fff;box-shadow:3px 3px 0 #1A1916,6px 8px 16px rgba(51,50,46,.14);
+    display:flex;align-items:center;gap:24px;padding:20px 24px;}
+  .mock .l{flex:1;position:relative;}
+  .mock .tag{font-size:10px;font-weight:800;letter-spacing:.12em;color:#B5AB98;}
+  .mock .nm{font-size:26px;font-weight:800;margin-top:7px;letter-spacing:.02em;}
+  .mock .ds{font-size:11.5px;color:#B5AB98;margin-top:7px;font-weight:600;}
+  .mock .safe{display:inline-flex;align-items:center;gap:6px;margin-top:11px;font-size:11px;font-weight:700;
+    background:rgba(255,255,255,.12);border-radius:11px;padding:5px 11px;color:#E9E2D4;}
+  .mock .r{width:250px;flex-shrink:0;position:relative;}
+  .mock .scoreline{display:flex;align-items:baseline;justify-content:space-between;font-size:10.5px;color:#B5AB98;font-weight:700;}
+  .mock .best{font-size:11px;color:#E9E2D4;font-weight:700;}
+  .mock .best b{font-size:19px;font-weight:600;}
+  /* めもり（合格ライン付き） */
+  .gauge{position:relative;height:24px;margin-top:9px;}
+  .gauge .track{position:absolute;left:0;right:0;top:8px;height:9px;border-radius:5px;background:rgba(255,255,255,.16);}
+  .gauge .fill{position:absolute;left:0;top:8px;height:9px;border-radius:5px;background:#8FCFAD;}
+  .gauge .ticks{position:absolute;left:0;right:0;top:1px;display:flex;justify-content:space-between;}
+  .gauge .ticks i{width:1.5px;height:5px;background:rgba(255,255,255,.28);border-radius:1px;}
+  .gauge .line{position:absolute;top:3px;width:2px;height:19px;background:#F0C348;border-radius:1px;}
+  .gauge .line span{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:8.5px;color:#F0C348;font-weight:800;white-space:nowrap;}
+  .gauge .knob{position:absolute;top:3px;width:19px;height:19px;border-radius:6px;background:#8FCFAD;
+    box-shadow:0 2px 0 rgba(0,0,0,.2);transform:translateX(-9.5px);}
+  .mock .go{width:64px;height:64px;border-radius:20px;background:#fff;color:#33322E;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;
+    box-shadow:3px 3px 0 #D8CCB4;position:relative;}
+
+  /* 分野別＝4色（練習と同じ言葉・同じ色で一貫） */
+  .fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .f{padding:15px 16px 14px;color:#fff;display:flex;flex-direction:column;}
+  .f-yomu{background:#5EA9A0;box-shadow:3px 3px 0 #47857D,6px 8px 16px rgba(51,50,46,.10);}
+  .f-kaku{background:#E8894A;box-shadow:3px 3px 0 #C56A34,6px 8px 16px rgba(51,50,46,.10);}
+  .f-kata{background:#7C93C4;box-shadow:3px 3px 0 #5E74A6,6px 8px 16px rgba(51,50,46,.10);}
+  .f-koto{background:#F0C348;color:#5A4A18;box-shadow:3px 3px 0 #CFA02F,6px 8px 16px rgba(51,50,46,.10);}
+  .f .hd{display:flex;align-items:center;gap:9px;position:relative;}
+  .f .plate{width:32px;height:32px;border-radius:11px;background:rgba(255,255,255,.20);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);}
+  .f-koto .plate{background:rgba(90,74,24,.13);}
+  .f .plate svg{width:18px;height:18px;fill:none;stroke-width:2.3;}
+  .f .nm{font-size:20px;font-weight:800;line-height:1;}
+  .f .q{font-size:11px;font-weight:700;opacity:.9;margin-top:10px;}
+  .f .last{margin-top:auto;padding-top:11px;font-size:10.5px;font-weight:700;opacity:.92;display:flex;align-items:baseline;justify-content:space-between;}
+  .f .last b{font-size:15px;font-weight:600;}
+
+  .note{text-align:center;font-size:11px;color:#B5AB98;font-weight:700;margin-top:14px;}
+
+  /* 案2 用：分野別を主役に */
+  .P2 .fields{flex:1;grid-template-rows:1fr;}
+  .P2 .f{padding:18px 18px 16px;}
+  .P2 .f .nm{font-size:23px;}
+  .P2 .f .q{font-size:11.5px;margin-top:12px;}
+  .P2 .mock{padding:16px 22px;margin-top:16px;}
+  .P2 .mock .nm{font-size:20px;}
+  .P2 .mock .r{width:210px;}
+  .P2 .mock .go{width:52px;height:52px;font-size:22px;border-radius:17px;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>腕だめし 2案（iPad横・3年生）</h1>
+    <p>試験不安の研究：高stakesは不安を強め、日本を含むアジアの子は特に高い。低stakesの短い挑戦が不安を下げる。<br>そこで<b>短い分野別テスト</b>を用意し、「なんかいでも うけられる」を明示。点数は人格でなく<b>伸び</b>として見せる。<br>2案の違いは<b>どちらを主役にするか</b>です。</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 案1 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">1</span>本番が主役</div>
+      <div class="rationale">もぎテスト（30もん・150点）を大きく、分野別を下に4つ。「本番に挑む」高揚感が強い。合格ラインを目盛りに描き、自己ベストとの差が見える。ただし毎回この大きさだと重く感じる子もいる。</div>
+      <div class="frame"><div class="scr">
+        <div class="bar">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="hgroup"><div class="t">腕だめし</div><div class="s">3年生・8きゅう そうとう</div></div>
+          <div class="grade">3年生 ▾</div>
+        </div>
+
+        <div class="blk mock" style="margin-bottom:18px;">
+          <div class="l">
+            <div class="tag">ほんばんの ように</div>
+            <div class="nm">もぎテスト</div>
+            <div class="ds">30もん・150てんまん　やく15ふん</div>
+            <div class="safe">なんかいでも うけられるよ</div>
+          </div>
+          <div class="r">
+            <div class="scoreline"><span>まえは <b class="mincho" style="font-size:14px;color:#E9E2D4;">118</b> てん</span><span class="best">じこベスト <b class="mincho">132</b></span></div>
+            <div class="gauge">
+              <div class="track"></div><div class="fill" style="width:88%"></div>
+              <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="line" style="left:80%"><span>ごうかく 120</span></div>
+              <div class="knob" style="left:88%"></div>
+            </div>
+          </div>
+          <div class="go">→</div>
+        </div>
+
+        <div class="fields">
+          <div class="blk f f-yomu">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M3 6h7a3 3 0 013 3v10a2.5 2.5 0 00-2.5-2.5H3z"/><path d="M21 6h-7a3 3 0 00-3 3v10a2.5 2.5 0 012.5-2.5H21z"/></svg></div><div class="nm">よむ</div></div>
+            <div class="q">10もん・3ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">8</b>／10</span></div>
+          </div>
+          <div class="blk f f-kaku">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/></svg></div><div class="nm">かく</div></div>
+            <div class="q">10もん・5ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">6</b>／10</span></div>
+          </div>
+          <div class="blk f f-kata">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 4h7v7H4z"/><path d="M13 13h7v7h-7z"/><path d="M4 15h7M17 4v7"/></svg></div><div class="nm">かたち</div></div>
+            <div class="q">10もん・3ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">9</b>／10</span></div>
+          </div>
+          <div class="blk f f-koto">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8l-4 4 4 4"/></svg></div><div class="nm">ことば</div></div>
+            <div class="q">8もん・3ふん</div>
+            <div class="last"><span>まだ</span><span>—</span></div>
+          </div>
+        </div>
+        <div class="note">まちがえた 字は あとで れんしゅうに もどってくるよ</div>
+      </div></div>
+    </div>
+
+    <!-- 案2 -->
+    <div class="case">
+      <div class="caselabel"><span class="num">2</span>みじかいのが主役（不安への配慮が厚い・私の推奨）</div>
+      <div class="rationale">短い分野別を大きく4つ並べ、もぎテストは下に構える。日常は軽い挑戦を重ね、本番は「やってみようかな」と自分で選ぶ形。研究の「低stakesの反復が不安を下げる／高stakesの繰り返しは燃え尽きを生む」に最も忠実。</div>
+      <div class="frame"><div class="scr P2">
+        <div class="bar">
+          <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>ホーム</div>
+          <div class="hgroup"><div class="t">腕だめし</div><div class="s">3年生・8きゅう そうとう</div></div>
+          <div class="grade">3年生 ▾</div>
+        </div>
+
+        <div class="fields">
+          <div class="blk f f-yomu">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M3 6h7a3 3 0 013 3v10a2.5 2.5 0 00-2.5-2.5H3z"/><path d="M21 6h-7a3 3 0 00-3 3v10a2.5 2.5 0 012.5-2.5H21z"/></svg></div><div class="nm">よむ</div></div>
+            <div class="q">10もん・3ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">8</b>／10</span></div>
+          </div>
+          <div class="blk f f-kaku">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/></svg></div><div class="nm">かく</div></div>
+            <div class="q">10もん・5ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">6</b>／10</span></div>
+          </div>
+          <div class="blk f f-kata">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 4h7v7H4z"/><path d="M13 13h7v7h-7z"/><path d="M4 15h7M17 4v7"/></svg></div><div class="nm">かたち</div></div>
+            <div class="q">10もん・3ふん</div>
+            <div class="last"><span>まえは</span><span><b class="mincho">9</b>／10</span></div>
+          </div>
+          <div class="blk f f-koto">
+            <div class="hd"><div class="plate"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8l-4 4 4 4"/></svg></div><div class="nm">ことば</div></div>
+            <div class="q">8もん・3ふん</div>
+            <div class="last"><span>まだ</span><span>—</span></div>
+          </div>
+        </div>
+
+        <div class="blk mock">
+          <div class="l">
+            <div class="tag">ほんばんの ように ためす</div>
+            <div class="nm">もぎテスト</div>
+            <div class="ds">30もん・150てんまん・やく15ふん　／　なんかいでも うけられるよ</div>
+          </div>
+          <div class="r">
+            <div class="scoreline"><span>まえは <b class="mincho" style="font-size:14px;color:#E9E2D4;">118</b> てん</span><span class="best">じこベスト <b class="mincho">132</b></span></div>
+            <div class="gauge">
+              <div class="track"></div><div class="fill" style="width:88%"></div>
+              <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="line" style="left:80%"><span>ごうかく 120</span></div>
+              <div class="knob" style="left:88%"></div>
+            </div>
+          </div>
+          <div class="go">→</div>
+        </div>
+        <div class="note">まちがえた 字は あとで れんしゅうに もどってくるよ</div>
+      </div></div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案3 右下段差くらべ</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:#33373E;font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;padding:20px 14px 60px;color:#fff;}
+  .head{text-align:center;max-width:900px;margin:0 auto 24px;}
+  .head h1{font-size:17px;font-weight:600;}
+  .head p{font-size:12.5px;color:#AAB0BC;margin-top:8px;line-height:1.6;}
+  .wrap{display:flex;flex-direction:column;gap:34px;align-items:center;}
+  .case{width:100%;max-width:920px;}
+  .caselabel{font-size:13px;font-weight:600;margin-bottom:10px;padding-left:4px;display:flex;align-items:center;gap:10px;}
+  .caselabel .num{background:#F0C348;color:#5A4A18;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .caselabel .desc{color:#AAB0BC;font-weight:400;font-size:11.5px;}
+  .frame{width:100%;aspect-ratio:10/7;border-radius:18px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.3);}
+
+  .c3{background:#FBF7F0;padding:26px 30px;display:flex;flex-direction:column;color:#33322E;height:100%;}
+  .c3 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+  .c3 .brand{font-size:21px;font-weight:800;color:#33322E;}
+  .c3 .brand span{color:#E8894A;}
+  .c3 .grade{color:#fff;border-radius:14px;padding:9px 17px;font-size:14px;font-weight:700;background:#33322E;}
+  .c3 .body{flex:1;display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;}
+  .c3 .blk{border-radius:22px;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;position:relative;}
+  .c3 .hero{grid-row:1 / 3;background:#E8894A;color:#fff;}
+  .c3 .hero .k{font-size:13px;opacity:.92;font-weight:600;letter-spacing:.06em;}
+  .c3 .hero .t{font-size:33px;font-weight:800;line-height:1.18;margin-top:12px;}
+  .c3 .hero .go{align-self:flex-start;background:#fff;color:#E8894A;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;}
+  .c3 .b-prac{background:#5EA9A0;color:#fff;}
+  .c3 .b-exam{background:#F0C348;color:#5A4A18;}
+  .c3 .b-jiten{background:#7C93C4;color:#fff;}
+  .c3 .b-climb{background:#fff;color:#8A8070;grid-column:2 / 4;flex-direction:row;align-items:center;justify-content:space-between;}
+  .c3 .blk .bnm{font-size:19px;font-weight:800;}
+  .c3 .blk .bds{font-size:11px;opacity:.85;margin-top:4px;}
+  .c3 .ic{width:30px;height:30px;}
+  .c3 .ic svg{width:100%;height:100%;fill:none;stroke-width:2.1;}
+
+  /* ══ パターンC：右下に ごく少し（3px相当・斜め段差＋淡い落ち影） ══ */
+  .C .hero{box-shadow:3px 3px 0 #C56A34, 5px 6px 12px rgba(51,50,46,.10);}
+  .C .b-prac{box-shadow:3px 3px 0 #47857D, 5px 6px 12px rgba(51,50,46,.09);}
+  .C .b-exam{box-shadow:3px 3px 0 #CFA02F, 5px 6px 12px rgba(51,50,46,.09);}
+  .C .b-jiten{box-shadow:3px 3px 0 #5E74A6, 5px 6px 12px rgba(51,50,46,.09);}
+  .C .b-climb{border:2px dashed #DDD2C0;box-shadow:3px 3px 0 #EDE4D5;}
+  .C .grade{box-shadow:2px 3px 0 #1A1916;}
+  .C .hero .go{box-shadow:2px 2px 0 #E4D9C8;}
+
+  /* ══ パターンD：右下に 少し（5px相当・もう一段はっきり） ══ */
+  .D .hero{box-shadow:5px 5px 0 #C56A34, 7px 9px 16px rgba(51,50,46,.12);}
+  .D .b-prac{box-shadow:5px 5px 0 #47857D, 7px 9px 16px rgba(51,50,46,.10);}
+  .D .b-exam{box-shadow:5px 5px 0 #CFA02F, 7px 9px 16px rgba(51,50,46,.10);}
+  .D .b-jiten{box-shadow:5px 5px 0 #5E74A6, 7px 9px 16px rgba(51,50,46,.10);}
+  .D .b-climb{border:2px dashed #DDD2C0;box-shadow:5px 5px 0 #EDE4D5;}
+  .D .grade{box-shadow:3px 4px 0 #1A1916;}
+  .D .hero .go{box-shadow:3px 3px 0 #E4D9C8;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>案3・右下に段差（2パターン）</h1>
+    <p>段差の向きを「右下・斜め」に、量を控えめにしました。<br>Cは"ごく少し"／Dは"少し（もう一段はっきり）"。どちらがちょうどいいか教えてください。</p>
+  </div>
+
+  <div class="wrap">
+
+    <!-- パターンC -->
+    <div class="case">
+      <div class="caselabel"><span class="num">C</span>右下に ごく少し<span class="desc">斜め3pxほど・繊細</span></div>
+      <div class="frame"><div class="c3 C">
+        <div class="top"><div class="brand">じぶん<span>字典</span></div><div class="grade">3年生 ▾</div></div>
+        <div class="body">
+          <div class="blk hero"><div><div class="k">きょうの ぶん</div><div class="t">5もじを<br>書こう</div></div><div class="go">→</div></div>
+          <div class="blk b-prac"><div class="ic"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/><path d="M14 6l3 3"/></svg></div><div><div class="bnm">練習</div><div class="bds">わけて まなぶ</div></div></div>
+          <div class="blk b-exam"><div class="ic"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/></svg></div><div><div class="bnm">腕だめし</div><div class="bds">8きゅう そうとう</div></div></div>
+          <div class="blk b-jiten"><div class="ic"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 5h16v14H4z"/><path d="M4 5v14M9 5v14"/></svg></div><div><div class="bnm">じてん</div><div class="bds">かいた 字</div></div></div>
+          <div class="blk b-climb"><div class="bnm" style="font-size:15px;color:#8A8070;">↑ もっと上に ちょうせん</div><div style="font-size:12px;color:#A89E8E;">7きゅう・6きゅう…</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- パターンD -->
+    <div class="case">
+      <div class="caselabel"><span class="num">D</span>右下に 少し<span class="desc">斜め5pxほど・もう一段はっきり</span></div>
+      <div class="frame"><div class="c3 D">
+        <div class="top"><div class="brand">じぶん<span>字典</span></div><div class="grade">3年生 ▾</div></div>
+        <div class="body">
+          <div class="blk hero"><div><div class="k">きょうの ぶん</div><div class="t">5もじを<br>書こう</div></div><div class="go">→</div></div>
+          <div class="blk b-prac"><div class="ic"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 19l1-4L16 4l3 3L8 18z"/><path d="M14 6l3 3"/></svg></div><div><div class="bnm">練習</div><div class="bds">わけて まなぶ</div></div></div>
+          <div class="blk b-exam"><div class="ic"><svg viewBox="0 0 24 24" stroke="#5A4A18"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/></svg></div><div><div class="bnm">腕だめし</div><div class="bds">8きゅう そうとう</div></div></div>
+          <div class="blk b-jiten"><div class="ic"><svg viewBox="0 0 24 24" stroke="#fff"><path d="M4 5h16v14H4z"/><path d="M4 5v14M9 5v14"/></svg></div><div><div class="bnm">じてん</div><div class="bds">かいた 字</div></div></div>
+          <div class="blk b-climb"><div class="bnm" style="font-size:15px;color:#8A8070;">↑ もっと上に ちょうせん</div><div style="font-size:12px;color:#A89E8E;">7きゅう・6きゅう…</div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</body>
+</html>
